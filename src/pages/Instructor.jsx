@@ -33,6 +33,9 @@ function Instructor() {
   const [attendanceData, setAttendanceData] = useState([]);
   const [expandedClassId, setExpandedClassId] = useState(null);
   const [attendanceRecordsByClass, setAttendanceRecordsByClass] = useState({});
+  const [expiredCodes, setExpiredCodes] = useState({});
+  const [timers, setTimers] = useState({});  // stores remaining seconds per class
+
 
 
   useEffect(() => {
@@ -160,12 +163,32 @@ function Instructor() {
         attendanceCode: code,
         attendanceCodeGeneratedAt: Date.now(),
       });
+  
+      // Show code and reset expiration
+      setExpiredCodes((prev) => ({ ...prev, [classId]: false }));
+      setTimers((prev) => ({ ...prev, [classId]: 600 })); // 10 minutes
+  
+      // Countdown timer
+      const interval = setInterval(() => {
+        setTimers((prev) => {
+          const newTime = (prev[classId] || 0) - 1;
+          if (newTime <= 0) {
+            clearInterval(interval);
+            setExpiredCodes((prevExpired) => ({ ...prevExpired, [classId]: true }));
+            return { ...prev, [classId]: 0 };
+          }
+          return { ...prev, [classId]: newTime };
+        });
+      }, 1000);
+  
       setMessage(`✅ Attendance code "${code}" generated for class.`);
       fetchClasses(userId);
     } catch (error) {
       setMessage(`❌ Failed to generate code: ${error.message}`);
     }
   };
+  
+  
 
   const fetchClasses = async (instructorId) => {
     if (!instructorId) return;
@@ -250,12 +273,18 @@ function Instructor() {
                   <strong>{cls.className}</strong> – {cls.schedule}<br />
                   Max Students: {cls.maxStudents}<br />
                   Enrollment Code: <code>{cls.enrollmentCode}</code><br />
-                  {cls.attendanceCode && (
-                    <>
-                      <div>Active Attendance Code: <code>{cls.attendanceCode}</code></div>
-                      <div>Generated at: {new Date(cls.attendanceCodeGeneratedAt).toLocaleTimeString()}</div>
-                    </>
+                  {cls.attendanceCode && !expiredCodes[cls.id] && (
+                    <div style={{ color: '#c62828', fontWeight: 'bold', marginTop: 8 }}>
+                      Active Attendance Code: <code>{cls.attendanceCode}</code>
+                      <span style={{ marginLeft: 12 }}>
+                        ⏳ {Math.floor((timers[cls.id] || 0) / 60)
+                          .toString()
+                          .padStart(2, '0')}:
+                        {(timers[cls.id] % 60 || 0).toString().padStart(2, '0')}
+                      </span>
+                    </div>
                   )}
+
                   <button
                     onClick={() => handleStartAttendance(cls.id)}
                     style={{
