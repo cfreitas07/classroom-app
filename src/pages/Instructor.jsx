@@ -36,8 +36,7 @@ function Instructor() {
   const [attendanceRecordsByClass, setAttendanceRecordsByClass] = useState({});
   const [expiredCodes, setExpiredCodes] = useState({});
   const [timers, setTimers] = useState({});  // stores remaining seconds per class
-
-
+  const [showLargeCodes, setShowLargeCodes] = useState({}); // tracks which class's codes are shown in large format
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -298,7 +297,43 @@ function Instructor() {
                 <li key={cls.id} style={{ marginBottom: 20 }}>
                   <strong>{cls.className}</strong> – {cls.schedule}<br />
                   Max Students: {cls.maxStudents}<br />
-                  Enrollment Code: <code>{cls.enrollmentCode}</code><br />
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginTop: '5px' }}>
+                    <span>Enrollment Code: <code>{cls.enrollmentCode}</code></span>
+                    <button
+                      onClick={() => setShowLargeCodes(prev => ({
+                        ...prev,
+                        [cls.id]: !prev[cls.id]
+                      }))}
+                      title="Click to show codes in large format"
+                      style={{
+                        padding: '6px 12px',
+                        backgroundColor: showLargeCodes[cls.id] ? '#94a3b8' : '#cbd5e1',
+                        color: '#1e293b',
+                        border: 'none',
+                        borderRadius: '4px',
+                        cursor: 'pointer',
+                        fontSize: '1.2em',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        transition: 'all 0.2s ease',
+                        ':hover': {
+                          transform: 'scale(1.1)',
+                          backgroundColor: '#94a3b8'
+                        }
+                      }}
+                      onMouseOver={e => {
+                        e.target.style.transform = 'scale(1.1)';
+                        e.target.style.backgroundColor = '#94a3b8';
+                      }}
+                      onMouseOut={e => {
+                        e.target.style.transform = 'scale(1)';
+                        e.target.style.backgroundColor = showLargeCodes[cls.id] ? '#94a3b8' : '#cbd5e1';
+                      }}
+                    >
+                      🔍
+                    </button>
+                  </div>
                   {cls.attendanceCode && !expiredCodes[cls.id] && (
                     <div style={{ color: '#c62828', fontWeight: 'bold', marginTop: 8 }}>
                       Active Attendance Code: <code>{cls.attendanceCode}</code>
@@ -308,6 +343,94 @@ function Instructor() {
                           .padStart(2, '0')}:
                         {(timers[cls.id] % 60 || 0).toString().padStart(2, '0')}
                       </span>
+                    </div>
+                  )}
+
+                  {/* Large Codes Modal */}
+                  {showLargeCodes[cls.id] && (
+                    <div style={{
+                      position: 'fixed',
+                      top: 0,
+                      left: 0,
+                      right: 0,
+                      bottom: 0,
+                      backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                      display: 'flex',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      zIndex: 1000,
+                      padding: '20px'
+                    }}>
+                      <div style={{
+                        backgroundColor: 'white',
+                        padding: '40px',
+                        borderRadius: '12px',
+                        maxWidth: '90%',
+                        width: '600px',
+                        textAlign: 'center',
+                        position: 'relative'
+                      }}>
+                        <button
+                          onClick={() => setShowLargeCodes(prev => ({
+                            ...prev,
+                            [cls.id]: false
+                          }))}
+                          style={{
+                            position: 'absolute',
+                            top: '10px',
+                            right: '10px',
+                            background: 'none',
+                            border: 'none',
+                            fontSize: '24px',
+                            cursor: 'pointer',
+                            color: '#666'
+                          }}
+                        >
+                          ×
+                        </button>
+                        <h2 style={{ marginBottom: '30px', color: '#333' }}>{cls.className}</h2>
+                        
+                        <div style={{ marginBottom: '40px' }}>
+                          <div style={{ fontSize: '1.2em', color: '#666', marginBottom: '10px' }}>Enrollment Code</div>
+                          <div style={{
+                            fontSize: '3.5em',
+                            fontWeight: 'bold',
+                            color: '#3f51b5',
+                            letterSpacing: '4px',
+                            padding: '20px',
+                            backgroundColor: '#e3f2fd',
+                            borderRadius: '8px',
+                            marginBottom: '20px'
+                          }}>
+                            {cls.enrollmentCode}
+                          </div>
+                        </div>
+
+                        {cls.attendanceCode && !expiredCodes[cls.id] && (
+                          <div>
+                            <div style={{ fontSize: '1.2em', color: '#666', marginBottom: '10px' }}>Active Attendance Code</div>
+                            <div style={{
+                              fontSize: '3.5em',
+                              fontWeight: 'bold',
+                              color: '#c62828',
+                              letterSpacing: '4px',
+                              padding: '20px',
+                              backgroundColor: '#ffebee',
+                              borderRadius: '8px'
+                            }}>
+                              {cls.attendanceCode}
+                            </div>
+                            <div style={{
+                              fontSize: '1.2em',
+                              color: '#c62828',
+                              marginTop: '15px'
+                            }}>
+                              ⏳ {Math.floor((timers[cls.id] || 0) / 60).toString().padStart(2, '0')}:
+                              {(timers[cls.id] % 60 || 0).toString().padStart(2, '0')}
+                            </div>
+                          </div>
+                        )}
+                      </div>
                     </div>
                   )}
 
