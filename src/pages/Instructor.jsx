@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { auth, db } from '../firebase';
+import { Link } from 'react-router-dom';
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
@@ -254,7 +255,19 @@ function Instructor() {
   if (userId) {
     return (
       <div style={{ maxWidth: 800, margin: '40px auto', padding: '0 20px' }}>
-        <h2>Welcome, Instructor!</h2>
+        <Link to="/" style={{ textDecoration: 'none' }}>
+          <h1 style={{ 
+            cursor: 'pointer',
+            transition: 'transform 0.2s ease',
+            textAlign: 'center',
+            marginBottom: '2rem',
+            ':hover': {
+              transform: 'scale(1.05)'
+            }
+          }} onMouseOver={e => e.target.style.transform = 'scale(1.05)'} onMouseOut={e => e.target.style.transform = 'scale(1)'}>
+            🎓 Aki
+          </h1>
+        </Link>
 
         <div style={{ marginTop: 40, textAlign: 'left' }}>
           <h3>Create a New Class</h3>
@@ -342,107 +355,57 @@ function Instructor() {
                         setMessage('✅ Class deleted.');
                         fetchClasses(userId); // Refresh class list
                       } catch (error) {
-                        setMessage(`❌ Failed to delete: ${error.message}`);
+                        setMessage(`❌ Error deleting class: ${error.message}`);
                       }
                     }}
                     style={{
                       marginTop: 10,
                       padding: '8px 12px',
-                      backgroundColor: '#d32f2f',
+                      backgroundColor: '#c62828',
                       color: 'white',
                       border: 'none',
                       borderRadius: '4px',
                       cursor: 'pointer',
-                      marginLeft: '10px',
                     }}
                   >
                     Delete Class
                   </button>
-
-
-                                {expandedClassId === cls.id && attendanceRecordsByClass[cls.id] && (
-                <div style={{ marginTop: 15, background: '#f5f5f5', padding: 10, borderRadius: 4 }}>
-                  <h4>Attendance Records:</h4>
-                  {attendanceRecordsByClass[cls.id].length === 0 ? (
-                    <p>No records yet.</p>
-                  ) : (
-                    <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                      <thead>
-                        <tr>
-                          <th style={{ textAlign: 'left', padding: '4px 8px' }}>Student Code</th>
-                          <th style={{ textAlign: 'left', padding: '4px 8px' }}>Date</th>
-                          <th style={{ textAlign: 'left', padding: '4px 8px' }}>Time</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {attendanceRecordsByClass[cls.id].map((record, i) => {
-                          const dateObj = new Date(record.timestamp);
-                          const date = dateObj.toLocaleDateString();
-                          const time = dateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-                          return (
-                            <tr key={i}>
-                              <td style={{ padding: '4px 8px' }}>{record.studentCode}</td>
-                              <td style={{ padding: '4px 8px' }}>{date}</td>
-                              <td style={{ padding: '4px 8px' }}>{time}</td>
-                            </tr>
-                          );
-                        })}
-                      </tbody>
-                    </table>
-                  )}
-                </div>
-              )}
-
-
                 </li>
               ))}
             </ul>
           </div>
-        )}
-
-        {message && (
-          <p style={{ marginTop: 20, padding: '10px', backgroundColor: message.includes('✅') ? '#e8f5e9' : '#ffebee', borderRadius: '4px', color: message.includes('✅') ? '#2e7d32' : '#c62828' }}>{message}</p>
         )}
       </div>
     );
   }
 
   return (
-    <div style={{ maxWidth: 400, margin: '80px auto', textAlign: 'center' }}>
-      <h2>{isLogin ? 'Instructor Login' : 'Instructor Sign Up'}</h2>
-      <form onSubmit={handleSubmit}>
-        <input type="email" placeholder="Email" required value={email} onChange={(e) => setEmail(e.target.value)} style={{ width: '100%', padding: 10, margin: '10px 0' }} />
-        <input type="password" placeholder="Password" required value={password} onChange={(e) => setPassword(e.target.value)} style={{ width: '100%', padding: 10, margin: '10px 0' }} />
-        {!isLogin && (
-          <div style={{ textAlign: 'left', fontSize: '0.8em', color: '#666', margin: '5px 0' }}>
-            Password must contain:
-            <ul style={{ margin: '5px 0', paddingLeft: '20px' }}>
-              <li>At least 6 characters</li>
-              <li>At least one uppercase letter</li>
-              <li>At least one lowercase letter</li>
-              <li>At least one number</li>
-            </ul>
-          </div>
-        )}
-        <div style={{ textAlign: 'left', margin: '10px 0' }}>
-          <label>
-            <input type="checkbox" checked={rememberMe} onChange={(e) => setRememberMe(e.target.checked)} style={{ marginRight: '5px' }} />
-            Remember me
-          </label>
-        </div>
-        <button type="submit" style={{ padding: 10, width: '100%', backgroundColor: '#4CAF50', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>
-          {isLogin ? 'Log In' : 'Sign Up'}
-        </button>
-      </form>
-      <p style={{ marginTop: 20 }}>
-        {isLogin ? "Don't have an account?" : 'Already have an account?'}{' '}
-        <button onClick={() => setIsLogin(!isLogin)} style={{ background: 'none', color: '#2196F3', border: 'none', cursor: 'pointer', textDecoration: 'underline' }}>
-          {isLogin ? 'Sign Up' : 'Log In'}
-        </button>
-      </p>
-      {message && (
-        <p style={{ marginTop: 20, padding: '10px', backgroundColor: message.includes('✅') ? '#e8f5e9' : '#ffebee', borderRadius: '4px', color: message.includes('✅') ? '#2e7d32' : '#c62828' }}>{message}</p>
-      )}
+    <div style={{ maxWidth: 400, margin: '40px auto', padding: '0 20px' }}>
+      <Link to="/" style={{ textDecoration: 'none' }}>
+        <h1 style={{ 
+          cursor: 'pointer',
+          transition: 'transform 0.2s ease',
+          textAlign: 'center',
+          marginBottom: '2rem',
+          ':hover': {
+            transform: 'scale(1.05)'
+          }
+        }} onMouseOver={e => e.target.style.transform = 'scale(1.05)'} onMouseOut={e => e.target.style.transform = 'scale(1)'}>
+          🎓 Aki
+        </h1>
+      </Link>
+
+      <div style={{ marginTop: 40, textAlign: 'left' }}>
+        <h3>Login</h3>
+        <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} style={{ width: '100%', padding: 8, margin: '8px 0' }} />
+        <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} style={{ width: '100%', padding: 8, margin: '8px 0' }} />
+        <button onClick={handleSubmit} style={{ padding: 10, width: '100%', backgroundColor: '#3f51b5', color: 'white', border: 'none', borderRadius: '4px', marginTop: 10, cursor: 'pointer' }}>Login</button>
+      </div>
+
+      <div style={{ marginTop: 20, textAlign: 'left' }}>
+        <h3>Don't have an account?</h3>
+        <button onClick={() => setIsLogin(false)} style={{ padding: 10, width: '100%', backgroundColor: '#3f51b5', color: 'white', border: 'none', borderRadius: '4px', marginTop: 10, cursor: 'pointer' }}>Sign Up</button>
+      </div>
     </div>
   );
 }

@@ -6,7 +6,17 @@ import styles from './Home.module.css';
 function Home() {
   return (
     <div className={styles.container}>
-      <h1 className={styles.title}>🎓 Classroom App</h1>
+      <Link to="/" style={{ textDecoration: 'none' }}>
+        <h1 className={styles.title} style={{ 
+          cursor: 'pointer',
+          transition: 'transform 0.2s ease',
+          ':hover': {
+            transform: 'scale(1.05)'
+          }
+        }} onMouseOver={e => e.target.style.transform = 'scale(1.05)'} onMouseOut={e => e.target.style.transform = 'scale(1)'}>
+          🎓 Aki
+        </h1>
+      </Link>
       <p style={{ color: '#4a5568', marginBottom: '2rem' }}>Manage attendance easily and securely</p>
       <div className={styles.buttonContainer}>
         <Link to="/instructor" className={styles.card}>

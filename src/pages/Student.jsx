@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { db } from '../firebase';
+import { Link } from 'react-router-dom';
 import {
   collection,
   query,
@@ -94,6 +95,18 @@ function Student() {
 
   return (
     <div style={{ maxWidth: 400, margin: '60px auto', textAlign: 'center' }}>
+      <Link to="/" style={{ textDecoration: 'none' }}>
+        <h1 style={{ 
+          cursor: 'pointer',
+          transition: 'transform 0.2s ease',
+          ':hover': {
+            transform: 'scale(1.05)'
+          }
+        }} onMouseOver={e => e.target.style.transform = 'scale(1.05)'} onMouseOut={e => e.target.style.transform = 'scale(1)'}>
+          🎓 Aki
+        </h1>
+      </Link>
+
       <h2>Student Check-In</h2>
 
       <input
