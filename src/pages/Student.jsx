@@ -72,6 +72,26 @@ function Student() {
     }
   };
 
+  const buttonStyle = {
+    padding: '10px 20px',
+    width: '100%',
+    backgroundColor: '#4CAF50',
+    color: 'white',
+    border: 'none',
+    borderRadius: '4px',
+    cursor: 'pointer',
+    fontSize: '1rem',
+    fontWeight: '500',
+    transition: 'all 0.3s ease',
+    marginTop: '10px',
+  };
+
+  const buttonHoverStyle = {
+    backgroundColor: '#45a049',
+    transform: 'translateY(-2px)',
+    boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+  };
+
   return (
     <div style={{ maxWidth: 400, margin: '60px auto', textAlign: 'center' }}>
       <h2>Student Check-In</h2>
@@ -83,7 +103,12 @@ function Student() {
         onChange={(e) => setEnrollmentCode(e.target.value.toUpperCase())}
         style={{ width: '100%', padding: 10, margin: '10px 0' }}
       />
-      <button onClick={handleJoinClass} style={{ padding: 10, width: '100%' }}>
+      <button 
+        onClick={handleJoinClass} 
+        style={buttonStyle}
+        onMouseOver={(e) => Object.assign(e.target.style, buttonHoverStyle)}
+        onMouseOut={(e) => Object.assign(e.target.style, buttonStyle)}
+      >
         Join Class
       </button>
 
@@ -103,14 +128,27 @@ function Student() {
             onChange={(e) => setAttendanceCode(e.target.value)}
             style={{ width: '100%', padding: 10, margin: '10px 0' }}
           />
-          <button onClick={handleSubmitAttendance} style={{ padding: 10, width: '100%' }}>
+          <button 
+            onClick={handleSubmitAttendance} 
+            style={buttonStyle}
+            onMouseOver={(e) => Object.assign(e.target.style, buttonHoverStyle)}
+            onMouseOut={(e) => Object.assign(e.target.style, buttonStyle)}
+          >
             Submit Attendance
           </button>
         </>
       )}
 
       {statusMessage && (
-        <p style={{ marginTop: 20 }}>{statusMessage}</p>
+        <p style={{ 
+          marginTop: 20, 
+          padding: '10px',
+          backgroundColor: statusMessage.includes('✅') ? '#e8f5e9' : '#ffebee',
+          borderRadius: '4px',
+          color: statusMessage.includes('✅') ? '#2e7d32' : '#c62828'
+        }}>
+          {statusMessage}
+        </p>
       )}
     </div>
   );
