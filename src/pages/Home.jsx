@@ -19,7 +19,7 @@ function Home() {
           🎓 Aki
         </h1>
       </Link>
-      <p style={{ color: '#4a5568', marginBottom: '2rem' }}>Manage attendance easily and securely</p>
+      <p style={{ color: '#4a5568', marginBottom: '2rem' }}>Manage classroom attendance easily and securely</p>
       
       <div className={styles.buttonContainer}>
         <Link to="/instructor" className={styles.card}>
@@ -224,7 +224,13 @@ function Home() {
         fontSize: '0.9rem',
         textAlign: 'center',
         background: 'linear-gradient(to bottom, transparent, rgba(237, 242, 247, 0.5))',
-        borderRadius: '0 0 12px 12px'
+        borderRadius: '0 0 12px 12px',
+        width: '100vw',
+        position: 'relative',
+        left: '50%',
+        right: '50%',
+        marginLeft: '-50vw',
+        marginRight: '-50vw'
       }}>
         <div style={{ 
           display: 'flex', 

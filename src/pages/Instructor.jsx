@@ -189,12 +189,12 @@ function Instructor() {
   
       // Show code and reset expiration
       setExpiredCodes((prev) => ({ ...prev, [classId]: false }));
-      setTimers((prev) => ({ ...prev, [classId]: 600 })); // 10 minutes
+      setTimers((prev) => ({ ...prev, [classId]: 600 })); // 10 minutes in seconds
   
       // Countdown timer
       const interval = setInterval(() => {
         setTimers((prev) => {
-          const newTime = (prev[classId] || 0) - 1;
+          const newTime = prev[classId] - 1;
           if (newTime <= 0) {
             clearInterval(interval);
             setExpiredCodes((prevExpired) => ({ ...prevExpired, [classId]: true }));
@@ -202,7 +202,10 @@ function Instructor() {
           }
           return { ...prev, [classId]: newTime };
         });
-      }, 1000);
+      }, 1000); // Run every 1000ms (1 second)
+  
+      // Clear interval when component unmounts or when generating new code
+      return () => clearInterval(interval);
   
       setMessage(`✅ Attendance code "${code}" generated for class.`);
       fetchClasses(userId);
