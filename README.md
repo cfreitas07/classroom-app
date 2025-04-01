@@ -1,70 +1,93 @@
-# Getting Started with Create React App
+# 🎓 Aki - Smart Attendance App
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+**Aki** is a simple, mobile-friendly web application built to help instructors manage classroom attendance with ease and privacy.
 
-## Available Scripts
+Students submit attendance anonymously, and instructors have a clear dashboard to track sessions, generate attendance codes, and export records.
+
+---
+
+## 🚀 Features
+
+- Instructor authentication (signup/login)
+- Create classrooms with custom schedules and class size
+- Generate time-limited attendance codes at the start of each session
+- Students can mark attendance anonymously using the provided codes
+- Attendance records organized by date
+- Export attendance as CSV
+- Fully responsive and mobile-ready
+
+---
+
+## 🔧 Available Scripts
 
 In the project directory, you can run:
 
 ### `npm start`
 
-Runs the app in the development mode.\
+Runs the app in the development mode.  
 Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
 
-The page will reload when you make changes.\
+The page will reload when you make changes.  
 You may also see any lint errors in the console.
 
-### `npm test`
-
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+---
 
 ### `npm run build`
 
-Builds the app for production to the `build` folder.\
+Builds the app for production to the `build` folder.  
 It correctly bundles React in production mode and optimizes the build for the best performance.
 
-The build is minified and the filenames include the hashes.\
+The build is minified and the filenames include the hashes.  
 Your app is ready to be deployed!
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+---
 
-### `npm run eject`
+## 🧪 `npm test`
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+Launches the test runner in interactive watch mode.  
+See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+---
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+## 📖 How It Works
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+### 👨‍🏫 For Instructors:
+1. Go to the app and select **"I'm an Instructor"**
+2. Create an account or log in
+3. Create a class with:
+   - Class name
+   - Schedule (e.g., Mon/Wed 10am)
+   - Max class size
+4. Before each class session, click **"Start Attendance"** to generate a temporary attendance code (valid for 10 minutes)
+5. Share the code with your students
+6. View or download attendance reports in CSV format
 
-## Learn More
+---
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+### 👩‍🎓 For Students:
+1. Go to the app and select **"I'm a Student"**
+2. Enter:
+   - The **Class Code** (shared by the instructor)
+   - Your **Student Code** (anonymous identifier)
+   - The **Attendance Code** generated during class
+3. That’s it — you’re marked as present anonymously!
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+---
 
-### Code Splitting
+## 🛠 Tech Stack
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+- **React** (frontend)
+- **Firebase Auth** (authentication)
+- **Firestore** (real-time database)
+- **Firebase Hosting** (deployment)
+- **Tailwind CSS** (styling)
 
-### Analyzing the Bundle Size
+---
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+## 📦 Deployment
 
-### Making a Progressive Web App
+To deploy using Firebase Hosting:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+```bash
+npm run build
+firebase deploy
