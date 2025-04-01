@@ -1,4 +1,4 @@
-# 🎓 Aki - Smart Attendance App
+# 🎓 Aki - Attendance App
 
 **Aki** is a simple, mobile-friendly web application built to help instructors manage classroom attendance with ease and privacy.
 
