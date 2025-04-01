@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { auth, db } from '../firebase';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
@@ -8,6 +8,7 @@ import {
   browserLocalPersistence,
   browserSessionPersistence,
   onAuthStateChanged,
+  signOut,
 } from 'firebase/auth';
 import {
   collection,
@@ -37,6 +38,7 @@ function Instructor() {
   const [expiredCodes, setExpiredCodes] = useState({});
   const [timers, setTimers] = useState({});  // stores remaining seconds per class
   const [showLargeCodes, setShowLargeCodes] = useState({}); // tracks which class's codes are shown in large format
+  const navigate = useNavigate();
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -61,18 +63,33 @@ function Instructor() {
       return;
     }
 
+    // Validate inputs
+    if (!className.trim()) {
+      setMessage("❌ Please enter a class name");
+      return;
+    }
+    if (!schedule.trim()) {
+      setMessage("❌ Please enter a schedule");
+      return;
+    }
+    if (!maxStudents || maxStudents < 1) {
+      setMessage("❌ Please enter a valid number of students");
+      return;
+    }
+
     const code = generateCode();
 
     try {
       await addDoc(collection(db, 'classes'), {
-        className,
-        schedule,
+        className: className.trim(),
+        schedule: schedule.trim(),
         maxStudents: Number(maxStudents),
         enrollmentCode: code,
         instructorId: userId,
       });
 
       setMessage(`✅ Class created! Code: ${code}`);
+      // Clear all input fields
       setClassName('');
       setSchedule('');
       setMaxStudents(30);
@@ -264,40 +281,132 @@ function Instructor() {
     }
   };
 
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+      setMessage('✅ Successfully logged out!');
+      // Clear any local state
+      setUserId(null);
+      setClasses([]);
+      setAttendanceRecordsByClass({});
+      setExpiredCodes({});
+      setTimers({});
+      setShowLargeCodes({});
+      // Navigate to home page
+      navigate('/');
+    } catch (error) {
+      setMessage(`❌ Error logging out: ${error.message}`);
+    }
+  };
+
   if (userId) {
     return (
-      <div style={{ maxWidth: 800, margin: '40px auto', padding: '0 20px' }}>
-        <Link to="/" style={{ textDecoration: 'none' }}>
-          <h1 style={{ 
-            cursor: 'pointer',
-            transition: 'transform 0.2s ease',
-            textAlign: 'center',
-            marginBottom: '2rem',
-            ':hover': {
-              transform: 'scale(1.05)'
-            }
-          }} onMouseOver={e => e.target.style.transform = 'scale(1.05)'} onMouseOut={e => e.target.style.transform = 'scale(1)'}>
-            🎓 Aki
-          </h1>
-        </Link>
+      <div style={{ maxWidth: 800, margin: '40px auto', padding: '0 20px', textAlign: 'center' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+          <Link to="/" style={{ textDecoration: 'none' }}>
+            <h1 style={{ 
+              cursor: 'pointer',
+              transition: 'transform 0.2s ease',
+              textAlign: 'center',
+              ':hover': {
+                transform: 'scale(1.05)'
+              }
+            }} onMouseOver={e => e.target.style.transform = 'scale(1.05)'} onMouseOut={e => e.target.style.transform = 'scale(1)'}>
+              🎓 Aki
+            </h1>
+          </Link>
+          <button
+            onClick={handleLogout}
+            style={{
+              padding: '8px 16px',
+              backgroundColor: '#64748b',
+              color: 'white',
+              border: 'none',
+              borderRadius: '4px',
+              cursor: 'pointer',
+              fontSize: '0.9em',
+              transition: 'background-color 0.2s ease',
+              ':hover': {
+                backgroundColor: '#475569'
+              }
+            }}
+            onMouseOver={e => e.target.style.backgroundColor = '#475569'}
+            onMouseOut={e => e.target.style.backgroundColor = '#64748b'}
+          >
+            Logout
+          </button>
+        </div>
 
-        <div style={{ marginTop: 40, textAlign: 'left' }}>
+        <div style={{ marginTop: 40 }}>
           <h3>Create a New Class</h3>
-          <input type="text" placeholder="Class Name" value={className} onChange={(e) => setClassName(e.target.value)} style={{ width: '100%', padding: 8, margin: '8px 0' }} />
-          <input type="text" placeholder="Schedule (e.g., Mon/Wed 10am)" value={schedule} onChange={(e) => setSchedule(e.target.value)} style={{ width: '100%', padding: 8, margin: '8px 0' }} />
-          <input type="number" placeholder="Max Students" value={maxStudents} onChange={(e) => setMaxStudents(e.target.value)} style={{ width: '100%', padding: 8, margin: '8px 0' }} />
-          <button onClick={handleCreateClass} style={{ padding: 10, width: '100%', backgroundColor: '#3f51b5', color: 'white', border: 'none', borderRadius: '4px', marginTop: 10, cursor: 'pointer' }}>Create Class</button>
+          <div style={{ maxWidth: '400px', margin: '0 auto' }}>
+            <input 
+              type="text" 
+              placeholder="Class Name" 
+              value={className} 
+              onChange={(e) => setClassName(e.target.value)} 
+              style={{ 
+                width: '100%', 
+                padding: 8, 
+                margin: '8px 0',
+                boxSizing: 'border-box',
+                textAlign: 'center'
+              }} 
+            />
+            <input 
+              type="text" 
+              placeholder="Schedule (e.g., Mon/Wed 10am)" 
+              value={schedule} 
+              onChange={(e) => setSchedule(e.target.value)} 
+              style={{ 
+                width: '100%', 
+                padding: 8, 
+                margin: '8px 0',
+                boxSizing: 'border-box',
+                textAlign: 'center'
+              }} 
+            />
+            <input 
+              type="number" 
+              placeholder="Max Students" 
+              value={maxStudents} 
+              onChange={(e) => setMaxStudents(e.target.value)} 
+              style={{ 
+                width: '100%', 
+                padding: 8, 
+                margin: '8px 0',
+                boxSizing: 'border-box',
+                textAlign: 'center'
+              }} 
+            />
+            <button 
+              onClick={handleCreateClass} 
+              style={{ 
+                padding: 10, 
+                width: '100%', 
+                backgroundColor: '#3f51b5', 
+                color: 'white', 
+                border: 'none', 
+                borderRadius: '4px', 
+                marginTop: 10, 
+                cursor: 'pointer',
+                textAlign: 'center'
+              }}
+            >
+              Create Class
+            </button>
+          </div>
         </div>
 
         {classes.length > 0 && (
           <div style={{ marginTop: 30 }}>
             <h3>Your Classes:</h3>
-            <ul>
+            <ul style={{ listStyle: 'none', padding: 0 }}>
               {classes.map((cls) => (
-                <li key={cls.id} style={{ marginBottom: 20 }}>
+                <li key={cls.id} style={{ marginBottom: 20, textAlign: 'center' }}>
                   <strong>{cls.className}</strong> – {cls.schedule}<br />
                   Max Students: {cls.maxStudents}<br />
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginTop: '5px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px', marginTop: '5px' }}>
                     <span>Enrollment Code: <code>{cls.enrollmentCode}</code></span>
                     <button
                       onClick={() => setShowLargeCodes(prev => ({
@@ -434,78 +543,88 @@ function Instructor() {
                     </div>
                   )}
 
-                  <button
-                    onClick={() => handleStartAttendance(cls.id)}
-                    style={{
-                      marginTop: 10,
-                      padding: '8px 12px',
-                      backgroundColor: '#f57c00',
-                      color: 'white',
-                      border: 'none',
-                      borderRadius: '4px',
-                      cursor: 'pointer',
-                      marginRight: '10px',
-                    }}
-                  >
-                    Start Attendance
-                  </button>
+                  <div style={{ 
+                    display: 'flex', 
+                    gap: '8px', 
+                    marginTop: '10px',
+                    flexWrap: 'wrap',
+                    justifyContent: 'center'
+                  }}>
+                    <button
+                      onClick={() => handleStartAttendance(cls.id)}
+                      style={{
+                        padding: '8px 12px',
+                        backgroundColor: '#f57c00',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '4px',
+                        cursor: 'pointer',
+                        flex: '0 0 auto',
+                        minWidth: '110px'
+                      }}
+                    >
+                      Start Attendance
+                    </button>
 
-                  <button
-                    onClick={() => fetchAttendanceForClass(cls.id)}
-                    style={{
-                      marginTop: 10,
-                      padding: '8px 12px',
-                      backgroundColor: expandedClassId === cls.id ? '#01579b' : '#0288d1',
-                      color: 'white',
-                      border: 'none',
-                      borderRadius: '4px',
-                      cursor: 'pointer',
-                      marginRight: '10px'
-                    }}
-                  >
-                    {expandedClassId === cls.id ? 'Hide Attendance' : 'View Attendance'}
-                  </button>
+                    <button
+                      onClick={() => fetchAttendanceForClass(cls.id)}
+                      style={{
+                        padding: '8px 12px',
+                        backgroundColor: expandedClassId === cls.id ? '#01579b' : '#0288d1',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '4px',
+                        cursor: 'pointer',
+                        flex: '0 0 auto',
+                        minWidth: '110px'
+                      }}
+                    >
+                      {expandedClassId === cls.id ? 'Hide Attendance' : 'View Attendance'}
+                    </button>
 
-                  <button
-                    onClick={() => fetchAttendanceForClass(cls.id, true)}
-                    style={{
-                      marginTop: 10,
-                      padding: '8px 12px',
-                      backgroundColor: '#00796b',
-                      color: 'white',
-                      border: 'none',
-                      borderRadius: '4px',
-                      cursor: 'pointer',
-                    }}
-                  >
-                    Download CSV
-                  </button>
+                    <button
+                      onClick={() => fetchAttendanceForClass(cls.id, true)}
+                      style={{
+                        padding: '8px 12px',
+                        backgroundColor: '#00796b',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '4px',
+                        cursor: 'pointer',
+                        flex: '0 0 auto',
+                        minWidth: '110px'
+                      }}
+                    >
+                      Download CSV
+                    </button>
 
-                  <button
-                    onClick={async () => {
-                      const confirmDelete = window.confirm(`Are you sure you want to delete "${cls.className}"?`);
-                      if (!confirmDelete) return;
+                    <button
+                      onClick={async () => {
+                        const confirmDelete = window.confirm(`Are you sure you want to delete "${cls.className}"?`);
+                        if (!confirmDelete) return;
 
-                      try {
-                        await deleteDoc(doc(db, 'classes', cls.id));
-                        setMessage('✅ Class deleted.');
-                        fetchClasses(userId); // Refresh class list
-                      } catch (error) {
-                        setMessage(`❌ Error deleting class: ${error.message}`);
-                      }
-                    }}
-                    style={{
-                      marginTop: 10,
-                      padding: '8px 12px',
-                      backgroundColor: '#c62828',
-                      color: 'white',
-                      border: 'none',
-                      borderRadius: '4px',
-                      cursor: 'pointer',
-                    }}
-                  >
-                    Delete Class
-                  </button>
+                        try {
+                          await deleteDoc(doc(db, 'classes', cls.id));
+                          setMessage('✅ Class deleted.');
+                          fetchClasses(userId); // Refresh class list
+                        } catch (error) {
+                          setMessage(`❌ Error deleting class: ${error.message}`);
+                        }
+                      }}
+                      style={{
+                        padding: '8px 12px',
+                        backgroundColor: '#c62828',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '4px',
+                        cursor: 'pointer',
+                        flex: '0 0 auto',
+                        minWidth: '110px'
+                      }}
+                    >
+                      Delete Class
+                    </button>
+                  </div>
 
                   {/* Display attendance records when class is expanded */}
                   {expandedClassId === cls.id && attendanceRecordsByClass[cls.id] && (
@@ -514,7 +633,8 @@ function Instructor() {
                       padding: 15, 
                       backgroundColor: '#f5f5f5', 
                       borderRadius: '4px',
-                      border: '1px solid #e0e0e0'
+                      border: '1px solid #e0e0e0',
+                      textAlign: 'center'
                     }}>
                       <h4 style={{ marginTop: 0, marginBottom: 10 }}>Attendance Records</h4>
                       {attendanceRecordsByClass[cls.id].length === 0 ? (
@@ -528,9 +648,9 @@ function Instructor() {
                           }}>
                             <thead>
                               <tr style={{ backgroundColor: '#f0f0f0' }}>
-                                <th style={{ padding: '8px', textAlign: 'left', borderBottom: '1px solid #ddd' }}>Student Code</th>
-                                <th style={{ padding: '8px', textAlign: 'left', borderBottom: '1px solid #ddd' }}>Date</th>
-                                <th style={{ padding: '8px', textAlign: 'left', borderBottom: '1px solid #ddd' }}>Time</th>
+                                <th style={{ padding: '8px', textAlign: 'center', borderBottom: '1px solid #ddd' }}>Student Code</th>
+                                <th style={{ padding: '8px', textAlign: 'center', borderBottom: '1px solid #ddd' }}>Date</th>
+                                <th style={{ padding: '8px', textAlign: 'center', borderBottom: '1px solid #ddd' }}>Time</th>
                               </tr>
                             </thead>
                             <tbody>
@@ -538,9 +658,9 @@ function Instructor() {
                                 const date = new Date(record.timestamp);
                                 return (
                                   <tr key={index} style={{ borderBottom: '1px solid #eee' }}>
-                                    <td style={{ padding: '8px' }}>{record.studentCode}</td>
-                                    <td style={{ padding: '8px' }}>{date.toLocaleDateString()}</td>
-                                    <td style={{ padding: '8px' }}>{date.toLocaleTimeString()}</td>
+                                    <td style={{ padding: '8px', textAlign: 'center' }}>{record.studentCode}</td>
+                                    <td style={{ padding: '8px', textAlign: 'center' }}>{date.toLocaleDateString()}</td>
+                                    <td style={{ padding: '8px', textAlign: 'center' }}>{date.toLocaleTimeString()}</td>
                                   </tr>
                                 );
                               })}
@@ -560,7 +680,7 @@ function Instructor() {
   }
 
   return (
-    <div style={{ maxWidth: 400, margin: '40px auto', padding: '0 20px' }}>
+    <div style={{ maxWidth: 400, margin: '40px auto', padding: '0 20px', textAlign: 'center' }}>
       <Link to="/" style={{ textDecoration: 'none' }}>
         <h1 style={{ 
           cursor: 'pointer',
@@ -575,12 +695,12 @@ function Instructor() {
         </h1>
       </Link>
 
-      <div style={{ marginTop: 40, textAlign: 'left' }}>
+      <div style={{ marginTop: 40 }}>
         <h3>{isLogin ? 'Login' : 'Sign Up'}</h3>
-        <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} style={{ width: '100%', padding: 8, margin: '8px 0' }} />
-        <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} style={{ width: '100%', padding: 8, margin: '8px 0' }} />
+        <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} style={{ width: '100%', padding: 8, margin: '8px 0', textAlign: 'center' }} />
+        <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} style={{ width: '100%', padding: 8, margin: '8px 0', textAlign: 'center' }} />
         <div style={{ marginTop: 10 }}>
-          <label style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <label style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
             <input
               type="checkbox"
               checked={rememberMe}
@@ -599,7 +719,8 @@ function Instructor() {
             border: 'none', 
             borderRadius: '4px', 
             marginTop: 10, 
-            cursor: 'pointer' 
+            cursor: 'pointer',
+            textAlign: 'center'
           }}
         >
           {isLogin ? 'Login' : 'Sign Up'}
@@ -610,14 +731,15 @@ function Instructor() {
             padding: 10, 
             backgroundColor: message.includes('✅') ? '#e8f5e9' : '#ffebee',
             borderRadius: '4px',
-            color: message.includes('✅') ? '#2e7d32' : '#c62828'
+            color: message.includes('✅') ? '#2e7d32' : '#c62828',
+            textAlign: 'center'
           }}>
             {message}
           </div>
         )}
       </div>
 
-      <div style={{ marginTop: 20, textAlign: 'left' }}>
+      <div style={{ marginTop: 20 }}>
         <h3>{isLogin ? "Don't have an account?" : "Already have an account?"}</h3>
         <button 
           onClick={() => setIsLogin(!isLogin)} 
@@ -629,7 +751,8 @@ function Instructor() {
             border: 'none', 
             borderRadius: '4px', 
             marginTop: 10, 
-            cursor: 'pointer' 
+            cursor: 'pointer',
+            textAlign: 'center'
           }}
         >
           {isLogin ? 'Sign Up' : 'Login'}
