@@ -1,22 +1,21 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { FaChalkboardTeacher, FaUserGraduate } from 'react-icons/fa';
+import styles from './Home.module.css';
 
 function Home() {
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100">
-      <h1 className="text-4xl font-bold mb-8 text-gray-800">Welcome to Classroom App</h1>
-      <div className="space-y-8">
-        <Link 
-          to="/instructor" 
-          className="block w-64 px-6 py-3 text-center text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors"
-        >
-          I'm an Instructor
+    <div className={styles.container}>
+      <h1 className={styles.title}>🎓 Classroom App</h1>
+      <p style={{ color: '#4a5568', marginBottom: '2rem' }}>Manage attendance easily and securely</p>
+      <div className={styles.buttonContainer}>
+        <Link to="/instructor" className={styles.card}>
+          <FaChalkboardTeacher size={36} style={{ marginBottom: '0.5rem' }} />
+          I’m an Instructor
         </Link>
-        <Link 
-          to="/student" 
-          className="block w-64 px-6 py-3 text-center text-white bg-green-600 rounded-lg hover:bg-green-700 transition-colors"
-        >
-          I'm a Student
+        <Link to="/student" className={styles.card}>
+          <FaUserGraduate size={36} style={{ marginBottom: '0.5rem' }} />
+          I’m a Student
         </Link>
       </div>
     </div>
@@ -24,4 +23,3 @@ function Home() {
 }
 
 export default Home;
-  
