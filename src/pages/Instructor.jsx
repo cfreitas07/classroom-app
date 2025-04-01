@@ -16,6 +16,7 @@ import {
   getDocs,
   updateDoc,
   doc,
+  deleteDoc,
 } from 'firebase/firestore';
 
 function Instructor() {
@@ -30,6 +31,9 @@ function Instructor() {
   const [maxStudents, setMaxStudents] = useState(30);
   const [classes, setClasses] = useState([]);
   const [attendanceData, setAttendanceData] = useState([]);
+  const [expandedClassId, setExpandedClassId] = useState(null);
+  const [attendanceRecordsByClass, setAttendanceRecordsByClass] = useState({});
+
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -75,7 +79,7 @@ function Instructor() {
     }
   };
 
-  const fetchAttendanceForClass = async (classId) => {
+  const fetchAttendanceForClass = async (classId, forDownload = false) => {
     try {
       const q = query(
         collection(db, 'attendanceRecords'),
@@ -83,12 +87,21 @@ function Instructor() {
       );
       const snapshot = await getDocs(q);
       const records = snapshot.docs.map((doc) => doc.data());
-      setAttendanceData(records);
-      downloadAsCSV(records);
+  
+      if (forDownload) {
+        downloadAsCSV(records);
+      } else {
+        setAttendanceRecordsByClass((prev) => ({
+          ...prev,
+          [classId]: records,
+        }));
+        setExpandedClassId(classId);
+      }
     } catch (error) {
       setMessage(`❌ Error fetching attendance: ${error.message}`);
     }
   };
+  
 
   const downloadAsCSV = (records) => {
     if (!records.length) {
@@ -96,11 +109,29 @@ function Instructor() {
       return;
     }
   
-    const header = ['Student Code', 'Timestamp'];
-    const rows = records.map((r) => [
-      r.studentCode,
-      new Date(r.timestamp).toLocaleString()
-    ]);
+    const studentMap = new Map();
+    const allDatesSet = new Set();
+  
+    records.forEach((record) => {
+      const dateObj = new Date(record.timestamp);
+      const date = dateObj.toLocaleDateString('en-CA'); // Format: YYYY-MM-DD
+      const time = dateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  
+      allDatesSet.add(date);
+  
+      if (!studentMap.has(record.studentCode)) {
+        studentMap.set(record.studentCode, {});
+      }
+  
+      studentMap.get(record.studentCode)[date] = time;
+    });
+  
+    const allDates = Array.from(allDatesSet).sort(); // Sorted list of dates
+    const header = ['Student Code', ...allDates];
+  
+    const rows = Array.from(studentMap.entries()).map(([studentCode, dates]) => {
+      return [studentCode, ...allDates.map(date => dates[date] || '')];
+    });
   
     const csvContent = [header, ...rows]
       .map((e) => e.join(','))
@@ -111,11 +142,13 @@ function Instructor() {
   
     const link = document.createElement('a');
     link.href = url;
-    link.setAttribute('download', 'attendance.csv');
+    link.setAttribute('download', 'attendance_by_date.csv');
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
   };
+  
+  
   
   
 
@@ -223,40 +256,113 @@ function Instructor() {
                       <div>Generated at: {new Date(cls.attendanceCodeGeneratedAt).toLocaleTimeString()}</div>
                     </>
                   )}
-                  <button onClick={() => handleStartAttendance(cls.id)} style={{ marginTop: 10, padding: '8px 12px', backgroundColor: '#f57c00', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>
+                  <button
+                    onClick={() => handleStartAttendance(cls.id)}
+                    style={{
+                      marginTop: 10,
+                      padding: '8px 12px',
+                      backgroundColor: '#f57c00',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '4px',
+                      cursor: 'pointer',
+                      marginRight: '10px',
+                    }}
+                  >
                     Start Attendance
                   </button>
 
                   <button
-  onClick={() => handleStartAttendance(cls.id)}
-  style={{
-    marginTop: 10,
-    padding: '8px 12px',
-    backgroundColor: '#f57c00',
-    color: 'white',
-    border: 'none',
-    borderRadius: '4px',
-    cursor: 'pointer',
-    marginRight: '10px',
-  }}
->
-  Start Attendance
-</button>
+                    onClick={() => fetchAttendanceForClass(cls.id)}
+                    style={{
+                      marginTop: 10,
+                      padding: '8px 12px',
+                      backgroundColor: '#0288d1',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '4px',
+                      cursor: 'pointer',
+                      marginRight: '10px'
+                    }}
+                  >
+                    View Attendance
+                  </button>
 
-<button
-  onClick={() => fetchAttendanceForClass(cls.id)}
-  style={{
-    marginTop: 10,
-    padding: '8px 12px',
-    backgroundColor: '#00796b',
-    color: 'white',
-    border: 'none',
-    borderRadius: '4px',
-    cursor: 'pointer',
-  }}
->
-  Download Attendance CSV
-</button>
+                  <button
+                    onClick={() => fetchAttendanceForClass(cls.id, true)}
+                    style={{
+                      marginTop: 10,
+                      padding: '8px 12px',
+                      backgroundColor: '#00796b',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '4px',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    Download CSV
+                  </button>
+
+                  <button
+                    onClick={async () => {
+                      const confirmDelete = window.confirm(`Are you sure you want to delete "${cls.className}"?`);
+                      if (!confirmDelete) return;
+
+                      try {
+                        await deleteDoc(doc(db, 'classes', cls.id));
+                        setMessage('✅ Class deleted.');
+                        fetchClasses(userId); // Refresh class list
+                      } catch (error) {
+                        setMessage(`❌ Failed to delete: ${error.message}`);
+                      }
+                    }}
+                    style={{
+                      marginTop: 10,
+                      padding: '8px 12px',
+                      backgroundColor: '#d32f2f',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '4px',
+                      cursor: 'pointer',
+                      marginLeft: '10px',
+                    }}
+                  >
+                    Delete Class
+                  </button>
+
+
+                                {expandedClassId === cls.id && attendanceRecordsByClass[cls.id] && (
+                <div style={{ marginTop: 15, background: '#f5f5f5', padding: 10, borderRadius: 4 }}>
+                  <h4>Attendance Records:</h4>
+                  {attendanceRecordsByClass[cls.id].length === 0 ? (
+                    <p>No records yet.</p>
+                  ) : (
+                    <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                      <thead>
+                        <tr>
+                          <th style={{ textAlign: 'left', padding: '4px 8px' }}>Student Code</th>
+                          <th style={{ textAlign: 'left', padding: '4px 8px' }}>Date</th>
+                          <th style={{ textAlign: 'left', padding: '4px 8px' }}>Time</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {attendanceRecordsByClass[cls.id].map((record, i) => {
+                          const dateObj = new Date(record.timestamp);
+                          const date = dateObj.toLocaleDateString();
+                          const time = dateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                          return (
+                            <tr key={i}>
+                              <td style={{ padding: '4px 8px' }}>{record.studentCode}</td>
+                              <td style={{ padding: '4px 8px' }}>{date}</td>
+                              <td style={{ padding: '4px 8px' }}>{time}</td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  )}
+                </div>
+              )}
 
 
                 </li>
