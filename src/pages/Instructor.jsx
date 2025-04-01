@@ -85,6 +85,12 @@ function Instructor() {
 
   const fetchAttendanceForClass = async (classId, forDownload = false) => {
     try {
+      // If clicking the same class that's already expanded, just collapse it
+      if (expandedClassId === classId && !forDownload) {
+        setExpandedClassId(null);
+        return;
+      }
+
       const q = query(
         collection(db, 'attendanceRecords'),
         where('classId', '==', classId)
@@ -231,23 +237,30 @@ function Instructor() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setMessage('');
+    console.log('Submit button clicked'); // Debug log
 
     try {
+      console.log('Setting persistence...'); // Debug log
       await setPersistence(auth, rememberMe ? browserLocalPersistence : browserSessionPersistence);
 
       if (isLogin) {
-        await signInWithEmailAndPassword(auth, email, password);
+        console.log('Attempting login...'); // Debug log
+        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        console.log('Login successful:', userCredential.user); // Debug log
         setMessage('✅ Successfully logged in!');
       } else {
+        console.log('Attempting signup...'); // Debug log
         const passwordError = validatePassword(password);
         if (passwordError) {
           setMessage(`❌ ${passwordError}`);
           return;
         }
-        await createUserWithEmailAndPassword(auth, email, password);
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        console.log('Signup successful:', userCredential.user); // Debug log
         setMessage('✅ Account created and logged in!');
       }
     } catch (error) {
+      console.error('Auth error:', error); // Debug log
       setMessage(`❌ ${getErrorMessage(error)}`);
     }
   };
@@ -319,7 +332,7 @@ function Instructor() {
                     style={{
                       marginTop: 10,
                       padding: '8px 12px',
-                      backgroundColor: '#0288d1',
+                      backgroundColor: expandedClassId === cls.id ? '#01579b' : '#0288d1',
                       color: 'white',
                       border: 'none',
                       borderRadius: '4px',
@@ -327,7 +340,7 @@ function Instructor() {
                       marginRight: '10px'
                     }}
                   >
-                    View Attendance
+                    {expandedClassId === cls.id ? 'Hide Attendance' : 'View Attendance'}
                   </button>
 
                   <button
@@ -370,6 +383,50 @@ function Instructor() {
                   >
                     Delete Class
                   </button>
+
+                  {/* Display attendance records when class is expanded */}
+                  {expandedClassId === cls.id && attendanceRecordsByClass[cls.id] && (
+                    <div style={{ 
+                      marginTop: 15, 
+                      padding: 15, 
+                      backgroundColor: '#f5f5f5', 
+                      borderRadius: '4px',
+                      border: '1px solid #e0e0e0'
+                    }}>
+                      <h4 style={{ marginTop: 0, marginBottom: 10 }}>Attendance Records</h4>
+                      {attendanceRecordsByClass[cls.id].length === 0 ? (
+                        <p style={{ color: '#666', fontStyle: 'italic' }}>No attendance records found.</p>
+                      ) : (
+                        <div style={{ overflowX: 'auto' }}>
+                          <table style={{ 
+                            width: '100%', 
+                            borderCollapse: 'collapse',
+                            backgroundColor: 'white'
+                          }}>
+                            <thead>
+                              <tr style={{ backgroundColor: '#f0f0f0' }}>
+                                <th style={{ padding: '8px', textAlign: 'left', borderBottom: '1px solid #ddd' }}>Student Code</th>
+                                <th style={{ padding: '8px', textAlign: 'left', borderBottom: '1px solid #ddd' }}>Date</th>
+                                <th style={{ padding: '8px', textAlign: 'left', borderBottom: '1px solid #ddd' }}>Time</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {attendanceRecordsByClass[cls.id].map((record, index) => {
+                                const date = new Date(record.timestamp);
+                                return (
+                                  <tr key={index} style={{ borderBottom: '1px solid #eee' }}>
+                                    <td style={{ padding: '8px' }}>{record.studentCode}</td>
+                                    <td style={{ padding: '8px' }}>{date.toLocaleDateString()}</td>
+                                    <td style={{ padding: '8px' }}>{date.toLocaleTimeString()}</td>
+                                  </tr>
+                                );
+                              })}
+                            </tbody>
+                          </table>
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </li>
               ))}
             </ul>
@@ -396,15 +453,64 @@ function Instructor() {
       </Link>
 
       <div style={{ marginTop: 40, textAlign: 'left' }}>
-        <h3>Login</h3>
+        <h3>{isLogin ? 'Login' : 'Sign Up'}</h3>
         <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} style={{ width: '100%', padding: 8, margin: '8px 0' }} />
         <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} style={{ width: '100%', padding: 8, margin: '8px 0' }} />
-        <button onClick={handleSubmit} style={{ padding: 10, width: '100%', backgroundColor: '#3f51b5', color: 'white', border: 'none', borderRadius: '4px', marginTop: 10, cursor: 'pointer' }}>Login</button>
+        <div style={{ marginTop: 10 }}>
+          <label style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <input
+              type="checkbox"
+              checked={rememberMe}
+              onChange={(e) => setRememberMe(e.target.checked)}
+            />
+            Remember me
+          </label>
+        </div>
+        <button 
+          onClick={handleSubmit} 
+          style={{ 
+            padding: 10, 
+            width: '100%', 
+            backgroundColor: '#3f51b5', 
+            color: 'white', 
+            border: 'none', 
+            borderRadius: '4px', 
+            marginTop: 10, 
+            cursor: 'pointer' 
+          }}
+        >
+          {isLogin ? 'Login' : 'Sign Up'}
+        </button>
+        {message && (
+          <div style={{ 
+            marginTop: 10, 
+            padding: 10, 
+            backgroundColor: message.includes('✅') ? '#e8f5e9' : '#ffebee',
+            borderRadius: '4px',
+            color: message.includes('✅') ? '#2e7d32' : '#c62828'
+          }}>
+            {message}
+          </div>
+        )}
       </div>
 
       <div style={{ marginTop: 20, textAlign: 'left' }}>
-        <h3>Don't have an account?</h3>
-        <button onClick={() => setIsLogin(false)} style={{ padding: 10, width: '100%', backgroundColor: '#3f51b5', color: 'white', border: 'none', borderRadius: '4px', marginTop: 10, cursor: 'pointer' }}>Sign Up</button>
+        <h3>{isLogin ? "Don't have an account?" : "Already have an account?"}</h3>
+        <button 
+          onClick={() => setIsLogin(!isLogin)} 
+          style={{ 
+            padding: 10, 
+            width: '100%', 
+            backgroundColor: '#3f51b5', 
+            color: 'white', 
+            border: 'none', 
+            borderRadius: '4px', 
+            marginTop: 10, 
+            cursor: 'pointer' 
+          }}
+        >
+          {isLogin ? 'Sign Up' : 'Login'}
+        </button>
       </div>
     </div>
   );
