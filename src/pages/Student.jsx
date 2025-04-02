@@ -168,7 +168,14 @@ function Student() {
   };
 
   return (
-    <div style={{ maxWidth: 400, margin: '40px auto', padding: '0 20px', textAlign: 'center' }}>
+    <div style={{ 
+      maxWidth: 400, 
+      margin: '40px auto', 
+      padding: '0 20px', 
+      textAlign: 'center',
+      width: '100%',
+      boxSizing: 'border-box'
+    }}>
       {showSuccessModal && (
         <div style={{
           position: 'fixed',
@@ -185,28 +192,28 @@ function Student() {
         }}>
           <div style={{
             backgroundColor: 'white',
-            padding: '40px',
+            padding: 'clamp(20px, 5vw, 40px)',
             borderRadius: '12px',
             maxWidth: '90%',
             width: '400px',
             textAlign: 'center'
           }}>
             <div style={{
-              fontSize: '3rem',
+              fontSize: 'clamp(2rem, 6vw, 3rem)',
               color: '#4CAF50',
               marginBottom: '20px'
             }}>
               ✅
             </div>
             <h2 style={{
-              fontSize: '2rem',
+              fontSize: 'clamp(1.5rem, 4vw, 2rem)',
               color: '#1e293b',
               marginBottom: '20px'
             }}>
               Attendance Submitted!
             </h2>
             <p style={{
-              fontSize: '1.2rem',
+              fontSize: 'clamp(1rem, 3vw, 1.2rem)',
               color: '#64748b',
               marginBottom: '10px'
             }}>
@@ -235,17 +242,19 @@ function Student() {
           src={logo} 
           alt="Presenzo Logo" 
           style={{ 
-            height: '60px',
+            height: 'clamp(40px, 10vw, 60px)',
             cursor: 'pointer',
             transition: 'transform 0.2s ease',
-            marginBottom: '2rem'
+            marginBottom: '2rem',
+            maxWidth: '100%',
+            height: 'auto'
           }} 
           onMouseOver={e => e.target.style.transform = 'scale(1.05)'} 
           onMouseOut={e => e.target.style.transform = 'scale(1)'}
         />
       </Link>
 
-      <h2>Student Check-In</h2>
+      <h2 style={{ fontSize: 'clamp(1.5rem, 4vw, 2rem)', marginBottom: '1.5rem' }}>Student Check-In</h2>
 
       <input
         type="tel"
@@ -254,11 +263,21 @@ function Student() {
         placeholder="Class Enrollment Code"
         value={enrollmentCode}
         onChange={(e) => setEnrollmentCode(e.target.value.replace(/[^0-9]/g, '').toUpperCase())}
-        style={{ width: '100%', padding: 10, margin: '10px 0' }}
+        style={{ 
+          width: '100%', 
+          padding: 'clamp(8px, 2vw, 12px)', 
+          margin: '10px 0',
+          fontSize: 'clamp(0.9rem, 2.5vw, 1rem)',
+          boxSizing: 'border-box'
+        }}
       />
       <button 
         onClick={handleJoinClass} 
-        style={buttonStyle}
+        style={{
+          ...buttonStyle,
+          padding: 'clamp(8px, 2vw, 12px)',
+          fontSize: 'clamp(0.9rem, 2.5vw, 1rem)'
+        }}
         onMouseOver={(e) => Object.assign(e.target.style, buttonHoverStyle)}
         onMouseOut={(e) => Object.assign(e.target.style, buttonStyle)}
       >
@@ -274,12 +293,14 @@ function Student() {
             onChange={(e) => setStudentCode(e.target.value)}
             style={{ 
               width: '100%', 
-              padding: 10, 
+              padding: 'clamp(8px, 2vw, 12px)', 
               margin: '10px 0',
+              fontSize: 'clamp(0.9rem, 2.5vw, 1rem)',
               borderColor: !studentCode.trim() ? '#ffcdd2' : '#e2e8f0',
               borderWidth: '1px',
               borderStyle: 'solid',
-              outline: 'none'
+              outline: 'none',
+              boxSizing: 'border-box'
             }}
             required
           />
@@ -294,11 +315,21 @@ function Student() {
               const value = e.target.value.replace(/[^0-9]/g, '').slice(0, 3);
               setAttendanceCode(value);
             }}
-            style={{ width: '100%', padding: 10, margin: '10px 0' }}
+            style={{ 
+              width: '100%', 
+              padding: 'clamp(8px, 2vw, 12px)', 
+              margin: '10px 0',
+              fontSize: 'clamp(0.9rem, 2.5vw, 1rem)',
+              boxSizing: 'border-box'
+            }}
           />
           <button 
             onClick={handleSubmitAttendance} 
-            style={buttonStyle}
+            style={{
+              ...buttonStyle,
+              padding: 'clamp(8px, 2vw, 12px)',
+              fontSize: 'clamp(0.9rem, 2.5vw, 1rem)'
+            }}
             onMouseOver={(e) => Object.assign(e.target.style, buttonHoverStyle)}
             onMouseOut={(e) => Object.assign(e.target.style, buttonStyle)}
           >
@@ -310,10 +341,11 @@ function Student() {
       {statusMessage && !showSuccessModal && (
         <p style={{ 
           marginTop: 20, 
-          padding: '10px',
+          padding: 'clamp(8px, 2vw, 12px)',
           backgroundColor: statusMessage.includes('✅') ? '#e8f5e9' : '#ffebee',
           borderRadius: '4px',
-          color: statusMessage.includes('✅') ? '#2e7d32' : '#c62828'
+          color: statusMessage.includes('✅') ? '#2e7d32' : '#c62828',
+          fontSize: 'clamp(0.85rem, 2.5vw, 0.9rem)'
         }}>
           {statusMessage}
         </p>

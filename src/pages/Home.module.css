@@ -32,6 +32,8 @@
   font-weight: 500;
   transition: all 0.3s ease;
   min-width: 200px;
+  width: 100%;
+  max-width: 300px;
 }
 
 .card:hover {
@@ -50,4 +52,89 @@
 .card:last-child:hover {
   background-color: #f0fff4;
   color: #2f855a;
+}
+
+/* Mobile Responsive Styles */
+@media (max-width: 768px) {
+  .container {
+    margin: 40px auto;
+    padding: 0 16px;
+  }
+
+  .title {
+    font-size: 2rem;
+  }
+
+  .buttonContainer {
+    gap: 1rem;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .card {
+    padding: 1.5rem;
+    font-size: 1.1rem;
+    min-width: unset;
+    max-width: 100%;
+  }
+
+  .howItWorksSection {
+    padding: 1rem !important;
+    margin: 2rem auto !important;
+  }
+
+  .gridContainer {
+    grid-template-columns: 1fr !important;
+    gap: 1rem !important;
+  }
+
+  .stepCard {
+    padding: 1rem !important;
+  }
+
+  .stepCard h3 {
+    font-size: 1.1rem !important;
+  }
+
+  .stepCard p {
+    font-size: 0.9rem !important;
+  }
+
+  .footer {
+    padding: 1rem !important;
+    font-size: 0.8rem !important;
+  }
+}
+
+/* Small Mobile Devices */
+@media (max-width: 480px) {
+  .container {
+    margin: 20px auto;
+    padding: 0 12px;
+  }
+
+  .title {
+    font-size: 1.8rem;
+  }
+
+  .card {
+    padding: 1.25rem;
+    font-size: 1rem;
+  }
+
+  .howItWorksSection {
+    padding: 0.75rem !important;
+  }
+
+  .stepCard {
+    padding: 0.75rem !important;
+  }
+
+  .stepCard h3 {
+    font-size: 1rem !important;
+  }
+
+  .stepCard p {
+    font-size: 0.85rem !important;
+  }
 } 

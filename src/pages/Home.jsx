@@ -16,13 +16,15 @@ function Home() {
           style={{ 
             height: '60px',
             cursor: 'pointer',
-            transition: 'transform 0.2s ease'
+            transition: 'transform 0.2s ease',
+            maxWidth: '100%',
+            height: 'auto'
           }} 
           onMouseOver={e => e.target.style.transform = 'scale(1.05)'} 
           onMouseOut={e => e.target.style.transform = 'scale(1)'}
         />
       </Link>
-      <p style={{ color: '#4a5568', marginBottom: '2rem' }}>Manage classroom attendance easily and securely</p>
+      <p style={{ color: '#4a5568', marginBottom: '2rem', fontSize: 'clamp(1rem, 4vw, 1.2rem)' }}>Manage classroom attendance easily and securely</p>
       
       <div className={styles.buttonContainer}>
         <Link to="/instructor" className={styles.card}>
@@ -36,7 +38,7 @@ function Home() {
       </div>
 
       {/* How it Works Section */}
-      <div style={{ 
+      <div className={styles.howItWorksSection} style={{ 
         maxWidth: '800px', 
         margin: '3rem auto',
         padding: '2rem',
@@ -54,12 +56,12 @@ function Home() {
             justifyContent: 'center',
             gap: '0.5rem',
             width: '100%',
-            padding: '0.25rem',
+            padding: '0.75rem',
             backgroundColor: 'transparent',
             border: 'none',
             cursor: 'pointer',
             color: '#1e293b',
-            fontSize: '1rem',
+            fontSize: 'clamp(1rem, 3vw, 1.2rem)',
             fontWeight: '600',
             transition: 'color 0.2s ease'
           }}
@@ -80,14 +82,14 @@ function Home() {
               borderRadius: '8px',
               marginTop: '1.5rem'
             }}>
-              <h3 style={{ color: '#1e40af', marginBottom: '1rem' }}>For Instructors</h3>
-              <div style={{
+              <h3 style={{ color: '#1e40af', marginBottom: '1rem', fontSize: 'clamp(1.2rem, 3vw, 1.5rem)' }}>For Instructors</h3>
+              <div className={styles.gridContainer} style={{
                 display: 'grid',
                 gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
                 gap: '1.5rem'
               }}>
                 {/* Step 1 */}
-                <div style={{
+                <div className={styles.stepCard} style={{
                   textAlign: 'center',
                   padding: '1rem',
                   backgroundColor: 'white',
@@ -98,12 +100,12 @@ function Home() {
                 onMouseOver={e => e.target.style.transform = 'translateY(-4px)'}
                 onMouseOut={e => e.target.style.transform = 'translateY(0)'}>
                   <FaUserPlus size={32} style={{ color: '#3b82f6', marginBottom: '0.5rem' }} />
-                  <h3 style={{ color: '#1e293b', marginBottom: '0.5rem' }}>1. Create Account</h3>
-                  <p style={{ color: '#64748b', fontSize: '0.9rem' }}>Sign up as an instructor to get started</p>
+                  <h3 style={{ color: '#1e293b', marginBottom: '0.5rem', fontSize: 'clamp(1rem, 2.5vw, 1.2rem)' }}>1. Create Account</h3>
+                  <p style={{ color: '#64748b', fontSize: 'clamp(0.85rem, 2vw, 0.9rem)' }}>Sign up as an instructor to get started</p>
                 </div>
 
                 {/* Step 2 */}
-                <div style={{
+                <div className={styles.stepCard} style={{
                   textAlign: 'center',
                   padding: '1rem',
                   backgroundColor: 'white',
@@ -114,12 +116,12 @@ function Home() {
                 onMouseOver={e => e.target.style.transform = 'translateY(-4px)'}
                 onMouseOut={e => e.target.style.transform = 'translateY(0)'}>
                   <FaUsers size={32} style={{ color: '#3b82f6', marginBottom: '0.5rem' }} />
-                  <h3 style={{ color: '#1e293b', marginBottom: '0.5rem' }}>2. Create Class</h3>
-                  <p style={{ color: '#64748b', fontSize: '0.9rem' }}>Set class name, meeting times, and class size</p>
+                  <h3 style={{ color: '#1e293b', marginBottom: '0.5rem', fontSize: 'clamp(1rem, 2.5vw, 1.2rem)' }}>2. Create Class</h3>
+                  <p style={{ color: '#64748b', fontSize: 'clamp(0.85rem, 2vw, 0.9rem)' }}>Set class name, meeting times, and class size</p>
                 </div>
 
                 {/* Step 3 */}
-                <div style={{
+                <div className={styles.stepCard} style={{
                   textAlign: 'center',
                   padding: '1rem',
                   backgroundColor: 'white',
@@ -130,12 +132,12 @@ function Home() {
                 onMouseOver={e => e.target.style.transform = 'translateY(-4px)'}
                 onMouseOut={e => e.target.style.transform = 'translateY(0)'}>
                   <FaClipboardCheck size={32} style={{ color: '#3b82f6', marginBottom: '0.5rem' }} />
-                  <h3 style={{ color: '#1e293b', marginBottom: '0.5rem' }}>3. Start Attendance</h3>
-                  <p style={{ color: '#64748b', fontSize: '0.9rem' }}>Generate and share attendance code at the start of each class</p>
+                  <h3 style={{ color: '#1e293b', marginBottom: '0.5rem', fontSize: 'clamp(1rem, 2.5vw, 1.2rem)' }}>3. Start Attendance</h3>
+                  <p style={{ color: '#64748b', fontSize: 'clamp(0.85rem, 2vw, 0.9rem)' }}>Generate and share attendance code at the start of each class</p>
                 </div>
 
                 {/* Step 4 */}
-                <div style={{
+                <div className={styles.stepCard} style={{
                   textAlign: 'center',
                   padding: '1rem',
                   backgroundColor: 'white',
@@ -146,8 +148,8 @@ function Home() {
                 onMouseOver={e => e.target.style.transform = 'translateY(-4px)'}
                 onMouseOut={e => e.target.style.transform = 'translateY(0)'}>
                   <FaFileCsv size={32} style={{ color: '#3b82f6', marginBottom: '0.5rem' }} />
-                  <h3 style={{ color: '#1e293b', marginBottom: '0.5rem' }}>4. Download Records</h3>
-                  <p style={{ color: '#64748b', fontSize: '0.9rem' }}>Get attendance reports in CSV format anytime</p>
+                  <h3 style={{ color: '#1e293b', marginBottom: '0.5rem', fontSize: 'clamp(1rem, 2.5vw, 1.2rem)' }}>4. Download Records</h3>
+                  <p style={{ color: '#64748b', fontSize: 'clamp(0.85rem, 2vw, 0.9rem)' }}>Get attendance reports in CSV format anytime</p>
                 </div>
               </div>
             </div>
@@ -160,14 +162,14 @@ function Home() {
               borderRadius: '8px',
               marginTop: '1.5rem'
             }}>
-              <h3 style={{ color: '#166534', marginBottom: '1rem' }}>For Students</h3>
-              <div style={{
+              <h3 style={{ color: '#166534', marginBottom: '1rem', fontSize: 'clamp(1.2rem, 3vw, 1.5rem)' }}>For Students</h3>
+              <div className={styles.gridContainer} style={{
                 display: 'grid',
                 gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
                 gap: '1.5rem'
               }}>
                 {/* Step 1 */}
-                <div style={{
+                <div className={styles.stepCard} style={{
                   textAlign: 'center',
                   padding: '1rem',
                   backgroundColor: 'white',
@@ -178,12 +180,12 @@ function Home() {
                 onMouseOver={e => e.target.style.transform = 'translateY(-4px)'}
                 onMouseOut={e => e.target.style.transform = 'translateY(0)'}>
                   <FaUserGraduate size={32} style={{ color: '#22c55e', marginBottom: '0.5rem' }} />
-                  <h3 style={{ color: '#1e293b', marginBottom: '0.5rem' }}>1. Get Enrollment Code</h3>
-                  <p style={{ color: '#64748b', fontSize: '0.9rem' }}>Obtain the classroom enrollment code from your instructor</p>
+                  <h3 style={{ color: '#1e293b', marginBottom: '0.5rem', fontSize: 'clamp(1rem, 2.5vw, 1.2rem)' }}>1. Get Enrollment Code</h3>
+                  <p style={{ color: '#64748b', fontSize: 'clamp(0.85rem, 2vw, 0.9rem)' }}>Obtain the classroom enrollment code from your instructor</p>
                 </div>
 
                 {/* Step 2 */}
-                <div style={{
+                <div className={styles.stepCard} style={{
                   textAlign: 'center',
                   padding: '1rem',
                   backgroundColor: 'white',
@@ -194,12 +196,12 @@ function Home() {
                 onMouseOver={e => e.target.style.transform = 'translateY(-4px)'}
                 onMouseOut={e => e.target.style.transform = 'translateY(0)'}>
                   <FaClipboardCheck size={32} style={{ color: '#22c55e', marginBottom: '0.5rem' }} />
-                  <h3 style={{ color: '#1e293b', marginBottom: '0.5rem' }}>2. Enter Details</h3>
-                  <p style={{ color: '#64748b', fontSize: '0.9rem' }}>Input your student ID and the attendance code</p>
+                  <h3 style={{ color: '#1e293b', marginBottom: '0.5rem', fontSize: 'clamp(1rem, 2.5vw, 1.2rem)' }}>2. Enter Details</h3>
+                  <p style={{ color: '#64748b', fontSize: 'clamp(0.85rem, 2vw, 0.9rem)' }}>Input your student ID and the attendance code</p>
                 </div>
 
                 {/* Step 3 */}
-                <div style={{
+                <div className={styles.stepCard} style={{
                   textAlign: 'center',
                   padding: '1rem',
                   backgroundColor: 'white',
@@ -210,8 +212,8 @@ function Home() {
                 onMouseOver={e => e.target.style.transform = 'translateY(-4px)'}
                 onMouseOut={e => e.target.style.transform = 'translateY(0)'}>
                   <FaCheck size={32} style={{ color: '#22c55e', marginBottom: '0.5rem' }} />
-                  <h3 style={{ color: '#1e293b', marginBottom: '0.5rem' }}>3. Confirm Attendance</h3>
-                  <p style={{ color: '#64748b', fontSize: '0.9rem' }}>Submit to confirm your attendance</p>
+                  <h3 style={{ color: '#1e293b', marginBottom: '0.5rem', fontSize: 'clamp(1rem, 2.5vw, 1.2rem)' }}>3. Confirm Attendance</h3>
+                  <p style={{ color: '#64748b', fontSize: 'clamp(0.85rem, 2vw, 0.9rem)' }}>Submit to confirm your attendance</p>
                 </div>
               </div>
             </div>
@@ -219,12 +221,12 @@ function Home() {
         )}
       </div>
       
-      <div style={{ 
+      <div className={styles.footer} style={{ 
         marginTop: '4rem', 
         padding: '1.5rem',
         borderTop: '1px solid #e2e8f0',
         color: '#718096',
-        fontSize: '0.9rem',
+        fontSize: 'clamp(0.8rem, 2vw, 0.9rem)',
         textAlign: 'center',
         background: 'linear-gradient(to bottom, transparent, rgba(237, 242, 247, 0.5))',
         borderRadius: '0 0 12px 12px',
@@ -269,42 +271,23 @@ function Home() {
           display: 'flex', 
           alignItems: 'center', 
           justifyContent: 'center', 
-          gap: '1rem',
-          marginBottom: '0.5rem'
-        }}>
-          <a 
-            href="https://www.claudiocsdefreitas.com" 
-            target="_blank" 
-            rel="noopener noreferrer"
-            style={{ 
-              color: '#718096', 
-              textDecoration: 'none',
-              transition: 'color 0.3s ease',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.5rem',
-              ':hover': {
-                color: '#4a5568'
-              }
-            }}
-            onMouseOver={e => e.target.style.color = '#4a5568'}
-            onMouseOut={e => e.target.style.color = '#718096'}
-          >
-            <FaGlobe style={{ color: '#4a5568' }} />
-            www.presenzo.com
-          </a>
-        </div>
-        
-        <div style={{ 
-          display: 'flex', 
-          alignItems: 'center', 
-          justifyContent: 'center', 
           gap: '0.5rem',
           color: '#a0aec0',
           fontSize: '0.8rem'
         }}>
           <FaCopyright />
-          <span>2025 v1.0.0</span>
+          <Link 
+            to="/version-history" 
+            style={{ 
+              color: '#a0aec0',
+              textDecoration: 'none',
+              transition: 'color 0.3s ease'
+            }}
+            onMouseOver={e => e.target.style.color = '#4a5568'}
+            onMouseOut={e => e.target.style.color = '#a0aec0'}
+          >
+            <span>2025 v1.0.0</span>
+          </Link>
         </div>
       </div>
     </div>

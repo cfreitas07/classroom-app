@@ -329,16 +329,32 @@ function Instructor() {
 
   if (userId) {
     return (
-      <div style={{ maxWidth: 800, margin: '40px auto', padding: '0 20px', textAlign: 'center' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+      <div style={{ 
+        maxWidth: 800, 
+        margin: '40px auto', 
+        padding: '0 20px', 
+        textAlign: 'center',
+        width: '100%',
+        boxSizing: 'border-box'
+      }}>
+        <div style={{ 
+          display: 'flex', 
+          justifyContent: 'space-between', 
+          alignItems: 'center', 
+          marginBottom: '2rem',
+          flexWrap: 'wrap',
+          gap: '1rem'
+        }}>
           <Link to="/" style={{ textDecoration: 'none' }}>
             <img 
               src={logo} 
               alt="Presenzo Logo" 
               style={{ 
-                height: '60px',
+                height: 'clamp(40px, 10vw, 60px)',
                 cursor: 'pointer',
-                transition: 'transform 0.2s ease'
+                transition: 'transform 0.2s ease',
+                maxWidth: '100%',
+                height: 'auto'
               }} 
               onMouseOver={e => e.target.style.transform = 'scale(1.05)'} 
               onMouseOut={e => e.target.style.transform = 'scale(1)'}
@@ -347,13 +363,13 @@ function Instructor() {
           <button
             onClick={handleLogout}
             style={{
-              padding: '8px 16px',
+              padding: 'clamp(6px, 1.5vw, 8px) clamp(12px, 2vw, 16px)',
               backgroundColor: '#64748b',
               color: 'white',
               border: 'none',
               borderRadius: '4px',
               cursor: 'pointer',
-              fontSize: '0.9em',
+              fontSize: 'clamp(0.8rem, 2vw, 0.9rem)',
               transition: 'background-color 0.2s ease',
               ':hover': {
                 backgroundColor: '#475569'
@@ -367,8 +383,8 @@ function Instructor() {
         </div>
 
         <div style={{ marginTop: 40 }}>
-          <h3>Create a New Class</h3>
-          <div style={{ maxWidth: '400px', margin: '0 auto' }}>
+          <h3 style={{ fontSize: 'clamp(1.5rem, 4vw, 2rem)', marginBottom: '1.5rem' }}>Create a New Class</h3>
+          <div style={{ maxWidth: '400px', margin: '0 auto', width: '100%' }}>
             <input 
               type="text" 
               placeholder="Class Name" 
@@ -376,10 +392,11 @@ function Instructor() {
               onChange={(e) => setClassName(e.target.value)} 
               style={{ 
                 width: '100%', 
-                padding: 8, 
+                padding: 'clamp(8px, 2vw, 12px)', 
                 margin: '8px 0',
                 boxSizing: 'border-box',
-                textAlign: 'center'
+                textAlign: 'center',
+                fontSize: 'clamp(0.9rem, 2.5vw, 1rem)'
               }} 
             />
             <input 
@@ -389,10 +406,11 @@ function Instructor() {
               onChange={(e) => setSchedule(e.target.value)} 
               style={{ 
                 width: '100%', 
-                padding: 8, 
+                padding: 'clamp(8px, 2vw, 12px)', 
                 margin: '8px 0',
                 boxSizing: 'border-box',
-                textAlign: 'center'
+                textAlign: 'center',
+                fontSize: 'clamp(0.9rem, 2.5vw, 1rem)'
               }} 
             />
             <input 
@@ -402,16 +420,17 @@ function Instructor() {
               onChange={(e) => setMaxStudents(e.target.value)} 
               style={{ 
                 width: '100%', 
-                padding: 8, 
+                padding: 'clamp(8px, 2vw, 12px)', 
                 margin: '8px 0',
                 boxSizing: 'border-box',
-                textAlign: 'center'
+                textAlign: 'center',
+                fontSize: 'clamp(0.9rem, 2.5vw, 1rem)'
               }} 
             />
             <button 
               onClick={handleCreateClass} 
               style={{ 
-                padding: 10, 
+                padding: 'clamp(8px, 2vw, 12px)', 
                 width: '100%', 
                 backgroundColor: '#3f51b5', 
                 color: 'white', 
@@ -419,7 +438,8 @@ function Instructor() {
                 borderRadius: '4px', 
                 marginTop: 10, 
                 cursor: 'pointer',
-                textAlign: 'center'
+                textAlign: 'center',
+                fontSize: 'clamp(0.9rem, 2.5vw, 1rem)'
               }}
             >
               Create Class
@@ -429,14 +449,36 @@ function Instructor() {
 
         {classes.length > 0 && (
           <div style={{ marginTop: 30 }}>
-            <h3>Your Classes:</h3>
+            <h3 style={{ fontSize: 'clamp(1.5rem, 4vw, 2rem)', marginBottom: '1.5rem' }}>Your Classes:</h3>
             <ul style={{ listStyle: 'none', padding: 0 }}>
               {classes.map((cls) => (
-                <li key={cls.id} style={{ marginBottom: 20, textAlign: 'center' }}>
-                  <strong>{cls.className}</strong> – {cls.schedule}<br />
-                  Max Students: {cls.maxStudents}<br />
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px', marginTop: '5px' }}>
-                    <span>Enrollment Code: <code>{cls.enrollmentCode}</code></span>
+                <li key={cls.id} style={{ 
+                  marginBottom: 20, 
+                  textAlign: 'center',
+                  padding: 'clamp(15px, 3vw, 20px)',
+                  backgroundColor: 'white',
+                  borderRadius: '8px',
+                  boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+                }}>
+                  <strong style={{ fontSize: 'clamp(1.1rem, 3vw, 1.3rem)' }}>{cls.className}</strong> – 
+                  <span style={{ fontSize: 'clamp(0.9rem, 2.5vw, 1rem)' }}> {cls.schedule}</span><br />
+                  <span style={{ fontSize: 'clamp(0.9rem, 2.5vw, 1rem)' }}>Max Students: {cls.maxStudents}</span><br />
+                  <div style={{ 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    justifyContent: 'center', 
+                    gap: '10px', 
+                    marginTop: '5px',
+                    flexWrap: 'wrap'
+                  }}>
+                    <span style={{ fontSize: 'clamp(0.9rem, 2.5vw, 1rem)' }}>
+                      Enrollment Code: <code style={{ 
+                        backgroundColor: '#f1f5f9',
+                        padding: '2px 6px',
+                        borderRadius: '4px',
+                        fontSize: 'clamp(0.9rem, 2.5vw, 1rem)'
+                      }}>{cls.enrollmentCode}</code>
+                    </span>
                     <button
                       onClick={() => setShowLargeCodes(prev => ({
                         ...prev,
@@ -444,13 +486,13 @@ function Instructor() {
                       }))}
                       title="Click to show codes in large format"
                       style={{
-                        padding: '6px 12px',
+                        padding: 'clamp(4px, 1vw, 6px) clamp(8px, 1.5vw, 12px)',
                         backgroundColor: showLargeCodes[cls.id] ? '#94a3b8' : '#cbd5e1',
                         color: '#1e293b',
                         border: 'none',
                         borderRadius: '4px',
                         cursor: 'pointer',
-                        fontSize: '1.2em',
+                        fontSize: 'clamp(0.9rem, 2.5vw, 1rem)',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
@@ -469,22 +511,10 @@ function Instructor() {
                         e.target.style.backgroundColor = showLargeCodes[cls.id] ? '#94a3b8' : '#cbd5e1';
                       }}
                     >
-                      🔍
+                      {showLargeCodes[cls.id] ? 'Hide Codes' : 'Show Codes'}
                     </button>
                   </div>
-                  {cls.attendanceCode && !expiredCodes[cls.id] && (
-                    <div style={{ color: '#c62828', fontWeight: 'bold', marginTop: 8 }}>
-                      Active Attendance Code: <code>{cls.attendanceCode}</code>
-                      <span style={{ marginLeft: 12 }}>
-                        ⏳ {Math.floor((timers[cls.id] || 0) / 60)
-                          .toString()
-                          .padStart(2, '0')}:
-                        {(timers[cls.id] % 60 || 0).toString().padStart(2, '0')}
-                      </span>
-                    </div>
-                  )}
 
-                  {/* Large Codes Modal */}
                   {showLargeCodes[cls.id] && (
                     <div style={{
                       position: 'fixed',
@@ -501,10 +531,10 @@ function Instructor() {
                     }}>
                       <div style={{
                         backgroundColor: 'white',
-                        padding: '25px',
+                        padding: 'clamp(20px, 5vw, 40px)',
                         borderRadius: '12px',
                         maxWidth: '90%',
-                        width: '450px',
+                        width: '400px',
                         textAlign: 'center',
                         position: 'relative'
                       }}>
@@ -519,7 +549,7 @@ function Instructor() {
                             right: '12px',
                             background: 'none',
                             border: 'none',
-                            fontSize: '24px',
+                            fontSize: 'clamp(1.5rem, 4vw, 2rem)',
                             cursor: 'pointer',
                             color: '#666',
                             padding: '6px',
@@ -534,25 +564,25 @@ function Instructor() {
                         <h2 style={{ 
                           marginBottom: '25px', 
                           color: '#1e293b',
-                          fontSize: '1.8rem'
+                          fontSize: 'clamp(1.5rem, 4vw, 2rem)'
                         }}>
                           {cls.className}
                         </h2>
                         
                         <div style={{ marginBottom: '30px' }}>
                           <div style={{ 
-                            fontSize: '1.1rem', 
+                            fontSize: 'clamp(1rem, 2.5vw, 1.1rem)', 
                             color: '#64748b', 
                             marginBottom: '12px' 
                           }}>
                             Enrollment Code
                           </div>
                           <div style={{
-                            fontSize: '2.8rem',
+                            fontSize: 'clamp(2rem, 5vw, 2.8rem)',
                             fontWeight: 'bold',
                             color: '#3f51b5',
                             letterSpacing: '4px',
-                            padding: '15px',
+                            padding: 'clamp(10px, 2vw, 15px)',
                             backgroundColor: '#e3f2fd',
                             borderRadius: '12px',
                             marginBottom: '15px',
@@ -562,66 +592,77 @@ function Instructor() {
                           </div>
                         </div>
 
-                        {cls.attendanceCode && !expiredCodes[cls.id] && (
-                          <div>
-                            <div style={{ 
-                              fontSize: '1.1rem', 
-                              color: '#64748b', 
-                              marginBottom: '12px' 
-                            }}>
-                              Active Attendance Code
-                            </div>
-                            <div style={{
-                              fontSize: '2.8rem',
-                              fontWeight: 'bold',
-                              color: '#c62828',
-                              letterSpacing: '4px',
-                              padding: '15px',
-                              backgroundColor: '#ffebee',
-                              borderRadius: '12px',
-                              boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
-                            }}>
-                              {cls.attendanceCode}
-                            </div>
-                            <div style={{
-                              fontSize: '1.5rem',
-                              color: '#c62828',
-                              marginTop: '15px',
-                              fontWeight: 'bold'
-                            }}>
-                              ⏳ {Math.floor((timers[cls.id] || 0) / 60).toString().padStart(2, '0')}:
-                              {(timers[cls.id] % 60 || 0).toString().padStart(2, '0')}
-                            </div>
+                        <div style={{ marginBottom: '30px' }}>
+                          <div style={{ 
+                            fontSize: 'clamp(1rem, 2.5vw, 1.1rem)', 
+                            color: '#64748b', 
+                            marginBottom: '12px' 
+                          }}>
+                            Attendance Code
                           </div>
-                        )}
-
-                        <div style={{ 
-                          marginTop: '30px', 
-                          paddingTop: '25px', 
-                          borderTop: '1px solid #e2e8f0' 
-                        }}>
                           <div style={{
-                            display: 'inline-block',
-                            padding: '15px',
-                            backgroundColor: 'white',
+                            fontSize: 'clamp(2.5rem, 6vw, 3.5rem)',
+                            fontWeight: 'bold',
+                            color: '#f57c00',
+                            letterSpacing: '8px',
+                            padding: 'clamp(15px, 3vw, 20px)',
+                            backgroundColor: '#fff3e0',
                             borderRadius: '12px',
+                            marginBottom: '15px',
                             boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
+                          }}>
+                            {cls.attendanceCode || '---'}
+                          </div>
+                          <div style={{
+                            display: 'flex',
+                            justifyContent: 'center',
+                            marginTop: '15px'
                           }}>
                             <QRCodeSVG
                               value="https://presenzo.com/student"
-                              size={150}
+                              size={120}
                               level="H"
                               includeMargin={true}
+                              style={{
+                                backgroundColor: 'white',
+                                padding: '8px',
+                                borderRadius: '8px',
+                                boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+                              }}
                             />
                           </div>
                           <div style={{
-                            fontSize: '1.2rem',
+                            fontSize: 'clamp(0.9rem, 2.5vw, 1rem)',
                             color: '#64748b',
-                            marginTop: '15px',
-                            fontWeight: '500'
+                            marginTop: '10px',
+                            textAlign: 'center'
                           }}>
-                            Scan to visit presenzo.com/student
+                            Scan QR code to go to presenzo.com/student
                           </div>
+                          <div style={{
+                            fontSize: 'clamp(1.2rem, 3vw, 1.5rem)',
+                            color: '#f57c00',
+                            fontWeight: 'bold',
+                            marginTop: '15px'
+                          }}>
+                            Time Remaining: {Math.floor(timers[cls.id] / 60)}:{(timers[cls.id] % 60).toString().padStart(2, '0')}
+                          </div>
+                        </div>
+
+                        <div style={{
+                          width: '100%',
+                          height: '4px',
+                          backgroundColor: '#e2e8f0',
+                          borderRadius: '2px',
+                          overflow: 'hidden',
+                          marginTop: '20px'
+                        }}>
+                          <div style={{
+                            width: `${(timers[cls.id] / 180) * 100}%`,
+                            height: '100%',
+                            backgroundColor: '#f57c00',
+                            transition: 'width 1s linear'
+                          }} />
                         </div>
                       </div>
                     </div>
@@ -637,14 +678,15 @@ function Instructor() {
                     <button
                       onClick={() => handleStartAttendance(cls.id)}
                       style={{
-                        padding: '8px 12px',
+                        padding: 'clamp(6px, 1.5vw, 8px) clamp(12px, 2vw, 16px)',
                         backgroundColor: '#f57c00',
                         color: 'white',
                         border: 'none',
                         borderRadius: '4px',
                         cursor: 'pointer',
                         flex: '0 0 auto',
-                        minWidth: '110px'
+                        minWidth: '110px',
+                        fontSize: 'clamp(0.9rem, 2.5vw, 1rem)'
                       }}
                     >
                       Start Attendance
@@ -653,107 +695,20 @@ function Instructor() {
                     <button
                       onClick={() => fetchAttendanceForClass(cls.id)}
                       style={{
-                        padding: '8px 12px',
+                        padding: 'clamp(6px, 1.5vw, 8px) clamp(12px, 2vw, 16px)',
                         backgroundColor: expandedClassId === cls.id ? '#01579b' : '#0288d1',
                         color: 'white',
                         border: 'none',
                         borderRadius: '4px',
                         cursor: 'pointer',
                         flex: '0 0 auto',
-                        minWidth: '110px'
+                        minWidth: '110px',
+                        fontSize: 'clamp(0.9rem, 2.5vw, 1rem)'
                       }}
                     >
                       {expandedClassId === cls.id ? 'Hide Attendance' : 'View Attendance'}
                     </button>
-
-                    <button
-                      onClick={() => fetchAttendanceForClass(cls.id, true)}
-                      style={{
-                        padding: '8px 12px',
-                        backgroundColor: '#00796b',
-                        color: 'white',
-                        border: 'none',
-                        borderRadius: '4px',
-                        cursor: 'pointer',
-                        flex: '0 0 auto',
-                        minWidth: '110px'
-                      }}
-                    >
-                      Download CSV
-                    </button>
-
-                    <button
-                      onClick={async () => {
-                        const confirmDelete = window.confirm(`Are you sure you want to delete "${cls.className}"?`);
-                        if (!confirmDelete) return;
-
-                        try {
-                          await deleteDoc(doc(db, 'classes', cls.id));
-                          setMessage('✅ Class deleted.');
-                          fetchClasses(userId); // Refresh class list
-                        } catch (error) {
-                          setMessage(`❌ Error deleting class: ${error.message}`);
-                        }
-                      }}
-                      style={{
-                        padding: '8px 12px',
-                        backgroundColor: '#c62828',
-                        color: 'white',
-                        border: 'none',
-                        borderRadius: '4px',
-                        cursor: 'pointer',
-                        flex: '0 0 auto',
-                        minWidth: '110px'
-                      }}
-                    >
-                      Delete Class
-                    </button>
                   </div>
-
-                  {/* Display attendance records when class is expanded */}
-                  {expandedClassId === cls.id && attendanceRecordsByClass[cls.id] && (
-                    <div style={{ 
-                      marginTop: 15, 
-                      padding: 15, 
-                      backgroundColor: '#f5f5f5', 
-                      borderRadius: '4px',
-                      border: '1px solid #e0e0e0',
-                      textAlign: 'center'
-                    }}>
-                      <h4 style={{ marginTop: 0, marginBottom: 10 }}>Attendance Records</h4>
-                      {attendanceRecordsByClass[cls.id].length === 0 ? (
-                        <p style={{ color: '#666', fontStyle: 'italic' }}>No attendance records found.</p>
-                      ) : (
-                        <div style={{ overflowX: 'auto' }}>
-                          <table style={{ 
-                            width: '100%', 
-                            borderCollapse: 'collapse',
-                            backgroundColor: 'white'
-                          }}>
-                            <thead>
-                              <tr style={{ backgroundColor: '#f0f0f0' }}>
-                                <th style={{ padding: '8px', textAlign: 'center', borderBottom: '1px solid #ddd' }}>Student Code</th>
-                                <th style={{ padding: '8px', textAlign: 'center', borderBottom: '1px solid #ddd' }}>Date</th>
-                                <th style={{ padding: '8px', textAlign: 'center', borderBottom: '1px solid #ddd' }}>Time</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              {attendanceRecordsByClass[cls.id].map((record, index) => {
-                                const date = new Date(record.timestamp);
-                                return (
-                                  <tr key={index} style={{ borderBottom: '1px solid #eee' }}>
-                                    <td style={{ padding: '8px', textAlign: 'center' }}>{record.studentCode}</td>
-                                    <td style={{ padding: '8px', textAlign: 'center' }}>{date.toLocaleDateString()}</td>
-                                    <td style={{ padding: '8px', textAlign: 'center' }}>{date.toLocaleTimeString()}</td>
-                                  </tr>
-                                );
-                              })}
-                            </tbody>
-                          </table>
-                        </div>
-                      )}
-                    </div>
-                  )}
                 </li>
               ))}
             </ul>
