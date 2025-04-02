@@ -735,64 +735,169 @@ function Instructor() {
         />
       </Link>
 
-      <div style={{ marginTop: 40 }}>
-        <h3>{isLogin ? 'Login' : 'Sign Up'}</h3>
-        <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} style={{ width: '100%', padding: 8, margin: '8px 0', textAlign: 'center' }} />
-        <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} style={{ width: '100%', padding: 8, margin: '8px 0', textAlign: 'center' }} />
-        <div style={{ marginTop: 10 }}>
-          <label style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
-            <input
-              type="checkbox"
-              checked={rememberMe}
-              onChange={(e) => setRememberMe(e.target.checked)}
-            />
-            Remember me
-          </label>
+      <div style={{ 
+        marginTop: 40,
+        padding: '2rem',
+        backgroundColor: 'white',
+        borderRadius: '12px',
+        boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
+      }}>
+        <h3 style={{ 
+          fontSize: '1.5rem',
+          color: '#1e293b',
+          marginBottom: '1.5rem',
+          fontWeight: '600'
+        }}>
+          {isLogin ? 'Welcome Back!' : 'Create Your Account'}
+        </h3>
+        
+        <div style={{ marginBottom: '1.5rem' }}>
+          <input 
+            type="email" 
+            placeholder="Email" 
+            value={email} 
+            onChange={(e) => setEmail(e.target.value)} 
+            style={{ 
+              width: '100%', 
+              padding: '12px', 
+              margin: '8px 0',
+              textAlign: 'center',
+              border: '1px solid #e2e8f0',
+              borderRadius: '6px',
+              fontSize: '1rem',
+              transition: 'border-color 0.2s ease'
+            }}
+          />
+          <input 
+            type="password" 
+            placeholder="Password" 
+            value={password} 
+            onChange={(e) => setPassword(e.target.value)} 
+            style={{ 
+              width: '100%', 
+              padding: '12px', 
+              margin: '8px 0',
+              textAlign: 'center',
+              border: '1px solid #e2e8f0',
+              borderRadius: '6px',
+              fontSize: '1rem',
+              transition: 'border-color 0.2s ease'
+            }}
+          />
+          {!isLogin && (
+            <div style={{ 
+              fontSize: '0.85rem',
+              color: '#64748b',
+              marginTop: '8px',
+              textAlign: 'left',
+              padding: '0 4px'
+            }}>
+              Password must contain:
+              <ul style={{ 
+                margin: '4px 0 0 20px',
+                padding: 0,
+                textAlign: 'left'
+              }}>
+                <li>At least 6 characters</li>
+                <li>One uppercase letter</li>
+                <li>One lowercase letter</li>
+                <li>One number</li>
+              </ul>
+            </div>
+          )}
         </div>
+
+        {isLogin && (
+          <div style={{ marginBottom: '1.5rem' }}>
+            <label style={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              justifyContent: 'center', 
+              gap: 8,
+              color: '#64748b',
+              fontSize: '0.9rem'
+            }}>
+              <input
+                type="checkbox"
+                checked={rememberMe}
+                onChange={(e) => setRememberMe(e.target.checked)}
+                style={{ width: '16px', height: '16px' }}
+              />
+              Remember me
+            </label>
+          </div>
+        )}
+
         <button 
           onClick={handleSubmit} 
           style={{ 
-            padding: 10, 
+            padding: '12px', 
             width: '100%', 
-            backgroundColor: '#3f51b5', 
+            backgroundColor: isLogin ? '#3f51b5' : '#10b981', 
             color: 'white', 
             border: 'none', 
-            borderRadius: '4px', 
-            marginTop: 10, 
+            borderRadius: '6px', 
+            marginTop: '10px', 
             cursor: 'pointer',
-            textAlign: 'center'
+            textAlign: 'center',
+            fontSize: '1rem',
+            fontWeight: '500',
+            transition: 'background-color 0.2s ease'
           }}
+          onMouseOver={e => e.target.style.backgroundColor = isLogin ? '#303f9f' : '#059669'}
+          onMouseOut={e => e.target.style.backgroundColor = isLogin ? '#3f51b5' : '#10b981'}
         >
-          {isLogin ? 'Login' : 'Sign Up'}
+          {isLogin ? 'Login' : 'Create Account'}
         </button>
+
         {message && (
           <div style={{ 
-            marginTop: 10, 
-            padding: 10, 
-            backgroundColor: message.includes('✅') ? '#e8f5e9' : '#ffebee',
-            borderRadius: '4px',
-            color: message.includes('✅') ? '#2e7d32' : '#c62828',
-            textAlign: 'center'
+            marginTop: '1rem', 
+            padding: '12px', 
+            backgroundColor: message.includes('✅') ? '#ecfdf5' : '#fef2f2',
+            borderRadius: '6px',
+            color: message.includes('✅') ? '#059669' : '#dc2626',
+            textAlign: 'center',
+            fontSize: '0.9rem'
           }}>
             {message}
           </div>
         )}
       </div>
 
-      <div style={{ marginTop: 20 }}>
-        <h3>{isLogin ? "Don't have an account?" : "Already have an account?"}</h3>
+      <div style={{ 
+        marginTop: '1.5rem',
+        padding: '1rem',
+        backgroundColor: '#f8fafc',
+        borderRadius: '8px'
+      }}>
+        <p style={{ 
+          color: '#64748b',
+          marginBottom: '0.5rem'
+        }}>
+          {isLogin ? "Don't have an account?" : "Already have an account?"}
+        </p>
         <button 
           onClick={() => setIsLogin(!isLogin)} 
           style={{ 
-            padding: 10, 
-            width: '100%', 
-            backgroundColor: '#3f51b5', 
-            color: 'white', 
-            border: 'none', 
-            borderRadius: '4px', 
-            marginTop: 10, 
+            padding: '10px 20px', 
+            backgroundColor: 'transparent', 
+            color: '#3f51b5', 
+            border: '2px solid #3f51b5', 
+            borderRadius: '6px', 
             cursor: 'pointer',
-            textAlign: 'center'
+            textAlign: 'center',
+            fontSize: '0.9rem',
+            fontWeight: '500',
+            transition: 'all 0.2s ease'
+          }}
+          onMouseOver={e => {
+            e.target.style.backgroundColor = '#3f51b5';
+            e.target.style.color = 'white';
+          }}
+          onMouseOut={e => {
+            e.target.style.backgroundColor = 'transparent';
+            e.target.style.color = '#3f51b5';
           }}
         >
           {isLogin ? 'Sign Up' : 'Login'}
