@@ -191,17 +191,22 @@ function Instructor() {
   
 
   const handleStartAttendance = async (classId) => {
-    const code = generateCode(5);
+    // Generate a random 3-digit code
+    const newCode = Math.floor(100 + Math.random() * 900).toString();
+    
+    const expirationTime = Date.now() + (3 * 60 * 1000);
+    
     try {
       const classRef = doc(db, 'classes', classId);
       await updateDoc(classRef, {
-        attendanceCode: code,
+        attendanceCode: newCode,
         attendanceCodeGeneratedAt: Date.now(),
+        attendanceCodeExpiresAt: expirationTime
       });
   
       // Show code and reset expiration
       setExpiredCodes((prev) => ({ ...prev, [classId]: false }));
-      setTimers((prev) => ({ ...prev, [classId]: 120 })); // 2 minutes in seconds
+      setTimers((prev) => ({ ...prev, [classId]: 180 })); // 3 minutes in seconds
       setShowLargeCodes((prev) => ({ ...prev, [classId]: true })); // Show the modal automatically
   
       // Clear any existing interval for this class
@@ -227,7 +232,7 @@ function Instructor() {
         });
       }, 1000); // Run every 1000ms (1 second)
   
-      setMessage(`✅ Attendance code "${code}" generated for class.`);
+      setMessage(`✅ Attendance code "${newCode}" generated for class.`);
       fetchClasses(userId);
     } catch (error) {
       setMessage(`❌ Failed to generate code: ${error.message}`);

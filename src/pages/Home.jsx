@@ -1,13 +1,11 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { FaChalkboardTeacher, FaUserGraduate, FaCode, FaGlobe, FaCopyright, FaUserPlus, FaUsers, FaClipboardCheck, FaFileCsv, FaChevronDown, FaChevronUp, FaCheck, FaQrcode } from 'react-icons/fa';
-import { QRCodeSVG } from 'qrcode.react';
+import { FaChalkboardTeacher, FaUserGraduate, FaCode, FaGlobe, FaCopyright, FaUserPlus, FaUsers, FaClipboardCheck, FaFileCsv, FaChevronDown, FaChevronUp, FaCheck } from 'react-icons/fa';
 import styles from './Home.module.css';
 import logo from '../images/logo transparent.png';
 
 function Home() {
   const [isExpanded, setIsExpanded] = useState(false);
-  const [showQRCode, setShowQRCode] = useState(false);
 
   return (
     <div className={styles.container}>
@@ -295,26 +293,6 @@ function Home() {
             <FaGlobe style={{ color: '#4a5568' }} />
             www.presenzo.com
           </a>
-          <button
-            onClick={() => setShowQRCode(true)}
-            style={{
-              background: 'transparent',
-              border: 'none',
-              cursor: 'pointer',
-              padding: '0.5rem',
-              borderRadius: '8px',
-              transition: 'all 0.2s ease',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.5rem',
-              color: '#718096'
-            }}
-            onMouseOver={e => e.target.style.color = '#4a5568'}
-            onMouseOut={e => e.target.style.color = '#718096'}
-          >
-            <FaQrcode size={16} />
-            <span>Share QR Code</span>
-          </button>
         </div>
         
         <div style={{ 
@@ -326,95 +304,9 @@ function Home() {
           fontSize: '0.8rem'
         }}>
           <FaCopyright />
-          <span>2025</span>
+          <span>2025 v1.0.0</span>
         </div>
       </div>
-
-      {/* QR Code Modal */}
-      {showQRCode && (
-        <div style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          backgroundColor: 'rgba(0, 0, 0, 0.5)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          zIndex: 1000
-        }}>
-          <div style={{
-            backgroundColor: 'white',
-            padding: '2rem',
-            borderRadius: '12px',
-            boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-            maxWidth: '90%',
-            width: '400px',
-            position: 'relative'
-          }}>
-            <button
-              onClick={() => setShowQRCode(false)}
-              style={{
-                position: 'absolute',
-                top: '1rem',
-                right: '1rem',
-                background: 'transparent',
-                border: 'none',
-                cursor: 'pointer',
-                padding: '0.5rem',
-                borderRadius: '50%',
-                transition: 'background-color 0.2s ease'
-              }}
-              onMouseOver={e => e.target.style.backgroundColor = '#e2e8f0'}
-              onMouseOut={e => e.target.style.backgroundColor = 'transparent'}
-            >
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M18 6L6 18M6 6l12 12" />
-              </svg>
-            </button>
-            <h3 style={{ 
-              color: '#1e293b',
-              marginBottom: '0.5rem',
-              textAlign: 'center',
-              fontSize: '1.25rem',
-              fontWeight: '600'
-            }}>
-              Scan QR Code
-            </h3>
-            <p style={{
-              textAlign: 'center',
-              color: '#64748b',
-              fontSize: '1.5rem',
-              marginBottom: '1.5rem'
-            }}>
-              www.presenzo.com
-            </p>
-            <div style={{
-              display: 'flex',
-              justifyContent: 'center',
-              padding: '1rem',
-              backgroundColor: 'white',
-              borderRadius: '8px'
-            }}>
-              <QRCodeSVG
-                value="https://presenzo.com/"
-                size={256}
-                level="H"
-                includeMargin={true}
-              />
-            </div>
-            <p style={{
-              textAlign: 'center',
-              marginTop: '1rem',
-              color: '#64748b',
-              fontSize: '0.9rem'
-            }}>
-              Scan this QR code to visit Presenzo
-            </p>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

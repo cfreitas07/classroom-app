@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { db } from '../firebase';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import {
   collection,
   query,
@@ -20,10 +20,43 @@ function Student() {
   const [statusMessage, setStatusMessage] = useState('');
   const [classId, setClassId] = useState(null);
   const [classData, setClassData] = useState(null);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [countdown, setCountdown] = useState(5);
+  const navigate = useNavigate();
+
+  // Check for recent submission on component mount
+  useEffect(() => {
+    const lastSubmission = localStorage.getItem('lastAttendanceSubmission');
+    if (lastSubmission) {
+      const submissionTime = parseInt(lastSubmission);
+      const now = Date.now();
+      const timeDiff = now - submissionTime;
+      
+      if (timeDiff < 180000) { // 3 minutes in milliseconds
+        const remainingTime = Math.ceil((180000 - timeDiff) / 1000);
+        setStatusMessage(`❌ Please wait ${remainingTime} seconds before submitting again.`);
+      }
+    }
+  }, []);
 
   // Step 1: Join a class by code
   const handleJoinClass = async () => {
     setStatusMessage('');
+    
+    // Check for recent submission
+    const lastSubmission = localStorage.getItem('lastAttendanceSubmission');
+    if (lastSubmission) {
+      const submissionTime = parseInt(lastSubmission);
+      const now = Date.now();
+      const timeDiff = now - submissionTime;
+      
+      if (timeDiff < 180000) { // 3 minutes in milliseconds
+        const remainingTime = Math.ceil((180000 - timeDiff) / 1000);
+        setStatusMessage(`❌ Please wait ${remainingTime} seconds before submitting again.`);
+        return;
+      }
+    }
+
     const q = query(collection(db, 'classes'), where('enrollmentCode', '==', enrollmentCode));
     const querySnapshot = await getDocs(q);
 
@@ -42,6 +75,20 @@ function Student() {
   const handleSubmitAttendance = async () => {
     setStatusMessage('');
 
+    // Check for recent submission
+    const lastSubmission = localStorage.getItem('lastAttendanceSubmission');
+    if (lastSubmission) {
+      const submissionTime = parseInt(lastSubmission);
+      const now = Date.now();
+      const timeDiff = now - submissionTime;
+      
+      if (timeDiff < 180000) { // 3 minutes in milliseconds
+        const remainingTime = Math.ceil((180000 - timeDiff) / 1000);
+        setStatusMessage(`❌ Please wait ${remainingTime} seconds before submitting again.`);
+        return;
+      }
+    }
+
     if (!classId || !classData) {
       setStatusMessage('❌ Please join a class first.');
       return;
@@ -52,7 +99,7 @@ function Student() {
       return;
     }
 
-    // OPTIONAL: Check if attendance code is expired (15 minutes)
+    // Check if attendance code is expired (15 minutes)
     const generatedTime = classData.attendanceCodeGeneratedAt;
     const now = Date.now();
     const timeDiff = now - generatedTime;
@@ -74,11 +121,31 @@ function Student() {
         timestamp: Date.now(),
       });
 
-      setStatusMessage('✅ Attendance recorded successfully!');
+      // Save submission time to localStorage
+      localStorage.setItem('lastAttendanceSubmission', Date.now().toString());
+
+      setShowSuccessModal(true);
+      setCountdown(5);
+      
+      // Redirect to home page after 5 seconds
+      setTimeout(() => {
+        navigate('/');
+      }, 5000);
     } catch (error) {
       setStatusMessage(`❌ Error: ${error.message}`);
     }
   };
+
+  // Countdown effect
+  useEffect(() => {
+    let timer;
+    if (showSuccessModal && countdown > 0) {
+      timer = setInterval(() => {
+        setCountdown(prev => prev - 1);
+      }, 1000);
+    }
+    return () => clearInterval(timer);
+  }, [showSuccessModal, countdown]);
 
   const buttonStyle = {
     padding: '10px 20px',
@@ -102,6 +169,67 @@ function Student() {
 
   return (
     <div style={{ maxWidth: 400, margin: '40px auto', padding: '0 20px', textAlign: 'center' }}>
+      {showSuccessModal && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(0, 0, 0, 0.9)',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          zIndex: 1000,
+          padding: '20px'
+        }}>
+          <div style={{
+            backgroundColor: 'white',
+            padding: '40px',
+            borderRadius: '12px',
+            maxWidth: '90%',
+            width: '400px',
+            textAlign: 'center'
+          }}>
+            <div style={{
+              fontSize: '3rem',
+              color: '#4CAF50',
+              marginBottom: '20px'
+            }}>
+              ✅
+            </div>
+            <h2 style={{
+              fontSize: '2rem',
+              color: '#1e293b',
+              marginBottom: '20px'
+            }}>
+              Attendance Submitted!
+            </h2>
+            <p style={{
+              fontSize: '1.2rem',
+              color: '#64748b',
+              marginBottom: '10px'
+            }}>
+              Redirecting to home page in {countdown} seconds...
+            </p>
+            <div style={{
+              width: '100%',
+              height: '4px',
+              backgroundColor: '#e2e8f0',
+              borderRadius: '2px',
+              overflow: 'hidden'
+            }}>
+              <div style={{
+                width: `${(countdown / 5) * 100}%`,
+                height: '100%',
+                backgroundColor: '#4CAF50',
+                transition: 'width 1s linear'
+              }} />
+            </div>
+          </div>
+        </div>
+      )}
+
       <Link to="/" style={{ textDecoration: 'none' }}>
         <img 
           src={logo} 
@@ -120,10 +248,12 @@ function Student() {
       <h2>Student Check-In</h2>
 
       <input
-        type="text"
+        type="tel"
+        inputMode="numeric"
+        pattern="[0-9]*"
         placeholder="Class Enrollment Code"
         value={enrollmentCode}
-        onChange={(e) => setEnrollmentCode(e.target.value.toUpperCase())}
+        onChange={(e) => setEnrollmentCode(e.target.value.replace(/[^0-9]/g, '').toUpperCase())}
         style={{ width: '100%', padding: 10, margin: '10px 0' }}
       />
       <button 
@@ -154,10 +284,16 @@ function Student() {
             required
           />
           <input
-            type="text"
-            placeholder="Attendance Code"
+            type="tel"
+            inputMode="numeric"
+            pattern="[0-9]{3}"
+            maxLength="3"
+            placeholder="Attendance Code (3 digits)"
             value={attendanceCode}
-            onChange={(e) => setAttendanceCode(e.target.value)}
+            onChange={(e) => {
+              const value = e.target.value.replace(/[^0-9]/g, '').slice(0, 3);
+              setAttendanceCode(value);
+            }}
             style={{ width: '100%', padding: 10, margin: '10px 0' }}
           />
           <button 
@@ -171,7 +307,7 @@ function Student() {
         </>
       )}
 
-      {statusMessage && (
+      {statusMessage && !showSuccessModal && (
         <p style={{ 
           marginTop: 20, 
           padding: '10px',
