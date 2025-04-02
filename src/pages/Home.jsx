@@ -14,11 +14,12 @@ function Home() {
           src={logo} 
           alt="Presenzo Logo" 
           style={{ 
-            height: '60px',
+            height: '120px',
+            maxHeight: '120px',
+            width: 'auto',
             cursor: 'pointer',
             transition: 'transform 0.2s ease',
-            maxWidth: '100%',
-            height: 'auto'
+            maxWidth: '100%'
           }} 
           onMouseOver={e => e.target.style.transform = 'scale(1.05)'} 
           onMouseOut={e => e.target.style.transform = 'scale(1)'}
@@ -56,12 +57,12 @@ function Home() {
             justifyContent: 'center',
             gap: '0.5rem',
             width: '100%',
-            padding: '0.75rem',
+            padding: '0.5rem',
             backgroundColor: 'transparent',
             border: 'none',
             cursor: 'pointer',
             color: '#1e293b',
-            fontSize: 'clamp(1rem, 3vw, 1.2rem)',
+            fontSize: '0.9rem',
             fontWeight: '600',
             transition: 'color 0.2s ease'
           }}
@@ -230,12 +231,9 @@ function Home() {
         textAlign: 'center',
         background: 'linear-gradient(to bottom, transparent, rgba(237, 242, 247, 0.5))',
         borderRadius: '0 0 12px 12px',
-        width: '100vw',
-        position: 'relative',
-        left: '50%',
-        right: '50%',
-        marginLeft: '-50vw',
-        marginRight: '-50vw'
+        width: '100%',
+        maxWidth: '800px',
+        margin: '4rem auto 0'
       }}>
         <div style={{ 
           display: 'flex', 
