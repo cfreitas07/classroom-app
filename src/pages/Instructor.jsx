@@ -21,6 +21,7 @@ import {
   deleteDoc,
 } from 'firebase/firestore';
 import logo from '../images/logo transparent.png';
+import { QRCodeSVG } from 'qrcode.react';
 
 function Instructor() {
   const [email, setEmail] = useState('');
@@ -52,9 +53,14 @@ function Instructor() {
   }, []);
 
   function generateCode(length = 6) {
-    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-    return Array.from({ length }, () =>
-      chars[Math.floor(Math.random() * chars.length)]
+    if (length === 5) { // For attendance code
+      return Array.from({ length: 3 }, () =>
+        Math.floor(Math.random() * 9) + 1
+      ).join('');
+    }
+    // For enrollment code (4 digits between 1-9)
+    return Array.from({ length: 4 }, () =>
+      Math.floor(Math.random() * 9) + 1
     ).join('');
   }
 
@@ -195,23 +201,31 @@ function Instructor() {
   
       // Show code and reset expiration
       setExpiredCodes((prev) => ({ ...prev, [classId]: false }));
-      setTimers((prev) => ({ ...prev, [classId]: 600 })); // 10 minutes in seconds
+      setTimers((prev) => ({ ...prev, [classId]: 120 })); // 2 minutes in seconds
+      setShowLargeCodes((prev) => ({ ...prev, [classId]: true })); // Show the modal automatically
+  
+      // Clear any existing interval for this class
+      if (window.attendanceIntervals && window.attendanceIntervals[classId]) {
+        clearInterval(window.attendanceIntervals[classId]);
+      }
+  
+      // Initialize the intervals object if it doesn't exist
+      if (!window.attendanceIntervals) {
+        window.attendanceIntervals = {};
+      }
   
       // Countdown timer
-      const interval = setInterval(() => {
+      window.attendanceIntervals[classId] = setInterval(() => {
         setTimers((prev) => {
           const newTime = prev[classId] - 1;
           if (newTime <= 0) {
-            clearInterval(interval);
+            clearInterval(window.attendanceIntervals[classId]);
             setExpiredCodes((prevExpired) => ({ ...prevExpired, [classId]: true }));
             return { ...prev, [classId]: 0 };
           }
           return { ...prev, [classId]: newTime };
         });
       }, 1000); // Run every 1000ms (1 second)
-  
-      // Clear interval when component unmounts or when generating new code
-      return () => clearInterval(interval);
   
       setMessage(`✅ Attendance code "${code}" generated for class.`);
       fetchClasses(userId);
@@ -473,7 +487,7 @@ function Instructor() {
                       left: 0,
                       right: 0,
                       bottom: 0,
-                      backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                      backgroundColor: 'rgba(0, 0, 0, 0.9)',
                       display: 'flex',
                       justifyContent: 'center',
                       alignItems: 'center',
@@ -482,10 +496,10 @@ function Instructor() {
                     }}>
                       <div style={{
                         backgroundColor: 'white',
-                        padding: '40px',
+                        padding: '25px',
                         borderRadius: '12px',
                         maxWidth: '90%',
-                        width: '600px',
+                        width: '450px',
                         textAlign: 'center',
                         position: 'relative'
                       }}>
@@ -496,30 +510,48 @@ function Instructor() {
                           }))}
                           style={{
                             position: 'absolute',
-                            top: '10px',
-                            right: '10px',
+                            top: '12px',
+                            right: '12px',
                             background: 'none',
                             border: 'none',
                             fontSize: '24px',
                             cursor: 'pointer',
-                            color: '#666'
+                            color: '#666',
+                            padding: '6px',
+                            borderRadius: '50%',
+                            transition: 'background-color 0.2s ease'
                           }}
+                          onMouseOver={e => e.target.style.backgroundColor = '#f0f0f0'}
+                          onMouseOut={e => e.target.style.backgroundColor = 'transparent'}
                         >
                           ×
                         </button>
-                        <h2 style={{ marginBottom: '30px', color: '#333' }}>{cls.className}</h2>
+                        <h2 style={{ 
+                          marginBottom: '25px', 
+                          color: '#1e293b',
+                          fontSize: '1.8rem'
+                        }}>
+                          {cls.className}
+                        </h2>
                         
-                        <div style={{ marginBottom: '40px' }}>
-                          <div style={{ fontSize: '1.2em', color: '#666', marginBottom: '10px' }}>Enrollment Code</div>
+                        <div style={{ marginBottom: '30px' }}>
+                          <div style={{ 
+                            fontSize: '1.1rem', 
+                            color: '#64748b', 
+                            marginBottom: '12px' 
+                          }}>
+                            Enrollment Code
+                          </div>
                           <div style={{
-                            fontSize: '3.5em',
+                            fontSize: '2.8rem',
                             fontWeight: 'bold',
                             color: '#3f51b5',
                             letterSpacing: '4px',
-                            padding: '20px',
+                            padding: '15px',
                             backgroundColor: '#e3f2fd',
-                            borderRadius: '8px',
-                            marginBottom: '20px'
+                            borderRadius: '12px',
+                            marginBottom: '15px',
+                            boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
                           }}>
                             {cls.enrollmentCode}
                           </div>
@@ -527,28 +559,65 @@ function Instructor() {
 
                         {cls.attendanceCode && !expiredCodes[cls.id] && (
                           <div>
-                            <div style={{ fontSize: '1.2em', color: '#666', marginBottom: '10px' }}>Active Attendance Code</div>
+                            <div style={{ 
+                              fontSize: '1.1rem', 
+                              color: '#64748b', 
+                              marginBottom: '12px' 
+                            }}>
+                              Active Attendance Code
+                            </div>
                             <div style={{
-                              fontSize: '3.5em',
+                              fontSize: '2.8rem',
                               fontWeight: 'bold',
                               color: '#c62828',
                               letterSpacing: '4px',
-                              padding: '20px',
+                              padding: '15px',
                               backgroundColor: '#ffebee',
-                              borderRadius: '8px'
+                              borderRadius: '12px',
+                              boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
                             }}>
                               {cls.attendanceCode}
                             </div>
                             <div style={{
-                              fontSize: '1.2em',
+                              fontSize: '1.5rem',
                               color: '#c62828',
-                              marginTop: '15px'
+                              marginTop: '15px',
+                              fontWeight: 'bold'
                             }}>
                               ⏳ {Math.floor((timers[cls.id] || 0) / 60).toString().padStart(2, '0')}:
                               {(timers[cls.id] % 60 || 0).toString().padStart(2, '0')}
                             </div>
                           </div>
                         )}
+
+                        <div style={{ 
+                          marginTop: '30px', 
+                          paddingTop: '25px', 
+                          borderTop: '1px solid #e2e8f0' 
+                        }}>
+                          <div style={{
+                            display: 'inline-block',
+                            padding: '15px',
+                            backgroundColor: 'white',
+                            borderRadius: '12px',
+                            boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
+                          }}>
+                            <QRCodeSVG
+                              value="https://presenzo.com/student"
+                              size={150}
+                              level="H"
+                              includeMargin={true}
+                            />
+                          </div>
+                          <div style={{
+                            fontSize: '1.2rem',
+                            color: '#64748b',
+                            marginTop: '15px',
+                            fontWeight: '500'
+                          }}>
+                            Scan to visit presenzo.com/student
+                          </div>
+                        </div>
                       </div>
                     </div>
                   )}

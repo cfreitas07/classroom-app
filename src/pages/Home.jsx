@@ -398,7 +398,7 @@ function Home() {
               borderRadius: '8px'
             }}>
               <QRCodeSVG
-                value="http://www.presenzo.com/"
+                value="https://presenzo.com/"
                 size={256}
                 level="H"
                 includeMargin={true}
