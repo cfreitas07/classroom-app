@@ -20,6 +20,7 @@ import {
   doc,
   deleteDoc,
 } from 'firebase/firestore';
+import logo from '../images/logo transparent.png';
 
 function Instructor() {
   const [email, setEmail] = useState('');
@@ -30,7 +31,7 @@ function Instructor() {
   const [userId, setUserId] = useState(null);
   const [className, setClassName] = useState('');
   const [schedule, setSchedule] = useState('');
-  const [maxStudents, setMaxStudents] = useState(30);
+  const [maxStudents, setMaxStudents] = useState('');
   const [classes, setClasses] = useState([]);
   const [attendanceData, setAttendanceData] = useState([]);
   const [expandedClassId, setExpandedClassId] = useState(null);
@@ -72,8 +73,13 @@ function Instructor() {
       setMessage("❌ Please enter a schedule");
       return;
     }
-    if (!maxStudents || maxStudents < 1) {
-      setMessage("❌ Please enter a valid number of students");
+    if (!maxStudents) {
+      setMessage("❌ Please enter the maximum number of students");
+      return;
+    }
+    const maxStudentsNum = Number(maxStudents);
+    if (isNaN(maxStudentsNum) || maxStudentsNum < 1) {
+      setMessage("❌ Please enter a valid number of students (minimum 1)");
       return;
     }
 
@@ -83,7 +89,7 @@ function Instructor() {
       await addDoc(collection(db, 'classes'), {
         className: className.trim(),
         schedule: schedule.trim(),
-        maxStudents: Number(maxStudents),
+        maxStudents: maxStudentsNum,
         enrollmentCode: code,
         instructorId: userId,
       });
@@ -92,7 +98,7 @@ function Instructor() {
       // Clear all input fields
       setClassName('');
       setSchedule('');
-      setMaxStudents(30);
+      setMaxStudents('');
       fetchClasses(userId);
     } catch (error) {
       setMessage(`❌ Error creating class: ${error.message}`);
@@ -307,16 +313,17 @@ function Instructor() {
       <div style={{ maxWidth: 800, margin: '40px auto', padding: '0 20px', textAlign: 'center' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
           <Link to="/" style={{ textDecoration: 'none' }}>
-            <h1 style={{ 
-              cursor: 'pointer',
-              transition: 'transform 0.2s ease',
-              textAlign: 'center',
-              ':hover': {
-                transform: 'scale(1.05)'
-              }
-            }} onMouseOver={e => e.target.style.transform = 'scale(1.05)'} onMouseOut={e => e.target.style.transform = 'scale(1)'}>
-              🎓 Aki
-            </h1>
+            <img 
+              src={logo} 
+              alt="Presenzo Logo" 
+              style={{ 
+                height: '60px',
+                cursor: 'pointer',
+                transition: 'transform 0.2s ease'
+              }} 
+              onMouseOver={e => e.target.style.transform = 'scale(1.05)'} 
+              onMouseOut={e => e.target.style.transform = 'scale(1)'}
+            />
           </Link>
           <button
             onClick={handleLogout}
@@ -685,17 +692,18 @@ function Instructor() {
   return (
     <div style={{ maxWidth: 400, margin: '40px auto', padding: '0 20px', textAlign: 'center' }}>
       <Link to="/" style={{ textDecoration: 'none' }}>
-        <h1 style={{ 
-          cursor: 'pointer',
-          transition: 'transform 0.2s ease',
-          textAlign: 'center',
-          marginBottom: '2rem',
-          ':hover': {
-            transform: 'scale(1.05)'
-          }
-        }} onMouseOver={e => e.target.style.transform = 'scale(1.05)'} onMouseOut={e => e.target.style.transform = 'scale(1)'}>
-          🎓 Aki
-        </h1>
+        <img 
+          src={logo} 
+          alt="Presenzo Logo" 
+          style={{ 
+            height: '60px',
+            cursor: 'pointer',
+            transition: 'transform 0.2s ease',
+            marginBottom: '2rem'
+          }} 
+          onMouseOver={e => e.target.style.transform = 'scale(1.05)'} 
+          onMouseOut={e => e.target.style.transform = 'scale(1)'}
+        />
       </Link>
 
       <div style={{ marginTop: 40 }}>

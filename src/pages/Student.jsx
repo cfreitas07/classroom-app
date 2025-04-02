@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { db } from '../firebase';
 import { Link } from 'react-router-dom';
 import {
@@ -9,7 +9,9 @@ import {
   addDoc,
   doc,
   getDoc,
+  Timestamp
 } from 'firebase/firestore';
+import logo from '../images/logo transparent.png';
 
 function Student() {
   const [enrollmentCode, setEnrollmentCode] = useState('');
@@ -42,6 +44,11 @@ function Student() {
 
     if (!classId || !classData) {
       setStatusMessage('❌ Please join a class first.');
+      return;
+    }
+
+    if (!studentCode.trim()) {
+      setStatusMessage('❌ Please enter your student code');
       return;
     }
 
@@ -94,17 +101,20 @@ function Student() {
   };
 
   return (
-    <div style={{ maxWidth: 400, margin: '60px auto', textAlign: 'center' }}>
+    <div style={{ maxWidth: 400, margin: '40px auto', padding: '0 20px', textAlign: 'center' }}>
       <Link to="/" style={{ textDecoration: 'none' }}>
-        <h1 style={{ 
-          cursor: 'pointer',
-          transition: 'transform 0.2s ease',
-          ':hover': {
-            transform: 'scale(1.05)'
-          }
-        }} onMouseOver={e => e.target.style.transform = 'scale(1.05)'} onMouseOut={e => e.target.style.transform = 'scale(1)'}>
-          🎓 Aki
-        </h1>
+        <img 
+          src={logo} 
+          alt="Presenzo Logo" 
+          style={{ 
+            height: '60px',
+            cursor: 'pointer',
+            transition: 'transform 0.2s ease',
+            marginBottom: '2rem'
+          }} 
+          onMouseOver={e => e.target.style.transform = 'scale(1.05)'} 
+          onMouseOut={e => e.target.style.transform = 'scale(1)'}
+        />
       </Link>
 
       <h2>Student Check-In</h2>
@@ -129,10 +139,19 @@ function Student() {
         <>
           <input
             type="text"
-            placeholder="Your Student Code"
+            placeholder="Your Student Code *"
             value={studentCode}
             onChange={(e) => setStudentCode(e.target.value)}
-            style={{ width: '100%', padding: 10, margin: '10px 0' }}
+            style={{ 
+              width: '100%', 
+              padding: 10, 
+              margin: '10px 0',
+              borderColor: !studentCode.trim() ? '#ffcdd2' : '#e2e8f0',
+              borderWidth: '1px',
+              borderStyle: 'solid',
+              outline: 'none'
+            }}
+            required
           />
           <input
             type="text"
