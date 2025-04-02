@@ -709,6 +709,92 @@ function Instructor() {
                       {expandedClassId === cls.id ? 'Hide Attendance' : 'View Attendance'}
                     </button>
                   </div>
+
+                  {expandedClassId === cls.id && attendanceRecordsByClass[cls.id] && (
+                    <div style={{ 
+                      marginTop: '20px',
+                      padding: '15px',
+                      backgroundColor: '#f8fafc',
+                      borderRadius: '8px',
+                      textAlign: 'left'
+                    }}>
+                      <div style={{ 
+                        display: 'flex', 
+                        justifyContent: 'space-between', 
+                        alignItems: 'center',
+                        marginBottom: '15px'
+                      }}>
+                        <h4 style={{ 
+                          fontSize: 'clamp(1rem, 2.5vw, 1.2rem)',
+                          color: '#1e293b',
+                          margin: 0
+                        }}>
+                          Attendance Records
+                        </h4>
+                        <button
+                          onClick={() => fetchAttendanceForClass(cls.id, true)}
+                          style={{
+                            padding: '8px 16px',
+                            backgroundColor: '#3f51b5',
+                            color: 'white',
+                            border: 'none',
+                            borderRadius: '4px',
+                            cursor: 'pointer',
+                            fontSize: 'clamp(0.8rem, 2vw, 0.9rem)',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '8px'
+                          }}
+                        >
+                          📥 Download CSV
+                        </button>
+                      </div>
+                      
+                      <div style={{ 
+                        maxHeight: '300px',
+                        overflowY: 'auto',
+                        border: '1px solid #e2e8f0',
+                        borderRadius: '6px',
+                        backgroundColor: 'white'
+                      }}>
+                        <table style={{ 
+                          width: '100%',
+                          borderCollapse: 'collapse',
+                          fontSize: 'clamp(0.8rem, 2vw, 0.9rem)'
+                        }}>
+                          <thead>
+                            <tr style={{ 
+                              backgroundColor: '#f1f5f9',
+                              borderBottom: '2px solid #e2e8f0'
+                            }}>
+                              <th style={{ padding: '10px', textAlign: 'left' }}>Student Code</th>
+                              <th style={{ padding: '10px', textAlign: 'left' }}>Date</th>
+                              <th style={{ padding: '10px', textAlign: 'left' }}>Time</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {attendanceRecordsByClass[cls.id]
+                              .sort((a, b) => b.timestamp - a.timestamp)
+                              .map((record, index) => {
+                                const date = new Date(record.timestamp);
+                                return (
+                                  <tr key={index} style={{ 
+                                    borderBottom: '1px solid #e2e8f0',
+                                    ':hover': {
+                                      backgroundColor: '#f8fafc'
+                                    }
+                                  }}>
+                                    <td style={{ padding: '10px' }}>{record.studentCode}</td>
+                                    <td style={{ padding: '10px' }}>{date.toLocaleDateString()}</td>
+                                    <td style={{ padding: '10px' }}>{date.toLocaleTimeString()}</td>
+                                  </tr>
+                                );
+                              })}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  )}
                 </li>
               ))}
             </ul>

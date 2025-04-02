@@ -256,11 +256,39 @@ function Student() {
 
       <h2 style={{ fontSize: 'clamp(1.5rem, 4vw, 2rem)', marginBottom: '1.5rem' }}>Student Check-In</h2>
 
+      <div style={{ 
+        textAlign: 'left',
+        marginBottom: '1.5rem',
+        padding: '1rem',
+        backgroundColor: '#f8fafc',
+        borderRadius: '8px',
+        fontSize: 'clamp(0.9rem, 2.5vw, 1rem)',
+        color: '#64748b'
+      }}>
+        <p style={{ marginBottom: '0.5rem' }}>
+          To check in, you'll need:
+        </p>
+        <ol style={{ margin: '0.5rem 0 0 1.5rem', padding: 0 }}>
+          <li style={{ marginBottom: '0.5rem' }}><strong>Class Enrollment Code:</strong> Get this from your instructor</li>
+          <li style={{ marginBottom: '0.5rem' }}><strong>Your Student Code:</strong> Your name initials (e.g., First Name and Last Name Initials. JohnD)</li>
+          <li><strong>Attendance Code:</strong> The 3-digit code shown by your instructor</li>
+        </ol>
+      </div>
+
+      <div style={{ 
+        marginBottom: '1rem',
+        textAlign: 'left',
+        fontSize: 'clamp(0.9rem, 2.5vw, 1rem)',
+        color: '#1e293b',
+        fontWeight: '500'
+      }}>
+        Step 1: Enter Class Enrollment Code
+      </div>
       <input
         type="tel"
         inputMode="numeric"
         pattern="[0-9]*"
-        placeholder="Class Enrollment Code"
+        placeholder="Enter the code provided by your instructor"
         value={enrollmentCode}
         onChange={(e) => setEnrollmentCode(e.target.value.replace(/[^0-9]/g, '').toUpperCase())}
         style={{ 
@@ -268,7 +296,10 @@ function Student() {
           padding: 'clamp(8px, 2vw, 12px)', 
           margin: '10px 0',
           fontSize: 'clamp(0.9rem, 2.5vw, 1rem)',
-          boxSizing: 'border-box'
+          boxSizing: 'border-box',
+          border: '1px solid #e2e8f0',
+          borderRadius: '6px',
+          transition: 'border-color 0.2s ease'
         }}
       />
       <button 
@@ -276,7 +307,8 @@ function Student() {
         style={{
           ...buttonStyle,
           padding: 'clamp(8px, 2vw, 12px)',
-          fontSize: 'clamp(0.9rem, 2.5vw, 1rem)'
+          fontSize: 'clamp(0.9rem, 2.5vw, 1rem)',
+          marginTop: '1rem'
         }}
         onMouseOver={(e) => Object.assign(e.target.style, buttonHoverStyle)}
         onMouseOut={(e) => Object.assign(e.target.style, buttonStyle)}
@@ -286,9 +318,19 @@ function Student() {
 
       {classData && (
         <>
+          <div style={{ 
+            marginTop: '2rem',
+            marginBottom: '1rem',
+            textAlign: 'left',
+            fontSize: 'clamp(0.9rem, 2.5vw, 1rem)',
+            color: '#1e293b',
+            fontWeight: '500'
+          }}>
+            Step 2: Enter Your Details
+          </div>
           <input
             type="text"
-            placeholder="Your Student Code *"
+            placeholder="Enter your student code or ID"
             value={studentCode}
             onChange={(e) => setStudentCode(e.target.value)}
             style={{ 
@@ -299,8 +341,10 @@ function Student() {
               borderColor: !studentCode.trim() ? '#ffcdd2' : '#e2e8f0',
               borderWidth: '1px',
               borderStyle: 'solid',
+              borderRadius: '6px',
               outline: 'none',
-              boxSizing: 'border-box'
+              boxSizing: 'border-box',
+              transition: 'border-color 0.2s ease'
             }}
             required
           />
@@ -309,7 +353,7 @@ function Student() {
             inputMode="numeric"
             pattern="[0-9]{3}"
             maxLength="3"
-            placeholder="Attendance Code (3 digits)"
+            placeholder="Enter the 3-digit code shown by your instructor"
             value={attendanceCode}
             onChange={(e) => {
               const value = e.target.value.replace(/[^0-9]/g, '').slice(0, 3);
@@ -320,7 +364,10 @@ function Student() {
               padding: 'clamp(8px, 2vw, 12px)', 
               margin: '10px 0',
               fontSize: 'clamp(0.9rem, 2.5vw, 1rem)',
-              boxSizing: 'border-box'
+              border: '1px solid #e2e8f0',
+              borderRadius: '6px',
+              boxSizing: 'border-box',
+              transition: 'border-color 0.2s ease'
             }}
           />
           <button 
@@ -328,7 +375,8 @@ function Student() {
             style={{
               ...buttonStyle,
               padding: 'clamp(8px, 2vw, 12px)',
-              fontSize: 'clamp(0.9rem, 2.5vw, 1rem)'
+              fontSize: 'clamp(0.9rem, 2.5vw, 1rem)',
+              marginTop: '1rem'
             }}
             onMouseOver={(e) => Object.assign(e.target.style, buttonHoverStyle)}
             onMouseOut={(e) => Object.assign(e.target.style, buttonStyle)}
