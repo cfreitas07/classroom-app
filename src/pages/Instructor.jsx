@@ -42,6 +42,25 @@ function Instructor() {
   const [showLargeCodes, setShowLargeCodes] = useState({}); // tracks which class's codes are shown in large format
   const navigate = useNavigate();
 
+  // Array of border colors for class cards
+  const borderColors = [
+    '#3f51b5', // Indigo
+    '#f57c00', // Orange
+    '#2e7d32', // Green
+    '#c2185b', // Pink
+    '#1976d2', // Blue
+    '#f44336', // Red
+    '#9c27b0', // Purple
+    '#ff9800', // Amber
+    '#009688', // Teal
+    '#795548'  // Brown
+  ];
+
+  // Function to get border color for a class
+  const getBorderColor = (index) => {
+    return borderColors[index % borderColors.length];
+  };
+
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
@@ -327,6 +346,20 @@ function Instructor() {
     }
   };
 
+  const handleDeleteClass = async (classId) => {
+    if (!window.confirm('Are you sure you want to delete this class? This action cannot be undone.')) {
+      return;
+    }
+
+    try {
+      await deleteDoc(doc(db, 'classes', classId));
+      setMessage('✅ Class deleted successfully');
+      fetchClasses(userId);
+    } catch (error) {
+      setMessage(`❌ Error deleting class: ${error.message}`);
+    }
+  };
+
   if (userId) {
     return (
       <div style={{ 
@@ -451,14 +484,20 @@ function Instructor() {
           <div style={{ marginTop: 30 }}>
             <h3 style={{ fontSize: 'clamp(1.5rem, 4vw, 2rem)', marginBottom: '1.5rem' }}>Your Classes:</h3>
             <ul style={{ listStyle: 'none', padding: 0 }}>
-              {classes.map((cls) => (
+              {classes.map((cls, index) => (
                 <li key={cls.id} style={{ 
                   marginBottom: 20, 
                   textAlign: 'center',
                   padding: 'clamp(15px, 3vw, 20px)',
                   backgroundColor: 'white',
                   borderRadius: '8px',
-                  boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+                  boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+                  border: `3px solid ${getBorderColor(index)}`,
+                  transition: 'transform 0.2s ease, box-shadow 0.2s ease',
+                  ':hover': {
+                    transform: 'translateY(-2px)',
+                    boxShadow: '0 4px 8px rgba(0,0,0,0.15)'
+                  }
                 }}>
                   <strong style={{ fontSize: 'clamp(1.1rem, 3vw, 1.3rem)' }}>{cls.className}</strong> – 
                   <span style={{ fontSize: 'clamp(0.9rem, 2.5vw, 1rem)' }}> {cls.schedule}</span><br />
@@ -707,6 +746,26 @@ function Instructor() {
                       }}
                     >
                       {expandedClassId === cls.id ? 'Hide Attendance' : 'View Attendance'}
+                    </button>
+
+                    <button
+                      onClick={() => handleDeleteClass(cls.id)}
+                      style={{
+                        padding: 'clamp(6px, 1.5vw, 8px) clamp(12px, 2vw, 16px)',
+                        backgroundColor: '#dc2626',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '4px',
+                        cursor: 'pointer',
+                        flex: '0 0 auto',
+                        minWidth: '110px',
+                        fontSize: 'clamp(0.9rem, 2.5vw, 1rem)',
+                        transition: 'background-color 0.2s ease'
+                      }}
+                      onMouseOver={e => e.target.style.backgroundColor = '#b91c1c'}
+                      onMouseOut={e => e.target.style.backgroundColor = '#dc2626'}
+                    >
+                      Delete Class
                     </button>
                   </div>
 
