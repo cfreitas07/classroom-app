@@ -1,8 +1,14 @@
 .container {
   max-width: 800px;
-  margin: 80px auto;
+  margin: 0 auto;
+  padding: 2rem;
   text-align: center;
-  padding: 0 20px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #f6f9fc 0%, #eef2f7 100%);
 }
 
 .title {
@@ -13,45 +19,57 @@
 
 .buttonContainer {
   display: flex;
-  gap: 2rem;
+  gap: 1.5rem;
+  margin-bottom: 3rem;
   justify-content: center;
-  flex-wrap: wrap;
+  width: 100%;
+  padding: 0 1rem;
 }
 
 .card {
+  flex: 1;
+  min-width: 280px;
+  max-width: 400px;
+  padding: 1.5rem;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  text-decoration: none;
+  color: #1e293b;
+  font-size: 1.2rem;
+  font-weight: 600;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 2rem;
-  background-color: white;
-  border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  text-decoration: none;
-  color: #2d3748;
-  font-size: 1.2rem;
-  font-weight: 500;
-  transition: all 0.3s ease;
-  min-width: 200px;
-  width: 100%;
-  max-width: 300px;
+  justify-content: center;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  border: 2px solid transparent;
 }
 
 .card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
-  background-color: #f7fafc;
-  color: #4a5568;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
 }
 
 /* Specific hover effects for each card */
+.card:first-child {
+  border-color: #3b82f6;
+}
+
+.card:last-child {
+  border-color: #22c55e;
+}
+
 .card:first-child:hover {
   background-color: #ebf8ff;
   color: #2b6cb0;
+  border-color: #2b6cb0;
 }
 
 .card:last-child:hover {
   background-color: #f0fff4;
   color: #2f855a;
+  border-color: #2f855a;
 }
 
 /* Mobile Responsive Styles */
