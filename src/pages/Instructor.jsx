@@ -34,6 +34,8 @@ function Instructor() {
   const [schedule, setSchedule] = useState('');
   const [maxStudents, setMaxStudents] = useState('');
   const [classes, setClasses] = useState([]);
+  const [selectedDays, setSelectedDays] = useState([]);
+  const [selectedTime, setSelectedTime] = useState('');
   const [attendanceData, setAttendanceData] = useState([]);
   const [expandedClassId, setExpandedClassId] = useState(null);
   const [attendanceRecordsByClass, setAttendanceRecordsByClass] = useState({});
@@ -55,6 +57,23 @@ function Instructor() {
     '#009688', // Teal
     '#795548'  // Brown
   ];
+
+  // Array of weekdays for selection
+  const weekDays = [
+    { id: 'monday', label: 'Monday' },
+    { id: 'tuesday', label: 'Tuesday' },
+    { id: 'wednesday', label: 'Wednesday' },
+    { id: 'thursday', label: 'Thursday' },
+    { id: 'friday', label: 'Friday' },
+    { id: 'saturday', label: 'Saturday' },
+    { id: 'sunday', label: 'Sunday' }
+  ];
+
+  // Array of time slots
+  const timeSlots = Array.from({ length: 24 }, (_, i) => {
+    const hour = i.toString().padStart(2, '0');
+    return `${hour}:00`;
+  });
 
   // Function to get border color for a class
   const getBorderColor = (index) => {
@@ -360,6 +379,18 @@ function Instructor() {
     }
   };
 
+  // Function to handle schedule creation
+  const handleScheduleChange = () => {
+    if (selectedDays.length === 0 || !selectedTime) {
+      setMessage('❌ Please select at least one day and time');
+      return;
+    }
+
+    const daysText = selectedDays.map(day => day.label).join('/');
+    const scheduleText = `${daysText} ${selectedTime}`;
+    setSchedule(scheduleText);
+  };
+
   if (userId) {
     return (
       <div style={{ 
@@ -432,20 +463,133 @@ function Instructor() {
                 fontSize: 'clamp(0.9rem, 2.5vw, 1rem)'
               }} 
             />
-            <input 
-              type="text" 
-              placeholder="Schedule (e.g., Mon/Wed 10am)" 
-              value={schedule} 
-              onChange={(e) => setSchedule(e.target.value)} 
-              style={{ 
-                width: '100%', 
-                padding: 'clamp(8px, 2vw, 12px)', 
-                margin: '8px 0',
-                boxSizing: 'border-box',
-                textAlign: 'center',
-                fontSize: 'clamp(0.9rem, 2.5vw, 1rem)'
-              }} 
-            />
+            
+            <div style={{ 
+              margin: '15px 0',
+              padding: '15px',
+              backgroundColor: '#f8fafc',
+              borderRadius: '8px',
+              textAlign: 'left'
+            }}>
+              <div style={{ 
+                marginBottom: '10px',
+                fontSize: 'clamp(0.9rem, 2.5vw, 1rem)',
+                color: '#1e293b'
+              }}>
+                Select Class Schedule
+              </div>
+              
+              <div style={{ 
+                display: 'flex', 
+                flexWrap: 'wrap', 
+                gap: '8px',
+                marginBottom: '15px'
+              }}>
+                {weekDays.map((day) => (
+                  <button
+                    key={day.id}
+                    onClick={() => {
+                      setSelectedDays(prev => {
+                        const isSelected = prev.some(d => d.id === day.id);
+                        if (isSelected) {
+                          return prev.filter(d => d.id !== day.id);
+                        } else {
+                          return [...prev, day];
+                        }
+                      });
+                    }}
+                    style={{
+                      padding: '6px 12px',
+                      backgroundColor: selectedDays.some(d => d.id === day.id) ? '#3f51b5' : '#e2e8f0',
+                      color: selectedDays.some(d => d.id === day.id) ? 'white' : '#1e293b',
+                      border: 'none',
+                      borderRadius: '4px',
+                      cursor: 'pointer',
+                      fontSize: 'clamp(0.8rem, 2vw, 0.9rem)',
+                      transition: 'all 0.2s ease'
+                    }}
+                    onMouseOver={e => {
+                      if (!selectedDays.some(d => d.id === day.id)) {
+                        e.target.style.backgroundColor = '#cbd5e1';
+                      }
+                    }}
+                    onMouseOut={e => {
+                      if (!selectedDays.some(d => d.id === day.id)) {
+                        e.target.style.backgroundColor = '#e2e8f0';
+                      }
+                    }}
+                  >
+                    {day.label}
+                  </button>
+                ))}
+              </div>
+
+              <div style={{ 
+                marginBottom: '15px',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '10px'
+              }}>
+                <span style={{ 
+                  fontSize: 'clamp(0.9rem, 2.5vw, 1rem)',
+                  color: '#1e293b'
+                }}>
+                  Time:
+                </span>
+                <select
+                  value={selectedTime}
+                  onChange={(e) => setSelectedTime(e.target.value)}
+                  style={{
+                    padding: '6px 12px',
+                    border: '1px solid #e2e8f0',
+                    borderRadius: '4px',
+                    fontSize: 'clamp(0.8rem, 2vw, 0.9rem)',
+                    backgroundColor: 'white',
+                    cursor: 'pointer'
+                  }}
+                >
+                  <option value="">Select time</option>
+                  {timeSlots.map((time) => (
+                    <option key={time} value={time}>
+                      {time}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <button
+                onClick={handleScheduleChange}
+                style={{
+                  padding: '8px 16px',
+                  backgroundColor: '#3f51b5',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '4px',
+                  cursor: 'pointer',
+                  fontSize: 'clamp(0.8rem, 2vw, 0.9rem)',
+                  width: '100%',
+                  transition: 'background-color 0.2s ease'
+                }}
+                onMouseOver={e => e.target.style.backgroundColor = '#303f9f'}
+                onMouseOut={e => e.target.style.backgroundColor = '#3f51b5'}
+              >
+                Set Schedule
+              </button>
+
+              {schedule && (
+                <div style={{ 
+                  marginTop: '10px',
+                  padding: '8px',
+                  backgroundColor: '#e3f2fd',
+                  borderRadius: '4px',
+                  fontSize: 'clamp(0.8rem, 2vw, 0.9rem)',
+                  color: '#1e293b'
+                }}>
+                  Current schedule: {schedule}
+                </div>
+              )}
+            </div>
+
             <input 
               type="number" 
               placeholder="Max Students" 
