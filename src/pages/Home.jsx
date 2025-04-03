@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { FaChalkboardTeacher, FaUserGraduate, FaCode, FaGlobe, FaCopyright, FaUsers, FaClipboardCheck, FaFileCsv, FaHistory, FaShieldAlt } from 'react-icons/fa';
+import { FaChalkboardTeacher, FaUserGraduate, FaCode, FaGlobe, FaCopyright, FaUsers, FaClipboardCheck, FaFileCsv, FaHistory, FaShieldAlt, FaFileContract } from 'react-icons/fa';
 import styles from './Home.module.css';
 import logo from '../images/logo transparent.png';
 
@@ -241,13 +241,17 @@ function Home() {
       }}>
         <div style={{ 
           display: 'flex', 
+          flexDirection: 'column',
           alignItems: 'center', 
           justifyContent: 'center', 
-          gap: '0.5rem',
-          marginBottom: '0.5rem'
+          gap: '0.25rem'
         }}>
-          <FaCode style={{ color: '#4a5568' }} />
-          <p style={{ margin: 0 }}>
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.5rem'
+          }}>
+            <FaCode style={{ color: '#4a5568' }} />
             Created by <a 
               href="https://www.claudiocsdefreitas.com" 
               target="_blank" 
@@ -263,22 +267,34 @@ function Home() {
             >
               Claudio de Freitas
             </a>
-          </p>
-        </div>
-        
-        <div style={{ 
-          display: 'flex', 
-          alignItems: 'center', 
-          justifyContent: 'center', 
-          gap: '1rem',
-          color: '#a0aec0',
-          fontSize: '0.8rem'
-        }}>
-          <FaCopyright />
-          <Link to="/version-history" style={{ textDecoration: 'none', color: '#3f51b5', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            <FaHistory style={{ fontSize: '1rem' }} />
-            Version History
+          </div>
+
+          <Link 
+            to="/version-history" 
+            style={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              gap: '0.5rem',
+              color: '#4a5568',
+              textDecoration: 'none',
+              transition: 'color 0.2s ease'
+            }}
+            onMouseOver={e => e.target.style.color = '#3b82f6'}
+            onMouseOut={e => e.target.style.color = '#4a5568'}
+          >
+            <FaShieldAlt />
+            Privacy & Terms
           </Link>
+
+          <div style={{ 
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.5rem',
+            color: '#64748b',
+            fontSize: '0.9rem'
+          }}>
+            <FaCopyright /> 2025 Presenzo. All rights reserved.
+          </div>
         </div>
       </div>
     </div>

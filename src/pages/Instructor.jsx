@@ -414,17 +414,17 @@ function Instructor() {
       successTitle: 'Class Created!',
       redirecting: 'Redirecting to class page in',
       seconds: 'seconds...',
-      className: 'Class Name:',
+      className: 'Class Name',
       classNamePlaceholder: 'e.g., Introduction to Programming',
       selectSchedule: 'Select Class Schedule',
-      time: 'Time:',
+      time: 'Time',
       selectTime: 'Select time',
       setSchedule: 'Set Schedule',
-      currentSchedule: 'Current schedule:',
-      classSize: 'Class Size:',
+      currentSchedule: 'Current schedule',
+      classSize: 'Class Size',
       classSizePlaceholder: 'e.g., 30',
-      yourClasses: 'Your Classes:',
-      enrollmentCode: 'Enrollment Code:',
+      yourClasses: 'Your Classes',
+      enrollmentCode: 'Enrollment Code',
       showCodes: 'Show Codes',
       hideCodes: 'Hide Codes',
       startAttendance: 'Start Attendance',
@@ -467,7 +467,16 @@ function Instructor() {
         deleteConfirm: 'Are you sure you want to delete this class? This action cannot be undone.',
         noRecords: "No attendance records found."
       },
-      logout: 'LOGOUT'
+      logout: 'LOGOUT',
+      weekdays: {
+        monday: 'Monday',
+        tuesday: 'Tuesday',
+        wednesday: 'Wednesday',
+        thursday: 'Thursday',
+        friday: 'Friday',
+        saturday: 'Saturday',
+        sunday: 'Sunday'
+      }
     },
     pt: {
       title: 'Painel do Instrutor',
@@ -482,17 +491,17 @@ function Instructor() {
       successTitle: 'Turma Criada!',
       redirecting: 'Redirecionando para a página da turma em',
       seconds: 'segundos...',
-      className: 'Nome da Turma:',
+      className: 'Nome da Turma',
       classNamePlaceholder: 'ex., Introdução à Programação',
       selectSchedule: 'Selecionar Horário da Turma',
-      time: 'Horário:',
+      time: 'Horário',
       selectTime: 'Selecionar horário',
       setSchedule: 'Definir Horário',
-      currentSchedule: 'Horário atual:',
-      classSize: 'Tamanho da Turma:',
+      currentSchedule: 'Horário atual',
+      classSize: 'Tamanho da Turma',
       classSizePlaceholder: 'ex., 30',
-      yourClasses: 'Suas Turmas:',
-      enrollmentCode: 'Código de Matrícula:',
+      yourClasses: 'Suas Turmas',
+      enrollmentCode: 'Código de Matrícula',
       showCodes: 'Mostrar Códigos',
       hideCodes: 'Ocultar Códigos',
       startAttendance: 'Iniciar Presença',
@@ -535,7 +544,16 @@ function Instructor() {
         deleteConfirm: 'Tem certeza que deseja excluir esta turma? Esta ação não pode ser desfeita.',
         noRecords: "Nenhum registro de presença encontrado."
       },
-      logout: 'SAIR'
+      logout: 'SAIR',
+      weekdays: {
+        monday: 'Segunda-feira',
+        tuesday: 'Terça-feira',
+        wednesday: 'Quarta-feira',
+        thursday: 'Quinta-feira',
+        friday: 'Sexta-feira',
+        saturday: 'Sábado',
+        sunday: 'Domingo'
+      }
     },
     es: {
       title: 'Panel del Instructor',
@@ -550,17 +568,17 @@ function Instructor() {
       successTitle: '¡Clase Creada!',
       redirecting: 'Redirigiendo a la página de la clase en',
       seconds: 'segundos...',
-      className: 'Nombre de la Clase:',
+      className: 'Nombre de la Clase',
       classNamePlaceholder: 'ej., Introducción a la Programación',
       selectSchedule: 'Seleccionar Horario de la Clase',
-      time: 'Horario:',
+      time: 'Horario',
       selectTime: 'Seleccionar horario',
       setSchedule: 'Establecer Horario',
-      currentSchedule: 'Horario actual:',
-      classSize: 'Tamaño de la Clase:',
+      currentSchedule: 'Horario actual',
+      classSize: 'Tamaño de la Clase',
       classSizePlaceholder: 'ej., 30',
-      yourClasses: 'Tus Clases:',
-      enrollmentCode: 'Código de Matrícula:',
+      yourClasses: 'Tus Clases',
+      enrollmentCode: 'Código de Matrícula',
       showCodes: 'Mostrar Códigos',
       hideCodes: 'Ocultar Códigos',
       startAttendance: 'Iniciar Asistencia',
@@ -603,7 +621,16 @@ function Instructor() {
         deleteConfirm: '¿Está seguro que desea eliminar esta clase? Esta acción no se puede deshacer.',
         noRecords: "No se encontraron registros de asistencia."
       },
-      logout: 'CERRAR SESIÓN'
+      logout: 'CERRAR SESIÓN',
+      weekdays: {
+        monday: 'Lunes',
+        tuesday: 'Martes',
+        wednesday: 'Miércoles',
+        thursday: 'Jueves',
+        friday: 'Viernes',
+        saturday: 'Sábado',
+        sunday: 'Domingo'
+      }
     }
   };
 
