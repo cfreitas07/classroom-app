@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { FaChalkboardTeacher, FaUserGraduate, FaCode, FaGlobe, FaCopyright, FaUsers, FaClipboardCheck, FaFileCsv, FaHistory, FaShieldAlt, FaFileContract } from 'react-icons/fa';
+import { FaChalkboardTeacher, FaUserGraduate, FaCode, FaGlobe, FaCopyright, FaUsers, FaClipboardCheck, FaFileCsv, FaHistory, FaShieldAlt, FaFileContract, FaFacebook, FaLinkedin, FaWhatsapp, FaLink } from 'react-icons/fa';
+import { FaXTwitter } from 'react-icons/fa6';
 import styles from './Home.module.css';
 import logo from '../images/logo transparent.png';
 
 function Home() {
   const [language, setLanguage] = useState('en');
+  const [showCopied, setShowCopied] = useState(false);
 
   const translations = {
     en: {
@@ -13,6 +15,9 @@ function Home() {
       title: 'How it Works',
       instructor: "I'm an Instructor",
       student: "I'm a Student",
+      shareTitle: 'Share with Friends',
+      shareText: 'Check out Presenzo - A simple way to track class attendance!',
+      copied: 'Link copied!',
       steps: [
         {
           title: 'Create Class',
@@ -33,6 +38,9 @@ function Home() {
       title: 'Como Funciona',
       instructor: 'Sou um Instrutor',
       student: 'Sou um Estudante',
+      shareTitle: 'Compartilhe com Amigos',
+      shareText: 'Conheça o Presenzo - Uma maneira simples de controlar a presença em aula!',
+      copied: 'Link copiado!',
       steps: [
         {
           title: 'Criar Turma',
@@ -53,6 +61,9 @@ function Home() {
       title: 'Cómo Funciona',
       instructor: 'Soy un Instructor',
       student: 'Soy un Estudiante',
+      shareTitle: 'Compartir con Amigos',
+      shareText: '¡Mira Presenzo - Una forma sencilla de controlar la asistencia en clase!',
+      copied: '¡Enlace copiado!',
       steps: [
         {
           title: 'Crear Clase',
@@ -223,6 +234,198 @@ function Home() {
               </p>
             </div>
           ))}
+        </div>
+      </div>
+      
+      {/* Share Section */}
+      <div style={{ 
+        maxWidth: '700px', 
+        margin: '0.5rem auto',
+        padding: '0.5rem',
+        backgroundColor: 'white',
+        borderRadius: '6px',
+        boxShadow: '0 1px 2px rgba(0,0,0,0.1)',
+        width: '100%',
+        textAlign: 'center'
+      }}>
+        <div style={{
+          fontSize: '0.8rem',
+          color: '#4a5568',
+          marginBottom: '0.5rem'
+        }}>
+          {translations[language].shareTitle}
+        </div>
+        <div style={{
+          display: 'flex',
+          justifyContent: 'center',
+          gap: '0.5rem',
+          alignItems: 'center'
+        }}>
+          <a
+            href={`https://x.com/intent/tweet?text=${encodeURIComponent(translations[language].shareText)}&url=${encodeURIComponent('https://presenzo.com')}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              padding: '0.35rem',
+              backgroundColor: '#000000',
+              color: 'white',
+              borderRadius: '50%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              textDecoration: 'none',
+              transition: 'transform 0.2s ease, background-color 0.2s ease',
+              width: '24px',
+              height: '24px'
+            }}
+            onMouseOver={e => {
+              e.target.style.transform = 'translateY(-2px)';
+              e.target.style.backgroundColor = '#1a1a1a';
+            }}
+            onMouseOut={e => {
+              e.target.style.transform = 'translateY(0)';
+              e.target.style.backgroundColor = '#000000';
+            }}
+            title="Share on X"
+          >
+            <FaXTwitter size={14} />
+          </a>
+          <a
+            href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent('https://presenzo.com')}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              padding: '0.35rem',
+              backgroundColor: '#4267B2',
+              color: 'white',
+              borderRadius: '50%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              textDecoration: 'none',
+              transition: 'transform 0.2s ease, background-color 0.2s ease',
+              width: '24px',
+              height: '24px'
+            }}
+            onMouseOver={e => {
+              e.target.style.transform = 'translateY(-2px)';
+              e.target.style.backgroundColor = '#365899';
+            }}
+            onMouseOut={e => {
+              e.target.style.transform = 'translateY(0)';
+              e.target.style.backgroundColor = '#4267B2';
+            }}
+            title="Share on Facebook"
+          >
+            <FaFacebook size={14} />
+          </a>
+          <a
+            href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent('https://presenzo.com')}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              padding: '0.35rem',
+              backgroundColor: '#0077b5',
+              color: 'white',
+              borderRadius: '50%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              textDecoration: 'none',
+              transition: 'transform 0.2s ease, background-color 0.2s ease',
+              width: '24px',
+              height: '24px'
+            }}
+            onMouseOver={e => {
+              e.target.style.transform = 'translateY(-2px)';
+              e.target.style.backgroundColor = '#006399';
+            }}
+            onMouseOut={e => {
+              e.target.style.transform = 'translateY(0)';
+              e.target.style.backgroundColor = '#0077b5';
+            }}
+            title="Share on LinkedIn"
+          >
+            <FaLinkedin size={14} />
+          </a>
+          <a
+            href={`https://wa.me/?text=${encodeURIComponent(translations[language].shareText + ' https://presenzo.com')}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              padding: '0.35rem',
+              backgroundColor: '#25D366',
+              color: 'white',
+              borderRadius: '50%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              textDecoration: 'none',
+              transition: 'transform 0.2s ease, background-color 0.2s ease',
+              width: '24px',
+              height: '24px'
+            }}
+            onMouseOver={e => {
+              e.target.style.transform = 'translateY(-2px)';
+              e.target.style.backgroundColor = '#22c55e';
+            }}
+            onMouseOut={e => {
+              e.target.style.transform = 'translateY(0)';
+              e.target.style.backgroundColor = '#25D366';
+            }}
+            title="Share on WhatsApp"
+          >
+            <FaWhatsapp size={14} />
+          </a>
+          <button
+            onClick={() => {
+              navigator.clipboard.writeText('https://presenzo.com');
+              setShowCopied(true);
+              setTimeout(() => setShowCopied(false), 2000);
+            }}
+            style={{
+              padding: '0.35rem',
+              backgroundColor: '#4a5568',
+              color: 'white',
+              border: 'none',
+              borderRadius: '50%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              cursor: 'pointer',
+              transition: 'transform 0.2s ease, background-color 0.2s ease',
+              position: 'relative',
+              width: '24px',
+              height: '24px'
+            }}
+            onMouseOver={e => {
+              e.target.style.transform = 'translateY(-2px)';
+              e.target.style.backgroundColor = '#2d3748';
+            }}
+            onMouseOut={e => {
+              e.target.style.transform = 'translateY(0)';
+              e.target.style.backgroundColor = '#4a5568';
+            }}
+            title="Copy Link"
+          >
+            <FaLink size={14} />
+            {showCopied && (
+              <span style={{
+                position: 'absolute',
+                top: '-20px',
+                left: '50%',
+                transform: 'translateX(-50%)',
+                backgroundColor: '#2d3748',
+                color: 'white',
+                padding: '0.2rem 0.4rem',
+                borderRadius: '4px',
+                fontSize: '0.7rem',
+                whiteSpace: 'nowrap'
+              }}>
+                {translations[language].copied}
+              </span>
+            )}
+          </button>
         </div>
       </div>
       
