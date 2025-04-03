@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { FaChalkboardTeacher, FaUserGraduate, FaCode, FaGlobe, FaCopyright, FaUsers, FaClipboardCheck, FaFileCsv } from 'react-icons/fa';
+import { FaChalkboardTeacher, FaUserGraduate, FaCode, FaGlobe, FaCopyright, FaUsers, FaClipboardCheck, FaFileCsv, FaHistory, FaShieldAlt } from 'react-icons/fa';
 import styles from './Home.module.css';
 import logo from '../images/logo transparent.png';
 
@@ -9,7 +9,10 @@ function Home() {
 
   const translations = {
     en: {
+      mainText: 'Streamline attendance tracking and reporting',
       title: 'How it Works',
+      instructor: "I'm an Instructor",
+      student: "I'm a Student",
       steps: [
         {
           title: 'Create Class',
@@ -26,7 +29,10 @@ function Home() {
       ]
     },
     pt: {
+      mainText: 'Simplifique o controle de presença e relatórios',
       title: 'Como Funciona',
+      instructor: 'Sou um Instrutor',
+      student: 'Sou um Estudante',
       steps: [
         {
           title: 'Criar Turma',
@@ -43,7 +49,10 @@ function Home() {
       ]
     },
     es: {
+      mainText: 'Simplifique el seguimiento y los informes de asistencia',
       title: 'Cómo Funciona',
+      instructor: 'Soy un Instructor',
+      student: 'Soy un Estudiante',
       steps: [
         {
           title: 'Crear Clase',
@@ -62,33 +71,73 @@ function Home() {
   };
 
   return (
-    <div className={styles.container}>
+    <div className={styles.container} style={{ paddingTop: '1rem' }}>
       <Link to="/" style={{ textDecoration: 'none' }}>
         <img 
           src={logo} 
           alt="Presenzo Logo" 
           style={{ 
-            height: '120px',
-            maxHeight: '120px',
-            width: 'auto',
+            height: 'clamp(58.5px, 14.625vw, 87.75px)',
             cursor: 'pointer',
             transition: 'transform 0.2s ease',
+            marginBottom: '0.5rem',
             maxWidth: '100%'
           }} 
           onMouseOver={e => e.target.style.transform = 'scale(1.05)'} 
           onMouseOut={e => e.target.style.transform = 'scale(1)'}
         />
       </Link>
-      <p style={{ color: '#4a5568', marginBottom: '2rem', fontSize: 'clamp(1rem, 4vw, 1.2rem)' }}>Manage classroom attendance easily and securely</p>
-      
+
+      <div style={{ 
+        display: 'flex', 
+        alignItems: 'center', 
+        justifyContent: 'center',
+        gap: '0.25rem',
+        backgroundColor: 'white',
+        padding: '0.25rem',
+        borderRadius: '6px',
+        boxShadow: '0 1px 2px rgba(0,0,0,0.1)',
+        marginBottom: '1rem'
+      }}>
+        <FaGlobe size={14} style={{ color: '#4a5568', marginRight: '0.5rem' }} />
+        {['en', 'pt', 'es'].map((lang) => (
+          <button
+            key={lang}
+            onClick={() => setLanguage(lang)}
+            style={{
+              padding: '0.25rem 0.75rem',
+              border: 'none',
+              background: language === lang ? '#3b82f6' : 'transparent',
+              color: language === lang ? 'white' : '#4a5568',
+              borderRadius: '4px',
+              cursor: 'pointer',
+              transition: 'all 0.2s ease',
+              fontSize: '0.9rem'
+            }}
+          >
+            {lang.toUpperCase()}
+          </button>
+        ))}
+      </div>
+
+      <p style={{ 
+        fontSize: 'clamp(1rem, 2.5vw, 1.4rem)', 
+        textAlign: 'center', 
+        color: '#4a5568',
+        maxWidth: '800px',
+        margin: '0 auto 2rem'
+      }}>
+        {translations[language].mainText}
+      </p>
+
       <div className={styles.buttonContainer}>
         <Link to="/instructor" className={styles.card}>
           <FaChalkboardTeacher size={36} style={{ marginBottom: '0.5rem' }} />
-          I'm an Instructor
+          {translations[language].instructor}
         </Link>
         <Link to="/student" className={styles.card}>
           <FaUserGraduate size={36} style={{ marginBottom: '0.5rem' }} />
-          I'm a Student
+          {translations[language].student}
         </Link>
       </div>
 
@@ -115,35 +164,6 @@ function Home() {
           }}>
             {translations[language].title}
           </h2>
-          <div style={{ 
-            display: 'flex', 
-            gap: '0.25rem',
-            backgroundColor: 'white',
-            padding: '0.25rem',
-            borderRadius: '6px',
-            boxShadow: '0 1px 2px rgba(0,0,0,0.1)',
-            alignItems: 'center'
-          }}>
-            <FaGlobe size={14} style={{ color: '#4a5568', marginRight: '0.5rem' }} />
-            {['en', 'pt', 'es'].map((lang) => (
-              <button
-                key={lang}
-                onClick={() => setLanguage(lang)}
-                style={{
-                  padding: '0.25rem 0.75rem',
-                  border: 'none',
-                  background: language === lang ? '#3b82f6' : 'transparent',
-                  color: language === lang ? 'white' : '#4a5568',
-                  borderRadius: '4px',
-                  cursor: 'pointer',
-                  transition: 'all 0.2s ease',
-                  fontSize: '0.9rem'
-                }}
-              >
-                {lang.toUpperCase()}
-              </button>
-            ))}
-          </div>
         </div>
 
         <div className={styles.gridContainer} style={{
@@ -250,22 +270,14 @@ function Home() {
           display: 'flex', 
           alignItems: 'center', 
           justifyContent: 'center', 
-          gap: '0.5rem',
+          gap: '1rem',
           color: '#a0aec0',
           fontSize: '0.8rem'
         }}>
           <FaCopyright />
-          <Link 
-            to="/version-history" 
-            style={{ 
-              color: '#a0aec0',
-              textDecoration: 'none',
-              transition: 'color 0.3s ease'
-            }}
-            onMouseOver={e => e.target.style.color = '#4a5568'}
-            onMouseOut={e => e.target.style.color = '#a0aec0'}
-          >
-            <span>2025 v1.0.0</span>
+          <Link to="/version-history" style={{ textDecoration: 'none', color: '#3f51b5', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <FaHistory style={{ fontSize: '1rem' }} />
+            Version History
           </Link>
         </div>
       </div>
