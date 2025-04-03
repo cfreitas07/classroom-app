@@ -70,9 +70,10 @@ function Instructor() {
   ];
 
   // Array of time slots
-  const timeSlots = Array.from({ length: 24 }, (_, i) => {
-    const hour = i.toString().padStart(2, '0');
-    return `${hour}:00`;
+  const timeSlots = Array.from({ length: 33 }, (_, i) => {
+    const hour = Math.floor(i / 2) + 6; // Start from 6 AM
+    const minute = (i % 2) * 30; // 0 or 30 minutes
+    return `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
   });
 
   // Function to get border color for a class
@@ -449,20 +450,33 @@ function Instructor() {
         <div style={{ marginTop: 40 }}>
           <h3 style={{ fontSize: 'clamp(1.5rem, 4vw, 2rem)', marginBottom: '1.5rem' }}>Create a New Class</h3>
           <div style={{ maxWidth: '400px', margin: '0 auto', width: '100%' }}>
-            <input 
-              type="text" 
-              placeholder="Class Name" 
-              value={className} 
-              onChange={(e) => setClassName(e.target.value)} 
-              style={{ 
-                width: '100%', 
-                padding: 'clamp(8px, 2vw, 12px)', 
-                margin: '8px 0',
-                boxSizing: 'border-box',
-                textAlign: 'center',
-                fontSize: 'clamp(0.9rem, 2.5vw, 1rem)'
-              }} 
-            />
+            <div style={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              gap: '10px',
+              marginBottom: '8px'
+            }}>
+              <span style={{ 
+                fontSize: 'clamp(0.9rem, 2.5vw, 1rem)',
+                color: '#1e293b',
+                whiteSpace: 'nowrap'
+              }}>
+                Class Name:
+              </span>
+              <input 
+                type="text" 
+                placeholder="e.g., Introduction to Programming" 
+                value={className} 
+                onChange={(e) => setClassName(e.target.value)} 
+                style={{ 
+                  width: '100%', 
+                  padding: 'clamp(8px, 2vw, 12px)', 
+                  boxSizing: 'border-box',
+                  textAlign: 'left',
+                  fontSize: 'clamp(0.9rem, 2.5vw, 1rem)'
+                }} 
+              />
+            </div>
             
             <div style={{ 
               margin: '15px 0',
@@ -590,20 +604,46 @@ function Instructor() {
               )}
             </div>
 
-            <input 
-              type="number" 
-              placeholder="Max Students" 
-              value={maxStudents} 
-              onChange={(e) => setMaxStudents(e.target.value)} 
-              style={{ 
-                width: '100%', 
-                padding: 'clamp(8px, 2vw, 12px)', 
-                margin: '8px 0',
-                boxSizing: 'border-box',
+            <div style={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              gap: '10px',
+              marginBottom: '8px'
+            }}>
+              <span style={{ 
+                fontSize: 'clamp(0.9rem, 2.5vw, 1rem)',
+                color: '#1e293b',
+                whiteSpace: 'nowrap'
+              }}>
+                Class Size:
+              </span>
+              <input 
+                type="number" 
+                placeholder="e.g., 30" 
+                value={maxStudents} 
+                onChange={(e) => setMaxStudents(e.target.value)} 
+                style={{ 
+                  width: '100%', 
+                  padding: 'clamp(8px, 2vw, 12px)', 
+                  boxSizing: 'border-box',
+                  textAlign: 'left',
+                  fontSize: 'clamp(0.9rem, 2.5vw, 1rem)'
+                }} 
+              />
+            </div>
+            {message && (
+              <div style={{ 
+                marginTop: '1rem', 
+                padding: '12px', 
+                backgroundColor: message.includes('✅') ? '#ecfdf5' : '#fef2f2',
+                borderRadius: '6px',
+                color: message.includes('✅') ? '#059669' : '#dc2626',
                 textAlign: 'center',
-                fontSize: 'clamp(0.9rem, 2.5vw, 1rem)'
-              }} 
-            />
+                fontSize: '0.9rem'
+              }}>
+                {message}
+              </div>
+            )}
             <button 
               onClick={handleCreateClass} 
               style={{ 
@@ -616,8 +656,11 @@ function Instructor() {
                 marginTop: 10, 
                 cursor: 'pointer',
                 textAlign: 'center',
-                fontSize: 'clamp(0.9rem, 2.5vw, 1rem)'
+                fontSize: 'clamp(0.9rem, 2.5vw, 1rem)',
+                transition: 'background-color 0.2s ease'
               }}
+              onMouseOver={e => e.target.style.backgroundColor = '#303f9f'}
+              onMouseOut={e => e.target.style.backgroundColor = '#3f51b5'}
             >
               Create Class
             </button>
@@ -645,7 +688,7 @@ function Instructor() {
                 }}>
                   <strong style={{ fontSize: 'clamp(1.1rem, 3vw, 1.3rem)' }}>{cls.className}</strong> – 
                   <span style={{ fontSize: 'clamp(0.9rem, 2.5vw, 1rem)' }}> {cls.schedule}</span><br />
-                  <span style={{ fontSize: 'clamp(0.9rem, 2.5vw, 1rem)' }}>Max Students: {cls.maxStudents}</span><br />
+                  <span style={{ fontSize: 'clamp(0.9rem, 2.5vw, 1rem)' }}>Class Size: {cls.maxStudents}</span><br />
                   <div style={{ 
                     display: 'flex', 
                     alignItems: 'center', 

@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { FaChalkboardTeacher, FaUserGraduate, FaCode, FaGlobe, FaCopyright, FaUserPlus, FaUsers, FaClipboardCheck, FaFileCsv, FaChevronDown, FaChevronUp, FaCheck, FaLanguage } from 'react-icons/fa';
+import { FaChalkboardTeacher, FaUserGraduate, FaCode, FaGlobe, FaCopyright, FaUsers, FaClipboardCheck, FaFileCsv } from 'react-icons/fa';
 import styles from './Home.module.css';
 import logo from '../images/logo transparent.png';
 
 function Home() {
-  const [isExpanded, setIsExpanded] = useState(false);
   const [language, setLanguage] = useState('en');
 
   const translations = {
@@ -96,7 +95,7 @@ function Home() {
       {/* How it Works Section */}
       <div className={styles.howItWorksSection} style={{ 
         maxWidth: '700px', 
-        margin: '2rem auto',
+        margin: '0.225rem auto',
         padding: '1.5rem',
         backgroundColor: '#d5e0f2',
         borderRadius: '10px',
@@ -122,53 +121,28 @@ function Home() {
             backgroundColor: 'white',
             padding: '0.25rem',
             borderRadius: '6px',
-            boxShadow: '0 1px 2px rgba(0,0,0,0.1)'
+            boxShadow: '0 1px 2px rgba(0,0,0,0.1)',
+            alignItems: 'center'
           }}>
-            <button
-              onClick={() => setLanguage('en')}
-              style={{
-                padding: '0.25rem 0.75rem',
-                border: 'none',
-                background: language === 'en' ? '#3b82f6' : 'transparent',
-                color: language === 'en' ? 'white' : '#4a5568',
-                borderRadius: '4px',
-                cursor: 'pointer',
-                transition: 'all 0.2s ease',
-                fontSize: '0.9rem'
-              }}
-            >
-              EN
-            </button>
-            <button
-              onClick={() => setLanguage('pt')}
-              style={{
-                padding: '0.25rem 0.75rem',
-                border: 'none',
-                background: language === 'pt' ? '#3b82f6' : 'transparent',
-                color: language === 'pt' ? 'white' : '#4a5568',
-                borderRadius: '4px',
-                cursor: 'pointer',
-                transition: 'all 0.2s ease',
-                fontSize: '0.9rem'
-              }}
-            >
-              PT
-            </button>
-            <button
-              onClick={() => setLanguage('es')}
-              style={{
-                padding: '0.25rem 0.75rem',
-                border: 'none',
-                background: language === 'es' ? '#3b82f6' : 'transparent',
-                color: language === 'es' ? 'white' : '#4a5568',
-                borderRadius: '4px',
-                cursor: 'pointer',
-                transition: 'all 0.2s ease',
-                fontSize: '0.9rem'
-              }}
-            >
-              ES
-            </button>
+            <FaGlobe size={14} style={{ color: '#4a5568', marginRight: '0.5rem' }} />
+            {['en', 'pt', 'es'].map((lang) => (
+              <button
+                key={lang}
+                onClick={() => setLanguage(lang)}
+                style={{
+                  padding: '0.25rem 0.75rem',
+                  border: 'none',
+                  background: language === lang ? '#3b82f6' : 'transparent',
+                  color: language === lang ? 'white' : '#4a5568',
+                  borderRadius: '4px',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease',
+                  fontSize: '0.9rem'
+                }}
+              >
+                {lang.toUpperCase()}
+              </button>
+            ))}
           </div>
         </div>
 
@@ -233,7 +207,7 @@ function Home() {
       </div>
       
       <div className={styles.footer} style={{ 
-        marginTop: '4rem', 
+        marginTop: '1rem', 
         padding: '1.5rem',
         borderTop: '1px solid #e2e8f0',
         color: '#718096',
@@ -243,7 +217,7 @@ function Home() {
         borderRadius: '0 0 12px 12px',
         width: '100%',
         maxWidth: '800px',
-        margin: '4rem auto 0'
+        margin: '1rem auto 0'
       }}>
         <div style={{ 
           display: 'flex', 
@@ -262,10 +236,7 @@ function Home() {
                 color: '#4a5568', 
                 textDecoration: 'none', 
                 fontWeight: '600',
-                transition: 'color 0.3s ease',
-                ':hover': {
-                  color: '#2b6cb0'
-                }
+                transition: 'color 0.3s ease'
               }}
               onMouseOver={e => e.target.style.color = '#2b6cb0'}
               onMouseOut={e => e.target.style.color = '#4a5568'}

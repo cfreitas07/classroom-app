@@ -22,6 +22,8 @@ function Student() {
   const [classData, setClassData] = useState(null);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [countdown, setCountdown] = useState(5);
+  const [showPrivacyNotice, setShowPrivacyNotice] = useState(false);
+  const [showAttendanceInfo, setShowAttendanceInfo] = useState(false);
   const navigate = useNavigate();
 
   // Check for recent submission on component mount
@@ -245,7 +247,7 @@ function Student() {
             height: 'clamp(40px, 10vw, 60px)',
             cursor: 'pointer',
             transition: 'transform 0.2s ease',
-            marginBottom: '2rem',
+            marginBottom: '0.5rem',
             maxWidth: '100%',
             height: 'auto'
           }} 
@@ -254,26 +256,7 @@ function Student() {
         />
       </Link>
 
-      <h2 style={{ fontSize: 'clamp(1.5rem, 4vw, 2rem)', marginBottom: '1.5rem' }}>Student Check-In</h2>
-
-      <div style={{ 
-        textAlign: 'left',
-        marginBottom: '1.5rem',
-        padding: '1rem',
-        backgroundColor: '#f8fafc',
-        borderRadius: '8px',
-        fontSize: 'clamp(0.9rem, 2.5vw, 1rem)',
-        color: '#64748b'
-      }}>
-        <p style={{ marginBottom: '0.5rem' }}>
-          To check in, you'll need:
-        </p>
-        <ol style={{ margin: '0.5rem 0 0 1.5rem', padding: 0 }}>
-          <li style={{ marginBottom: '0.5rem' }}><strong>Class Enrollment Code:</strong> Get this from your instructor</li>
-          <li style={{ marginBottom: '0.5rem' }}><strong>Your Student Code:</strong> Your name initials (e.g., First Name and Last Name Initials. JohnD)</li>
-          <li><strong>Attendance Code:</strong> The 3-digit code shown by your instructor</li>
-        </ol>
-      </div>
+      <h2 style={{ fontSize: 'clamp(1.5rem, 4vw, 2rem)', marginBottom: '1rem' }}>Student Check-In</h2>
 
       <div style={{ 
         marginBottom: '1rem',
@@ -328,48 +311,135 @@ function Student() {
           }}>
             Step 2: Enter Your Details
           </div>
-          <input
-            type="text"
-            placeholder="Enter your student code or ID"
-            value={studentCode}
-            onChange={(e) => setStudentCode(e.target.value)}
-            style={{ 
-              width: '100%', 
-              padding: 'clamp(8px, 2vw, 12px)', 
-              margin: '10px 0',
+
+          {/* Student Identifier Section */}
+          <div style={{
+            marginBottom: '1.5rem',
+            padding: '15px',
+            backgroundColor: '#f8fafc',
+            borderRadius: '8px',
+            border: '1px solid #e2e8f0'
+          }}>
+            <div style={{ 
               fontSize: 'clamp(0.9rem, 2.5vw, 1rem)',
-              borderColor: !studentCode.trim() ? '#ffcdd2' : '#e2e8f0',
-              borderWidth: '1px',
-              borderStyle: 'solid',
+              color: '#1e293b',
+              fontWeight: '500',
+              marginBottom: '8px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px'
+            }}>
+              👤 Student Identifier
+            </div>
+            <div style={{
+              marginBottom: '1rem',
+              padding: '12px',
+              backgroundColor: '#fff3e0',
               borderRadius: '6px',
-              outline: 'none',
-              boxSizing: 'border-box',
-              transition: 'border-color 0.2s ease'
-            }}
-            required
-          />
-          <input
-            type="tel"
-            inputMode="numeric"
-            pattern="[0-9]{3}"
-            maxLength="3"
-            placeholder="Enter the 3-digit code shown by your instructor"
-            value={attendanceCode}
-            onChange={(e) => {
-              const value = e.target.value.replace(/[^0-9]/g, '').slice(0, 3);
-              setAttendanceCode(value);
-            }}
-            style={{ 
-              width: '100%', 
-              padding: 'clamp(8px, 2vw, 12px)', 
-              margin: '10px 0',
+              border: '1px solid #ffb74d',
+              textAlign: 'left',
+              transition: 'all 0.3s ease'
+            }}>
+              <div style={{ 
+                fontSize: 'clamp(0.9rem, 2.5vw, 1rem)',
+                color: '#e65100',
+                fontWeight: '500',
+                marginBottom: showPrivacyNotice ? '8px' : '0',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                cursor: 'pointer'
+              }}
+              onClick={() => setShowPrivacyNotice(!showPrivacyNotice)}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  ⚠️ Privacy Notice
+                </div>
+                <div style={{ 
+                  transform: showPrivacyNotice ? 'rotate(180deg)' : 'rotate(0deg)',
+                  transition: 'transform 0.3s ease',
+                  fontSize: '1.2rem'
+                }}>
+                  ▼
+                </div>
+              </div>
+              <div style={{ 
+                fontSize: 'clamp(0.85rem, 2.5vw, 0.9rem)',
+                color: '#1e293b',
+                lineHeight: '1.4',
+                maxHeight: showPrivacyNotice ? '200px' : '0',
+                overflow: 'hidden',
+                transition: 'all 0.3s ease',
+                opacity: showPrivacyNotice ? '1' : '0'
+              }}>
+                Please contact your instructor to confirm what identifier you should use. For privacy reasons, do not enter your full name. Your instructor will provide guidance on how to identify yourself in the system.
+              </div>
+            </div>
+            <input
+              type="text"
+              placeholder="Enter your student identifier"
+              value={studentCode}
+              onChange={(e) => setStudentCode(e.target.value)}
+              style={{ 
+                width: '100%', 
+                padding: 'clamp(8px, 2vw, 12px)', 
+                margin: '10px 0',
+                fontSize: 'clamp(0.9rem, 2.5vw, 1rem)',
+                borderColor: !studentCode.trim() ? '#ffcdd2' : '#e2e8f0',
+                borderWidth: '1px',
+                borderStyle: 'solid',
+                borderRadius: '6px',
+                outline: 'none',
+                boxSizing: 'border-box',
+                transition: 'border-color 0.2s ease'
+              }}
+              required
+            />
+          </div>
+
+          {/* Attendance Code Section */}
+          <div style={{
+            marginBottom: '1.5rem',
+            padding: '15px',
+            backgroundColor: '#f8fafc',
+            borderRadius: '8px',
+            border: '1px solid #e2e8f0'
+          }}>
+            <div style={{ 
               fontSize: 'clamp(0.9rem, 2.5vw, 1rem)',
-              border: '1px solid #e2e8f0',
-              borderRadius: '6px',
-              boxSizing: 'border-box',
-              transition: 'border-color 0.2s ease'
-            }}
-          />
+              color: '#1e293b',
+              fontWeight: '500',
+              marginBottom: '8px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px'
+            }}>
+              🔢 Attendance Code
+            </div>
+            <input
+              type="tel"
+              inputMode="numeric"
+              pattern="[0-9]{3}"
+              maxLength="3"
+              placeholder="Enter the 3-digit code from the screen"
+              value={attendanceCode}
+              onChange={(e) => {
+                const value = e.target.value.replace(/[^0-9]/g, '').slice(0, 3);
+                setAttendanceCode(value);
+              }}
+              style={{ 
+                width: '100%', 
+                padding: 'clamp(8px, 2vw, 12px)', 
+                margin: '10px 0',
+                fontSize: 'clamp(0.9rem, 2.5vw, 1rem)',
+                border: '1px solid #e2e8f0',
+                borderRadius: '6px',
+                boxSizing: 'border-box',
+                transition: 'border-color 0.2s ease'
+              }}
+            />
+          </div>
+
           <button 
             onClick={handleSubmitAttendance} 
             style={{
