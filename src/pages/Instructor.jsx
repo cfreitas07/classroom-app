@@ -54,7 +54,7 @@ function Instructor() {
 
   // Array of border colors for class cards
   const borderColors = [
-    '#3f51b5', // Indigo
+    '#3b82f6', // Blue
     '#f57c00', // Orange
     '#2e7d32', // Green
     '#c2185b', // Pink
@@ -615,7 +615,9 @@ function Instructor() {
         padding: '0 20px', 
         textAlign: 'center',
         width: '100%',
-        boxSizing: 'border-box'
+        boxSizing: 'border-box',
+        background: 'linear-gradient(to bottom right, #e0f2fe, #dbeafe)',
+        minHeight: '100vh'
       }}>
         <div style={{ 
           display: 'flex', 
@@ -643,7 +645,7 @@ function Instructor() {
             onClick={handleLogout}
             style={{
               padding: '12px 24px',
-              backgroundColor: '#64748b',
+              backgroundColor: '#3b82f6',
               color: 'white',
               border: 'none',
               borderRadius: '4px',
@@ -652,11 +654,11 @@ function Instructor() {
               fontWeight: '600',
               transition: 'background-color 0.2s ease',
               ':hover': {
-                backgroundColor: '#475569'
+                backgroundColor: '#2563eb'
               }
             }}
-            onMouseOver={e => e.target.style.backgroundColor = '#475569'}
-            onMouseOut={e => e.target.style.backgroundColor = '#64748b'}
+            onMouseOver={e => e.target.style.backgroundColor = '#2563eb'}
+            onMouseOut={e => e.target.style.backgroundColor = '#3b82f6'}
           >
             {translations[language].logout}
           </button>
@@ -764,7 +766,7 @@ function Instructor() {
                     }}
                     style={{
                       padding: '6px 12px',
-                      backgroundColor: selectedDays.some(d => d.id === day.id) ? '#3f51b5' : '#e2e8f0',
+                      backgroundColor: selectedDays.some(d => d.id === day.id) ? '#3b82f6' : '#e2e8f0',
                       color: selectedDays.some(d => d.id === day.id) ? 'white' : '#1e293b',
                       border: 'none',
                       borderRadius: '4px',
@@ -825,7 +827,7 @@ function Instructor() {
                 onClick={handleScheduleChange}
                 style={{
                   padding: '8px 16px',
-                  backgroundColor: '#3f51b5',
+                  backgroundColor: '#3b82f6',
                   color: 'white',
                   border: 'none',
                   borderRadius: '4px',
@@ -834,8 +836,8 @@ function Instructor() {
                   width: '100%',
                   transition: 'background-color 0.2s ease'
                 }}
-                onMouseOver={e => e.target.style.backgroundColor = '#303f9f'}
-                onMouseOut={e => e.target.style.backgroundColor = '#3f51b5'}
+                onMouseOver={e => e.target.style.backgroundColor = '#2563eb'}
+                onMouseOut={e => e.target.style.backgroundColor = '#3b82f6'}
               >
                 {translations[language].setSchedule}
               </button>
@@ -899,7 +901,7 @@ function Instructor() {
               style={{ 
                 padding: 'clamp(8px, 2vw, 12px)', 
                 width: '100%', 
-                backgroundColor: '#3f51b5', 
+                backgroundColor: '#3b82f6', 
                 color: 'white', 
                 border: 'none', 
                 borderRadius: '4px', 
@@ -909,8 +911,8 @@ function Instructor() {
                 fontSize: 'clamp(0.9rem, 2.5vw, 1rem)',
                 transition: 'background-color 0.2s ease'
               }}
-              onMouseOver={e => e.target.style.backgroundColor = '#303f9f'}
-              onMouseOut={e => e.target.style.backgroundColor = '#3f51b5'}
+              onMouseOver={e => e.target.style.backgroundColor = '#2563eb'}
+              onMouseOut={e => e.target.style.backgroundColor = '#3b82f6'}
             >
               {translations[language].createClass}
             </button>
@@ -1056,7 +1058,7 @@ function Instructor() {
                           <div style={{
                             fontSize: 'clamp(2rem, 5vw, 2.8rem)',
                             fontWeight: 'bold',
-                            color: '#3f51b5',
+                            color: '#3b82f6',
                             letterSpacing: '4px',
                             padding: 'clamp(10px, 2vw, 15px)',
                             backgroundColor: '#e3f2fd',
@@ -1231,7 +1233,7 @@ function Instructor() {
                           onClick={() => fetchAttendanceForClass(cls.id, true)}
                           style={{
                             padding: '8px 16px',
-                            backgroundColor: '#3f51b5',
+                            backgroundColor: '#3b82f6',
                             color: 'white',
                             border: 'none',
                             borderRadius: '4px',
@@ -1307,7 +1309,9 @@ function Instructor() {
       padding: '0 20px', 
       textAlign: 'center',
       width: '100%',
-      boxSizing: 'border-box'
+      boxSizing: 'border-box',
+      background: 'linear-gradient(to bottom right, #e0f2fe, #dbeafe)',
+      minHeight: '100vh'
     }}>
       <Link to="/" style={{ textDecoration: 'none' }}>
         <img 
@@ -1422,7 +1426,7 @@ function Instructor() {
           style={{ 
             padding: '12px', 
             width: '100%', 
-            backgroundColor: isLogin ? '#3f51b5' : '#10b981', 
+            backgroundColor: isLogin ? '#3b82f6' : '#10b981', 
             color: 'white', 
             border: 'none', 
             borderRadius: '6px', 
@@ -1433,8 +1437,8 @@ function Instructor() {
             fontWeight: '500',
             transition: 'background-color 0.2s ease'
           }}
-          onMouseOver={e => e.target.style.backgroundColor = isLogin ? '#303f9f' : '#059669'}
-          onMouseOut={e => e.target.style.backgroundColor = isLogin ? '#3f51b5' : '#10b981'}
+          onMouseOver={e => e.target.style.backgroundColor = isLogin ? '#2563eb' : '#059669'}
+          onMouseOut={e => e.target.style.backgroundColor = isLogin ? '#3b82f6' : '#10b981'}
         >
           {translations[language].login}
         </button>
@@ -1471,8 +1475,8 @@ function Instructor() {
           style={{ 
             padding: '10px 20px', 
             backgroundColor: 'transparent', 
-            color: '#3f51b5', 
-            border: '2px solid #3f51b5', 
+            color: '#3b82f6', 
+            border: '2px solid #3b82f6', 
             borderRadius: '6px', 
             cursor: 'pointer',
             textAlign: 'center',
@@ -1481,12 +1485,12 @@ function Instructor() {
             transition: 'all 0.2s ease'
           }}
           onMouseOver={e => {
-            e.target.style.backgroundColor = '#3f51b5';
+            e.target.style.backgroundColor = '#3b82f6';
             e.target.style.color = 'white';
           }}
           onMouseOut={e => {
             e.target.style.backgroundColor = 'transparent';
-            e.target.style.color = '#3f51b5';
+            e.target.style.color = '#3b82f6';
           }}
         >
           {translations[language].signUp}

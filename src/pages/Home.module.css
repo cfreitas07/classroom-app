@@ -8,7 +8,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #f6f9fc 0%, #eef2f7 100%);
+  background: linear-gradient(to bottom right, #e0f2fe, #dbeafe);
 }
 
 .title {
@@ -61,7 +61,7 @@
 }
 
 .card:first-child:hover {
-  background-color: #ebf8ff;
+  background-color: #e0f2fe;
   color: #2b6cb0;
   border-color: #2b6cb0;
 }

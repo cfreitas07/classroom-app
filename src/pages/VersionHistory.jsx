@@ -121,7 +121,7 @@ function VersionHistory() {
         color: '#718096',
         fontSize: '0.9rem',
         textAlign: 'center',
-        background: 'linear-gradient(to bottom, transparent, rgba(237, 242, 247, 0.5))',
+        background: 'linear-gradient(to bottom, transparent, rgba(224, 242, 254, 0.5))',
         borderRadius: '0 0 12px 12px',
         width: '100vw',
         position: 'relative',
