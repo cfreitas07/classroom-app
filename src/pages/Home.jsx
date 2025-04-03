@@ -1,11 +1,66 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { FaChalkboardTeacher, FaUserGraduate, FaCode, FaGlobe, FaCopyright, FaUserPlus, FaUsers, FaClipboardCheck, FaFileCsv, FaChevronDown, FaChevronUp, FaCheck } from 'react-icons/fa';
+import { FaChalkboardTeacher, FaUserGraduate, FaCode, FaGlobe, FaCopyright, FaUserPlus, FaUsers, FaClipboardCheck, FaFileCsv, FaChevronDown, FaChevronUp, FaCheck, FaLanguage } from 'react-icons/fa';
 import styles from './Home.module.css';
 import logo from '../images/logo transparent.png';
 
 function Home() {
   const [isExpanded, setIsExpanded] = useState(false);
+  const [language, setLanguage] = useState('en');
+
+  const translations = {
+    en: {
+      title: 'How it Works',
+      steps: [
+        {
+          title: 'Create Class',
+          description: 'Set up your classroom with name, schedule, and size'
+        },
+        {
+          title: 'Share Code',
+          description: 'Generate and share attendance code at the start of each class'
+        },
+        {
+          title: 'Download Reports',
+          description: 'Get attendance records in CSV format anytime'
+        }
+      ]
+    },
+    pt: {
+      title: 'Como Funciona',
+      steps: [
+        {
+          title: 'Criar Turma',
+          description: 'Configure sua sala com nome, horário e tamanho'
+        },
+        {
+          title: 'Compartilhar Código',
+          description: 'Gere e compartilhe o código de presença no início de cada aula'
+        },
+        {
+          title: 'Baixar Relatórios',
+          description: 'Obtenha registros de presença em formato CSV a qualquer momento'
+        }
+      ]
+    },
+    es: {
+      title: 'Cómo Funciona',
+      steps: [
+        {
+          title: 'Crear Clase',
+          description: 'Configure su aula con nombre, horario y tamaño'
+        },
+        {
+          title: 'Compartir Código',
+          description: 'Genere y comparta el código de asistencia al inicio de cada clase'
+        },
+        {
+          title: 'Descargar Informes',
+          description: 'Obtenga registros de asistencia en formato CSV en cualquier momento'
+        }
+      ]
+    }
+  };
 
   return (
     <div className={styles.container}>
@@ -40,186 +95,141 @@ function Home() {
 
       {/* How it Works Section */}
       <div className={styles.howItWorksSection} style={{ 
-        maxWidth: '800px', 
-        margin: '3rem auto',
-        padding: '2rem',
+        maxWidth: '700px', 
+        margin: '2rem auto',
+        padding: '1.5rem',
         backgroundColor: '#d5e0f2',
-        borderRadius: '12px',
+        borderRadius: '10px',
         boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-        width: '100%',
-        maxWidth: '500px'
+        width: '100%'
       }}>
-        <button
-          onClick={() => setIsExpanded(!isExpanded)}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: '0.5rem',
-            width: '100%',
-            padding: '0.5rem',
-            backgroundColor: 'transparent',
-            border: 'none',
-            cursor: 'pointer',
-            color: '#1e293b',
-            fontSize: '0.9rem',
-            fontWeight: '600',
-            transition: 'color 0.2s ease'
-          }}
-          onMouseOver={e => e.target.style.color = '#3b82f6'}
-          onMouseOut={e => e.target.style.color = '#1e293b'}
-        >
-          How It Works
-          {isExpanded ? <FaChevronUp /> : <FaChevronDown />}
-        </button>
+        <div style={{ 
+          display: 'flex', 
+          justifyContent: 'space-between', 
+          alignItems: 'center',
+          marginBottom: '1.5rem'
+        }}>
+          <h2 style={{ 
+            color: '#1e40af', 
+            fontSize: 'clamp(1.3rem, 3vw, 1.8rem)',
+            margin: 0
+          }}>
+            {translations[language].title}
+          </h2>
+          <div style={{ 
+            display: 'flex', 
+            gap: '0.25rem',
+            backgroundColor: 'white',
+            padding: '0.25rem',
+            borderRadius: '6px',
+            boxShadow: '0 1px 2px rgba(0,0,0,0.1)'
+          }}>
+            <button
+              onClick={() => setLanguage('en')}
+              style={{
+                padding: '0.25rem 0.75rem',
+                border: 'none',
+                background: language === 'en' ? '#3b82f6' : 'transparent',
+                color: language === 'en' ? 'white' : '#4a5568',
+                borderRadius: '4px',
+                cursor: 'pointer',
+                transition: 'all 0.2s ease',
+                fontSize: '0.9rem'
+              }}
+            >
+              EN
+            </button>
+            <button
+              onClick={() => setLanguage('pt')}
+              style={{
+                padding: '0.25rem 0.75rem',
+                border: 'none',
+                background: language === 'pt' ? '#3b82f6' : 'transparent',
+                color: language === 'pt' ? 'white' : '#4a5568',
+                borderRadius: '4px',
+                cursor: 'pointer',
+                transition: 'all 0.2s ease',
+                fontSize: '0.9rem'
+              }}
+            >
+              PT
+            </button>
+            <button
+              onClick={() => setLanguage('es')}
+              style={{
+                padding: '0.25rem 0.75rem',
+                border: 'none',
+                background: language === 'es' ? '#3b82f6' : 'transparent',
+                color: language === 'es' ? 'white' : '#4a5568',
+                borderRadius: '4px',
+                cursor: 'pointer',
+                transition: 'all 0.2s ease',
+                fontSize: '0.9rem'
+              }}
+            >
+              ES
+            </button>
+          </div>
+        </div>
 
-        {isExpanded && (
-          <>
-            {/* Instructor Section */}
-            <div style={{
+        <div className={styles.gridContainer} style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
+          gap: '1.25rem'
+        }}>
+          {translations[language].steps.map((step, index) => (
+            <div key={index} className={styles.stepCard} style={{
               textAlign: 'center',
-              padding: '1rem',
-              backgroundColor: '#eff6ff',
+              padding: '1.25rem',
+              backgroundColor: 'white',
               borderRadius: '8px',
-              marginTop: '1.5rem'
-            }}>
-              <h3 style={{ color: '#1e40af', marginBottom: '1rem', fontSize: 'clamp(1.2rem, 3vw, 1.5rem)' }}>For Instructors</h3>
-              <div className={styles.gridContainer} style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-                gap: '1.5rem'
+              boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+              transition: 'transform 0.2s ease, box-shadow 0.2s ease',
+              position: 'relative'
+            }}
+            onMouseOver={e => e.target.style.transform = 'translateY(-2px)'}
+            onMouseOut={e => e.target.style.transform = 'translateY(0)'}>
+              <div style={{
+                position: 'absolute',
+                top: '-10px',
+                left: '50%',
+                transform: 'translateX(-50%)',
+                backgroundColor: '#3b82f6',
+                color: 'white',
+                width: '20px',
+                height: '20px',
+                borderRadius: '50%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: '0.8rem',
+                fontWeight: 'bold'
               }}>
-                {/* Step 1 */}
-                <div className={styles.stepCard} style={{
-                  textAlign: 'center',
-                  padding: '1rem',
-                  backgroundColor: 'white',
-                  borderRadius: '8px',
-                  boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
-                  transition: 'transform 0.2s ease'
-                }}
-                onMouseOver={e => e.target.style.transform = 'translateY(-4px)'}
-                onMouseOut={e => e.target.style.transform = 'translateY(0)'}>
-                  <FaUserPlus size={32} style={{ color: '#3b82f6', marginBottom: '0.5rem' }} />
-                  <h3 style={{ color: '#1e293b', marginBottom: '0.5rem', fontSize: 'clamp(1rem, 2.5vw, 1.2rem)' }}>1. Create Account</h3>
-                  <p style={{ color: '#64748b', fontSize: 'clamp(0.85rem, 2vw, 0.9rem)' }}>Sign up as an instructor to get started</p>
-                </div>
-
-                {/* Step 2 */}
-                <div className={styles.stepCard} style={{
-                  textAlign: 'center',
-                  padding: '1rem',
-                  backgroundColor: 'white',
-                  borderRadius: '8px',
-                  boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
-                  transition: 'transform 0.2s ease'
-                }}
-                onMouseOver={e => e.target.style.transform = 'translateY(-4px)'}
-                onMouseOut={e => e.target.style.transform = 'translateY(0)'}>
-                  <FaUsers size={32} style={{ color: '#3b82f6', marginBottom: '0.5rem' }} />
-                  <h3 style={{ color: '#1e293b', marginBottom: '0.5rem', fontSize: 'clamp(1rem, 2.5vw, 1.2rem)' }}>2. Create Class</h3>
-                  <p style={{ color: '#64748b', fontSize: 'clamp(0.85rem, 2vw, 0.9rem)' }}>Set class name, meeting times, and class size</p>
-                </div>
-
-                {/* Step 3 */}
-                <div className={styles.stepCard} style={{
-                  textAlign: 'center',
-                  padding: '1rem',
-                  backgroundColor: 'white',
-                  borderRadius: '8px',
-                  boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
-                  transition: 'transform 0.2s ease'
-                }}
-                onMouseOver={e => e.target.style.transform = 'translateY(-4px)'}
-                onMouseOut={e => e.target.style.transform = 'translateY(0)'}>
-                  <FaClipboardCheck size={32} style={{ color: '#3b82f6', marginBottom: '0.5rem' }} />
-                  <h3 style={{ color: '#1e293b', marginBottom: '0.5rem', fontSize: 'clamp(1rem, 2.5vw, 1.2rem)' }}>3. Start Attendance</h3>
-                  <p style={{ color: '#64748b', fontSize: 'clamp(0.85rem, 2vw, 0.9rem)' }}>Generate and share attendance code at the start of each class</p>
-                </div>
-
-                {/* Step 4 */}
-                <div className={styles.stepCard} style={{
-                  textAlign: 'center',
-                  padding: '1rem',
-                  backgroundColor: 'white',
-                  borderRadius: '8px',
-                  boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
-                  transition: 'transform 0.2s ease'
-                }}
-                onMouseOver={e => e.target.style.transform = 'translateY(-4px)'}
-                onMouseOut={e => e.target.style.transform = 'translateY(0)'}>
-                  <FaFileCsv size={32} style={{ color: '#3b82f6', marginBottom: '0.5rem' }} />
-                  <h3 style={{ color: '#1e293b', marginBottom: '0.5rem', fontSize: 'clamp(1rem, 2.5vw, 1.2rem)' }}>4. Download Records</h3>
-                  <p style={{ color: '#64748b', fontSize: 'clamp(0.85rem, 2vw, 0.9rem)' }}>Get attendance reports in CSV format anytime</p>
-                </div>
+                {index + 1}
               </div>
-            </div>
-
-            {/* Student Section */}
-            <div style={{
-              textAlign: 'center',
-              padding: '1rem',
-              backgroundColor: '#f0fdf4',
-              borderRadius: '8px',
-              marginTop: '1.5rem'
-            }}>
-              <h3 style={{ color: '#166534', marginBottom: '1rem', fontSize: 'clamp(1.2rem, 3vw, 1.5rem)' }}>For Students</h3>
-              <div className={styles.gridContainer} style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-                gap: '1.5rem'
+              <div style={{ marginTop: '0.75rem' }}>
+                {index === 0 && <FaUsers size={28} style={{ color: '#3b82f6', marginBottom: '0.75rem' }} />}
+                {index === 1 && <FaClipboardCheck size={28} style={{ color: '#3b82f6', marginBottom: '0.75rem' }} />}
+                {index === 2 && <FaFileCsv size={28} style={{ color: '#3b82f6', marginBottom: '0.75rem' }} />}
+              </div>
+              <h3 style={{ 
+                color: '#1e293b', 
+                marginBottom: '0.25rem', 
+                fontSize: 'clamp(1rem, 2vw, 1.2rem)',
+                fontWeight: '600'
               }}>
-                {/* Step 1 */}
-                <div className={styles.stepCard} style={{
-                  textAlign: 'center',
-                  padding: '1rem',
-                  backgroundColor: 'white',
-                  borderRadius: '8px',
-                  boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
-                  transition: 'transform 0.2s ease'
-                }}
-                onMouseOver={e => e.target.style.transform = 'translateY(-4px)'}
-                onMouseOut={e => e.target.style.transform = 'translateY(0)'}>
-                  <FaUserGraduate size={32} style={{ color: '#22c55e', marginBottom: '0.5rem' }} />
-                  <h3 style={{ color: '#1e293b', marginBottom: '0.5rem', fontSize: 'clamp(1rem, 2.5vw, 1.2rem)' }}>1. Get Enrollment Code</h3>
-                  <p style={{ color: '#64748b', fontSize: 'clamp(0.85rem, 2vw, 0.9rem)' }}>Obtain the classroom enrollment code from your instructor</p>
-                </div>
-
-                {/* Step 2 */}
-                <div className={styles.stepCard} style={{
-                  textAlign: 'center',
-                  padding: '1rem',
-                  backgroundColor: 'white',
-                  borderRadius: '8px',
-                  boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
-                  transition: 'transform 0.2s ease'
-                }}
-                onMouseOver={e => e.target.style.transform = 'translateY(-4px)'}
-                onMouseOut={e => e.target.style.transform = 'translateY(0)'}>
-                  <FaClipboardCheck size={32} style={{ color: '#22c55e', marginBottom: '0.5rem' }} />
-                  <h3 style={{ color: '#1e293b', marginBottom: '0.5rem', fontSize: 'clamp(1rem, 2.5vw, 1.2rem)' }}>2. Enter Details</h3>
-                  <p style={{ color: '#64748b', fontSize: 'clamp(0.85rem, 2vw, 0.9rem)' }}>Input your student ID and the attendance code</p>
-                </div>
-
-                {/* Step 3 */}
-                <div className={styles.stepCard} style={{
-                  textAlign: 'center',
-                  padding: '1rem',
-                  backgroundColor: 'white',
-                  borderRadius: '8px',
-                  boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
-                  transition: 'transform 0.2s ease'
-                }}
-                onMouseOver={e => e.target.style.transform = 'translateY(-4px)'}
-                onMouseOut={e => e.target.style.transform = 'translateY(0)'}>
-                  <FaCheck size={32} style={{ color: '#22c55e', marginBottom: '0.5rem' }} />
-                  <h3 style={{ color: '#1e293b', marginBottom: '0.5rem', fontSize: 'clamp(1rem, 2.5vw, 1.2rem)' }}>3. Confirm Attendance</h3>
-                  <p style={{ color: '#64748b', fontSize: 'clamp(0.85rem, 2vw, 0.9rem)' }}>Submit to confirm your attendance</p>
-                </div>
-              </div>
+                {step.title}
+              </h3>
+              <p style={{ 
+                color: '#64748b', 
+                fontSize: 'clamp(0.85rem, 1.8vw, 0.95rem)',
+                lineHeight: '1.4'
+              }}>
+                {step.description}
+              </p>
             </div>
-          </>
-        )}
+          ))}
+        </div>
       </div>
       
       <div className={styles.footer} style={{ 
