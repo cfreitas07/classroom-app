@@ -70,7 +70,7 @@ function Student() {
     const classDoc = querySnapshot.docs[0];
     setClassId(classDoc.id);
     setClassData(classDoc.data());
-    setStatusMessage('✅ Class found. Now enter your student code and today\'s attendance code.');
+    setStatusMessage('✅ Class found. Now enter your student identifier and today\'s attendance code.');
   };
 
   // Step 2: Submit attendance
@@ -97,7 +97,7 @@ function Student() {
     }
 
     if (!studentCode.trim()) {
-      setStatusMessage('❌ Please enter your student code');
+      setStatusMessage('❌ Please enter your student identifier');
       return;
     }
 
@@ -299,6 +299,19 @@ function Student() {
         Join Class
       </button>
 
+      {statusMessage && !showSuccessModal && (
+        <p style={{ 
+          marginTop: 20, 
+          padding: 'clamp(8px, 2vw, 12px)',
+          backgroundColor: statusMessage.includes('✅') ? '#e8f5e9' : '#ffebee',
+          borderRadius: '4px',
+          color: statusMessage.includes('✅') ? '#2e7d32' : '#c62828',
+          fontSize: 'clamp(0.85rem, 2.5vw, 0.9rem)'
+        }}>
+          {statusMessage}
+        </p>
+      )}
+
       {classData && (
         <>
           <div style={{ 
@@ -454,19 +467,6 @@ function Student() {
             Submit Attendance
           </button>
         </>
-      )}
-
-      {statusMessage && !showSuccessModal && (
-        <p style={{ 
-          marginTop: 20, 
-          padding: 'clamp(8px, 2vw, 12px)',
-          backgroundColor: statusMessage.includes('✅') ? '#e8f5e9' : '#ffebee',
-          borderRadius: '4px',
-          color: statusMessage.includes('✅') ? '#2e7d32' : '#c62828',
-          fontSize: 'clamp(0.85rem, 2.5vw, 0.9rem)'
-        }}>
-          {statusMessage}
-        </p>
       )}
     </div>
   );
