@@ -11,7 +11,7 @@ import {
   getDoc,
   Timestamp
 } from 'firebase/firestore';
-import { FaGlobe } from 'react-icons/fa';
+import { FaGlobe, FaUserGraduate, FaCode, FaQuestionCircle } from 'react-icons/fa';
 import logo from '../images/logo transparent.png';
 
 function Student() {
@@ -26,6 +26,9 @@ function Student() {
   const [countdown, setCountdown] = useState(5);
   const [showPrivacyNotice, setShowPrivacyNotice] = useState(false);
   const [showAttendanceInfo, setShowAttendanceInfo] = useState(false);
+  const [showTooltip, setShowTooltip] = useState(false);
+  const [showEnrollmentTooltip, setShowEnrollmentTooltip] = useState(false);
+  const [showAttendanceTooltip, setShowAttendanceTooltip] = useState(false);
   const navigate = useNavigate();
 
   const translations = {
@@ -55,11 +58,32 @@ function Student() {
         invalidCode: 'Invalid attendance code.',
         expiredCode: 'Attendance code has expired.',
         error: 'Error:'
-      }
+      },
+      backToHome: "Back to Home",
+      enterCode: "Enter Class Code",
+      studentName: "Student Identifier",
+      studentNameTooltip: "Enter how you want to be identified in class. Examples:\n• First name + Last initial (e.g., John D.)\n• First name + Last name\n• Student ID number\n• Any identifier that helps your instructor recognize you",
+      submit: "Submit",
+      success: "Check-in Successful!",
+      error: "Error",
+      invalidCode: "Invalid code. Please try again.",
+      alreadyCheckedIn: "You have already checked in for this class.",
+      classNotFound: "Class not found. Please verify the code.",
+      expiredCode: "This code has expired. Please contact your instructor.",
+      enterValidCode: "Please enter a valid code",
+      enterName: "Please enter your identifier",
+      processing: "Processing...",
+      checkInHistory: "Check-in History",
+      noHistory: "No check-in history available",
+      classCode: "Class Code",
+      checkInTime: "Check-in Time",
+      status: "Status",
+      enrollmentTooltip: "This is your class's permanent enrollment code. It will ALWAYS be the same for this specific class section. Use this code to join the class for the first time.",
+      attendanceCodeTooltip: "This is a unique 3-digit code generated at the start of each class. It is only valid for 3 minutes. Your instructor will display this code at the beginning of class."
     },
     pt: {
       title: 'Registro de Presença',
-      step1: 'Passo 1: Digite o Código de Matrícula',
+      step1: 'Passo 1: Digite o Código da Turma',
       step2: 'Passo 2: Digite Seus Detalhes',
       enrollmentPlaceholder: 'Digite o código fornecido pelo seu instrutor',
       joinClass: 'Entrar na Turma',
@@ -83,7 +107,28 @@ function Student() {
         invalidCode: 'Código de presença inválido.',
         expiredCode: 'Código de presença expirado.',
         error: 'Erro:'
-      }
+      },
+      backToHome: "Voltar para Home",
+      enterCode: "Digite o Código da Aula",
+      studentName: "Identificador do Estudante",
+      studentNameTooltip: "Digite como você quer ser identificado na aula. Exemplos:\n• Primeiro nome + Inicial do sobrenome (ex: João S.)\n• Primeiro nome + Sobrenome\n• Número de matrícula\n• Qualquer identificador que ajude seu instrutor a reconhecê-lo",
+      submit: "Enviar",
+      success: "Check-in Realizado com Sucesso!",
+      error: "Erro",
+      invalidCode: "Código inválido. Por favor, tente novamente.",
+      alreadyCheckedIn: "Você já realizou check-in para esta aula.",
+      classNotFound: "Aula não encontrada. Por favor, verifique o código.",
+      expiredCode: "Este código expirou. Por favor, contate seu instrutor.",
+      enterValidCode: "Por favor, digite um código válido",
+      enterName: "Por favor, digite seu identificador",
+      processing: "Processando...",
+      checkInHistory: "Histórico de Check-in",
+      noHistory: "Nenhum histórico de check-in disponível",
+      classCode: "Código da Aula",
+      checkInTime: "Horário do Check-in",
+      status: "Status",
+      enrollmentTooltip: "Este é o código permanente da sua turma. Ele SEMPRE será o mesmo para esta seção específica da turma. Use este código para entrar na turma pela primeira vez.",
+      attendanceCodeTooltip: "Este é um código único de 3 dígitos gerado no início de cada aula. É válido apenas por 3 minutos. Seu instrutor exibirá este código no início da aula."
     },
     es: {
       title: 'Registro de Asistencia',
@@ -111,7 +156,28 @@ function Student() {
         invalidCode: 'Código de asistencia inválido.',
         expiredCode: 'Código de asistencia expirado.',
         error: 'Error:'
-      }
+      },
+      backToHome: "Volver al Inicio",
+      enterCode: "Ingrese el Código de la Clase",
+      studentName: "Identificador del Estudiante",
+      studentNameTooltip: "Ingrese cómo quiere ser identificado en la clase. Ejemplos:\n• Nombre + Inicial del apellido (ej: Juan P.)\n• Nombre + Apellido\n• Número de estudiante\n• Cualquier identificador que ayude a su instructor a reconocerlo",
+      submit: "Enviar",
+      success: "¡Registro Exitoso!",
+      error: "Error",
+      invalidCode: "Código inválido. Por favor, intente nuevamente.",
+      alreadyCheckedIn: "Ya se ha registrado para esta clase.",
+      classNotFound: "Clase no encontrada. Por favor, verifique el código.",
+      expiredCode: "Este código ha expirado. Por favor, contacte a su instructor.",
+      enterValidCode: "Por favor, ingrese un código válido",
+      enterName: "Por favor, ingrese su identificador",
+      processing: "Procesando...",
+      checkInHistory: "Historial de Registro",
+      noHistory: "No hay historial de registro disponible",
+      classCode: "Código de la Clase",
+      checkInTime: "Hora de Registro",
+      status: "Estado",
+      enrollmentTooltip: "Este es el código permanente de matrícula de su clase. SIEMPRE será el mismo para esta sección específica de la clase. Use este código para unirse a la clase por primera vez.",
+      attendanceCodeTooltip: "Este es un código único de 3 dígitos generado al inicio de cada clase. Es válido solo por 3 minutos. Su instructor mostrará este código al inicio de la clase."
     }
   };
 
@@ -384,9 +450,56 @@ function Student() {
         textAlign: 'left',
         fontSize: 'clamp(0.9rem, 2.5vw, 1rem)',
         color: '#1e293b',
-        fontWeight: '500'
+        fontWeight: '500',
+        display: 'flex',
+        alignItems: 'center',
+        gap: '8px'
       }}>
         {translations[language].step1}
+        <div style={{ position: 'relative', display: 'inline-block' }}>
+          <span 
+            style={{ 
+              cursor: 'help',
+              color: '#718096'
+            }}
+            onMouseEnter={() => setShowEnrollmentTooltip(true)}
+            onMouseLeave={() => setShowEnrollmentTooltip(false)}
+          >
+            <FaQuestionCircle size={14} />
+          </span>
+          {showEnrollmentTooltip && (
+            <div style={{
+              position: 'absolute',
+              bottom: '100%',
+              left: '50%',
+              transform: 'translateX(-50%)',
+              backgroundColor: 'white',
+              padding: '12px',
+              borderRadius: '8px',
+              boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+              width: '300px',
+              zIndex: 1000,
+              border: '1px solid #e2e8f0',
+              fontSize: '0.9rem',
+              color: '#4a5568',
+              whiteSpace: 'pre-line',
+              marginBottom: '8px'
+            }}>
+              {translations[language].enrollmentTooltip}
+              <div style={{
+                position: 'absolute',
+                bottom: '-6px',
+                left: '50%',
+                transform: 'translateX(-50%) rotate(45deg)',
+                width: '12px',
+                height: '12px',
+                backgroundColor: 'white',
+                borderRight: '1px solid #e2e8f0',
+                borderBottom: '1px solid #e2e8f0'
+              }} />
+            </div>
+          )}
+        </div>
       </div>
       <input
         type="tel"
@@ -450,50 +563,51 @@ function Student() {
               alignItems: 'center',
               gap: '8px'
             }}>
-              {translations[language].studentIdentifier}
-            </div>
-            <div style={{
-              marginBottom: '1rem',
-              padding: '12px',
-              backgroundColor: '#fff3e0',
-              borderRadius: '6px',
-              border: '1px solid #ffb74d',
-              textAlign: 'left',
-              transition: 'all 0.3s ease'
-            }}>
-              <div style={{ 
-                fontSize: 'clamp(0.9rem, 2.5vw, 1rem)',
-                color: '#e65100',
-                fontWeight: '500',
-                marginBottom: showPrivacyNotice ? '8px' : '0',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                cursor: 'pointer'
-              }}
-              onClick={() => setShowPrivacyNotice(!showPrivacyNotice)}
-              >
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  {translations[language].privacyNotice}
-                </div>
-                <div style={{ 
-                  transform: showPrivacyNotice ? 'rotate(180deg)' : 'rotate(0deg)',
-                  transition: 'transform 0.3s ease',
-                  fontSize: '1.2rem'
-                }}>
-                  ▼
-                </div>
-              </div>
-              <div style={{ 
-                fontSize: 'clamp(0.85rem, 2.5vw, 0.9rem)',
-                color: '#1e293b',
-                lineHeight: '1.4',
-                maxHeight: showPrivacyNotice ? '200px' : '0',
-                overflow: 'hidden',
-                transition: 'all 0.3s ease',
-                opacity: showPrivacyNotice ? '1' : '0'
-              }}>
-                {translations[language].privacyText}
+              {translations[language].studentName}
+              <div style={{ position: 'relative', display: 'inline-block' }}>
+                <span 
+                  style={{ 
+                    marginLeft: '0.5rem',
+                    cursor: 'help',
+                    color: '#718096'
+                  }}
+                  onMouseEnter={() => setShowTooltip(true)}
+                  onMouseLeave={() => setShowTooltip(false)}
+                >
+                  <FaQuestionCircle size={14} />
+                </span>
+                {showTooltip && (
+                  <div style={{
+                    position: 'absolute',
+                    bottom: '100%',
+                    left: '50%',
+                    transform: 'translateX(-50%)',
+                    backgroundColor: 'white',
+                    padding: '12px',
+                    borderRadius: '8px',
+                    boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+                    width: '300px',
+                    zIndex: 1000,
+                    border: '1px solid #e2e8f0',
+                    fontSize: '0.9rem',
+                    color: '#4a5568',
+                    whiteSpace: 'pre-line',
+                    marginBottom: '8px'
+                  }}>
+                    {translations[language].studentNameTooltip}
+                    <div style={{
+                      position: 'absolute',
+                      bottom: '-6px',
+                      left: '50%',
+                      transform: 'translateX(-50%) rotate(45deg)',
+                      width: '12px',
+                      height: '12px',
+                      backgroundColor: 'white',
+                      borderRight: '1px solid #e2e8f0',
+                      borderBottom: '1px solid #e2e8f0'
+                    }} />
+                  </div>
+                )}
               </div>
             </div>
             <input
@@ -536,6 +650,50 @@ function Student() {
               gap: '8px'
             }}>
               {translations[language].attendanceCode}
+              <div style={{ position: 'relative', display: 'inline-block' }}>
+                <span 
+                  style={{ 
+                    cursor: 'help',
+                    color: '#718096'
+                  }}
+                  onMouseEnter={() => setShowAttendanceTooltip(true)}
+                  onMouseLeave={() => setShowAttendanceTooltip(false)}
+                >
+                  <FaQuestionCircle size={14} />
+                </span>
+                {showAttendanceTooltip && (
+                  <div style={{
+                    position: 'absolute',
+                    bottom: '100%',
+                    left: '50%',
+                    transform: 'translateX(-50%)',
+                    backgroundColor: 'white',
+                    padding: '12px',
+                    borderRadius: '8px',
+                    boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+                    width: '300px',
+                    zIndex: 1000,
+                    border: '1px solid #e2e8f0',
+                    fontSize: '0.9rem',
+                    color: '#4a5568',
+                    whiteSpace: 'pre-line',
+                    marginBottom: '8px'
+                  }}>
+                    {translations[language].attendanceCodeTooltip}
+                    <div style={{
+                      position: 'absolute',
+                      bottom: '-6px',
+                      left: '50%',
+                      transform: 'translateX(-50%) rotate(45deg)',
+                      width: '12px',
+                      height: '12px',
+                      backgroundColor: 'white',
+                      borderRight: '1px solid #e2e8f0',
+                      borderBottom: '1px solid #e2e8f0'
+                    }} />
+                  </div>
+                )}
+              </div>
             </div>
             <input
               type="tel"
