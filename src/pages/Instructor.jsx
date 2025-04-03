@@ -19,9 +19,12 @@ import {
   updateDoc,
   doc,
   deleteDoc,
+  getDoc,
+  Timestamp
 } from 'firebase/firestore';
 import logo from '../images/logo transparent.png';
 import { QRCodeSVG } from 'qrcode.react';
+import { FaGlobe } from 'react-icons/fa';
 
 function Instructor() {
   const [email, setEmail] = useState('');
@@ -42,6 +45,11 @@ function Instructor() {
   const [expiredCodes, setExpiredCodes] = useState({});
   const [timers, setTimers] = useState({});  // stores remaining seconds per class
   const [showLargeCodes, setShowLargeCodes] = useState({}); // tracks which class's codes are shown in large format
+  const [language, setLanguage] = useState('en');
+  const [classCode, setClassCode] = useState('');
+  const [attendanceCode, setAttendanceCode] = useState('');
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [countdown, setCountdown] = useState(5);
   const navigate = useNavigate();
 
   // Array of border colors for class cards
@@ -392,6 +400,213 @@ function Instructor() {
     setSchedule(scheduleText);
   };
 
+  const translations = {
+    en: {
+      title: 'Instructor Dashboard',
+      step1: 'Step 1: Create a New Class',
+      step2: 'Step 2: Generate Attendance Code',
+      classCodeLabel: 'Class Code',
+      classCodePlaceholder: 'Enter a unique code for your class',
+      createClass: 'Create Class',
+      attendanceCodeLabel: 'Attendance Code',
+      attendanceCodePlaceholder: 'Enter a 3-digit code',
+      generateCode: 'Generate Code',
+      successTitle: 'Class Created!',
+      redirecting: 'Redirecting to class page in',
+      seconds: 'seconds...',
+      className: 'Class Name:',
+      classNamePlaceholder: 'e.g., Introduction to Programming',
+      selectSchedule: 'Select Class Schedule',
+      time: 'Time:',
+      selectTime: 'Select time',
+      setSchedule: 'Set Schedule',
+      currentSchedule: 'Current schedule:',
+      classSize: 'Class Size:',
+      classSizePlaceholder: 'e.g., 30',
+      yourClasses: 'Your Classes:',
+      enrollmentCode: 'Enrollment Code:',
+      showCodes: 'Show Codes',
+      hideCodes: 'Hide Codes',
+      startAttendance: 'Start Attendance',
+      viewAttendance: 'View Attendance',
+      hideAttendance: 'Hide Attendance',
+      deleteClass: 'Delete Class',
+      attendanceRecords: 'Attendance Records',
+      downloadCSV: 'Download CSV',
+      studentCode: 'Student Code',
+      date: 'Date',
+      time: 'Time',
+      scanQR: 'Scan QR code to go to presenzo.com/student',
+      timeRemaining: 'Time Remaining:',
+      welcomeBack: 'Welcome Back!',
+      createAccount: 'Create Your Account',
+      email: 'Email',
+      password: 'Password',
+      rememberMe: 'Remember me',
+      login: 'Login',
+      signUp: 'Sign Up',
+      dontHaveAccount: "Don't have an account?",
+      alreadyHaveAccount: "Already have an account?",
+      passwordRequirements: 'Password must contain:',
+      atLeast6: 'At least 6 characters',
+      oneUppercase: 'One uppercase letter',
+      oneLowercase: 'One lowercase letter',
+      oneNumber: 'One number',
+      errors: {
+        wait: 'Please wait',
+        seconds: 'seconds before creating another class.',
+        classCreated: 'Class created successfully!',
+        invalidCode: 'Please enter a valid 3-digit code.',
+        error: 'Error:',
+        notLoggedIn: "You're not logged in.",
+        enterClassName: "❌ Please enter a class name",
+        enterSchedule: "❌ Please enter a schedule",
+        enterMaxStudents: "❌ Please enter the maximum number of students",
+        invalidMaxStudents: "❌ Please enter a valid number of students (minimum 1)",
+        selectDayTime: '❌ Please select at least one day and time',
+        deleteConfirm: 'Are you sure you want to delete this class? This action cannot be undone.',
+        noRecords: "No attendance records found."
+      },
+      logout: 'LOGOUT'
+    },
+    pt: {
+      title: 'Painel do Instrutor',
+      step1: 'Passo 1: Criar Nova Turma',
+      step2: 'Passo 2: Gerar Código de Presença',
+      classCodeLabel: 'Código da Turma',
+      classCodePlaceholder: 'Digite um código único para sua turma',
+      createClass: 'Criar Turma',
+      attendanceCodeLabel: 'Código de Presença',
+      attendanceCodePlaceholder: 'Digite um código de 3 dígitos',
+      generateCode: 'Gerar Código',
+      successTitle: 'Turma Criada!',
+      redirecting: 'Redirecionando para a página da turma em',
+      seconds: 'segundos...',
+      className: 'Nome da Turma:',
+      classNamePlaceholder: 'ex., Introdução à Programação',
+      selectSchedule: 'Selecionar Horário da Turma',
+      time: 'Horário:',
+      selectTime: 'Selecionar horário',
+      setSchedule: 'Definir Horário',
+      currentSchedule: 'Horário atual:',
+      classSize: 'Tamanho da Turma:',
+      classSizePlaceholder: 'ex., 30',
+      yourClasses: 'Suas Turmas:',
+      enrollmentCode: 'Código de Matrícula:',
+      showCodes: 'Mostrar Códigos',
+      hideCodes: 'Ocultar Códigos',
+      startAttendance: 'Iniciar Presença',
+      viewAttendance: 'Ver Presença',
+      hideAttendance: 'Ocultar Presença',
+      deleteClass: 'Excluir Turma',
+      attendanceRecords: 'Registros de Presença',
+      downloadCSV: 'Baixar CSV',
+      studentCode: 'Código do Estudante',
+      date: 'Data',
+      time: 'Horário',
+      scanQR: 'Escaneie o código QR para acessar presenzo.com/student',
+      timeRemaining: 'Tempo Restante:',
+      welcomeBack: 'Bem-vindo de Volta!',
+      createAccount: 'Criar Sua Conta',
+      email: 'E-mail',
+      password: 'Senha',
+      rememberMe: 'Lembrar-me',
+      login: 'Entrar',
+      signUp: 'Cadastrar',
+      dontHaveAccount: "Não tem uma conta?",
+      alreadyHaveAccount: "Já tem uma conta?",
+      passwordRequirements: 'A senha deve conter:',
+      atLeast6: 'Pelo menos 6 caracteres',
+      oneUppercase: 'Uma letra maiúscula',
+      oneLowercase: 'Uma letra minúscula',
+      oneNumber: 'Um número',
+      errors: {
+        wait: 'Por favor, aguarde',
+        seconds: 'segundos antes de criar outra turma.',
+        classCreated: 'Turma criada com sucesso!',
+        invalidCode: 'Por favor, digite um código válido de 3 dígitos.',
+        error: 'Erro:',
+        notLoggedIn: "Você não está logado.",
+        enterClassName: "❌ Por favor, digite um nome para a turma",
+        enterSchedule: "❌ Por favor, digite um horário",
+        enterMaxStudents: "❌ Por favor, digite o número máximo de alunos",
+        invalidMaxStudents: "❌ Por favor, digite um número válido de alunos (mínimo 1)",
+        selectDayTime: '❌ Por favor, selecione pelo menos um dia e horário',
+        deleteConfirm: 'Tem certeza que deseja excluir esta turma? Esta ação não pode ser desfeita.',
+        noRecords: "Nenhum registro de presença encontrado."
+      },
+      logout: 'SAIR'
+    },
+    es: {
+      title: 'Panel del Instructor',
+      step1: 'Paso 1: Crear Nueva Clase',
+      step2: 'Paso 2: Generar Código de Asistencia',
+      classCodeLabel: 'Código de Clase',
+      classCodePlaceholder: 'Ingrese un código único para su clase',
+      createClass: 'Crear Clase',
+      attendanceCodeLabel: 'Código de Asistencia',
+      attendanceCodePlaceholder: 'Ingrese un código de 3 dígitos',
+      generateCode: 'Generar Código',
+      successTitle: '¡Clase Creada!',
+      redirecting: 'Redirigiendo a la página de la clase en',
+      seconds: 'segundos...',
+      className: 'Nombre de la Clase:',
+      classNamePlaceholder: 'ej., Introducción a la Programación',
+      selectSchedule: 'Seleccionar Horario de la Clase',
+      time: 'Horario:',
+      selectTime: 'Seleccionar horario',
+      setSchedule: 'Establecer Horario',
+      currentSchedule: 'Horario actual:',
+      classSize: 'Tamaño de la Clase:',
+      classSizePlaceholder: 'ej., 30',
+      yourClasses: 'Tus Clases:',
+      enrollmentCode: 'Código de Matrícula:',
+      showCodes: 'Mostrar Códigos',
+      hideCodes: 'Ocultar Códigos',
+      startAttendance: 'Iniciar Asistencia',
+      viewAttendance: 'Ver Asistencia',
+      hideAttendance: 'Ocultar Asistencia',
+      deleteClass: 'Eliminar Clase',
+      attendanceRecords: 'Registros de Asistencia',
+      downloadCSV: 'Descargar CSV',
+      studentCode: 'Código del Estudiante',
+      date: 'Fecha',
+      time: 'Hora',
+      scanQR: 'Escanee el código QR para ir a presenzo.com/student',
+      timeRemaining: 'Tiempo Restante:',
+      welcomeBack: '¡Bienvenido de Nuevo!',
+      createAccount: 'Crear Tu Cuenta',
+      email: 'Correo Electrónico',
+      password: 'Contraseña',
+      rememberMe: 'Recordarme',
+      login: 'Iniciar Sesión',
+      signUp: 'Registrarse',
+      dontHaveAccount: "¿No tienes una cuenta?",
+      alreadyHaveAccount: "¿Ya tienes una cuenta?",
+      passwordRequirements: 'La contraseña debe contener:',
+      atLeast6: 'Al menos 6 caracteres',
+      oneUppercase: 'Una letra mayúscula',
+      oneLowercase: 'Una letra minúscula',
+      oneNumber: 'Un número',
+      errors: {
+        wait: 'Por favor, espere',
+        seconds: 'segundos antes de crear otra clase.',
+        classCreated: '¡Clase creada exitosamente!',
+        invalidCode: 'Por favor, ingrese un código válido de 3 dígitos.',
+        error: 'Error:',
+        notLoggedIn: "No has iniciado sesión.",
+        enterClassName: "❌ Por favor, ingrese un nombre para la clase",
+        enterSchedule: "❌ Por favor, ingrese un horario",
+        enterMaxStudents: "❌ Por favor, ingrese el número máximo de estudiantes",
+        invalidMaxStudents: "❌ Por favor, ingrese un número válido de estudiantes (mínimo 1)",
+        selectDayTime: '❌ Por favor, seleccione al menos un día y horario',
+        deleteConfirm: '¿Está seguro que desea eliminar esta clase? Esta acción no se puede deshacer.',
+        noRecords: "No se encontraron registros de asistencia."
+      },
+      logout: 'CERRAR SESIÓN'
+    }
+  };
+
   if (userId) {
     return (
       <div style={{ 
@@ -415,11 +630,10 @@ function Instructor() {
               src={logo} 
               alt="Presenzo Logo" 
               style={{ 
-                height: 'clamp(40px, 10vw, 60px)',
+                height: '60px',
                 cursor: 'pointer',
                 transition: 'transform 0.2s ease',
-                maxWidth: '100%',
-                height: 'auto'
+                marginBottom: '2rem'
               }} 
               onMouseOver={e => e.target.style.transform = 'scale(1.05)'} 
               onMouseOut={e => e.target.style.transform = 'scale(1)'}
@@ -428,13 +642,14 @@ function Instructor() {
           <button
             onClick={handleLogout}
             style={{
-              padding: 'clamp(6px, 1.5vw, 8px) clamp(12px, 2vw, 16px)',
+              padding: '12px 24px',
               backgroundColor: '#64748b',
               color: 'white',
               border: 'none',
               borderRadius: '4px',
               cursor: 'pointer',
-              fontSize: 'clamp(0.8rem, 2vw, 0.9rem)',
+              fontSize: '1.1rem',
+              fontWeight: '600',
               transition: 'background-color 0.2s ease',
               ':hover': {
                 backgroundColor: '#475569'
@@ -443,12 +658,47 @@ function Instructor() {
             onMouseOver={e => e.target.style.backgroundColor = '#475569'}
             onMouseOut={e => e.target.style.backgroundColor = '#64748b'}
           >
-            Logout
+            {translations[language].logout}
           </button>
         </div>
 
+        <div style={{ 
+          display: 'flex', 
+          alignItems: 'center', 
+          justifyContent: 'center',
+          gap: '0.25rem',
+          backgroundColor: 'white',
+          padding: '0.25rem',
+          borderRadius: '6px',
+          boxShadow: '0 1px 2px rgba(0,0,0,0.1)',
+          marginBottom: '1rem',
+          maxWidth: '400px',
+          marginLeft: 'auto',
+          marginRight: 'auto'
+        }}>
+          <FaGlobe size={14} style={{ color: '#4a5568', marginRight: '0.5rem' }} />
+          {['en', 'pt', 'es'].map((lang) => (
+            <button
+              key={lang}
+              onClick={() => setLanguage(lang)}
+              style={{
+                padding: '0.25rem 0.75rem',
+                border: 'none',
+                background: language === lang ? '#3b82f6' : 'transparent',
+                color: language === lang ? 'white' : '#4a5568',
+                borderRadius: '4px',
+                cursor: 'pointer',
+                transition: 'all 0.2s ease',
+                fontSize: '0.9rem'
+              }}
+            >
+              {lang.toUpperCase()}
+            </button>
+          ))}
+        </div>
+
         <div style={{ marginTop: 40 }}>
-          <h3 style={{ fontSize: 'clamp(1.5rem, 4vw, 2rem)', marginBottom: '1.5rem' }}>Create a New Class</h3>
+          <h3 style={{ fontSize: 'clamp(1.5rem, 4vw, 2rem)', marginBottom: '1.5rem' }}>{translations[language].title}</h3>
           <div style={{ maxWidth: '400px', margin: '0 auto', width: '100%' }}>
             <div style={{ 
               display: 'flex', 
@@ -461,11 +711,11 @@ function Instructor() {
                 color: '#1e293b',
                 whiteSpace: 'nowrap'
               }}>
-                Class Name:
+                {translations[language].className}:
               </span>
               <input 
                 type="text" 
-                placeholder="e.g., Introduction to Programming" 
+                placeholder={translations[language].classNamePlaceholder} 
                 value={className} 
                 onChange={(e) => setClassName(e.target.value)} 
                 style={{ 
@@ -490,7 +740,7 @@ function Instructor() {
                 fontSize: 'clamp(0.9rem, 2.5vw, 1rem)',
                 color: '#1e293b'
               }}>
-                Select Class Schedule
+                {translations[language].selectSchedule}
               </div>
               
               <div style={{ 
@@ -548,7 +798,7 @@ function Instructor() {
                   fontSize: 'clamp(0.9rem, 2.5vw, 1rem)',
                   color: '#1e293b'
                 }}>
-                  Time:
+                  {translations[language].time}:
                 </span>
                 <select
                   value={selectedTime}
@@ -562,7 +812,7 @@ function Instructor() {
                     cursor: 'pointer'
                   }}
                 >
-                  <option value="">Select time</option>
+                  <option value="">{translations[language].selectTime}</option>
                   {timeSlots.map((time) => (
                     <option key={time} value={time}>
                       {time}
@@ -587,7 +837,7 @@ function Instructor() {
                 onMouseOver={e => e.target.style.backgroundColor = '#303f9f'}
                 onMouseOut={e => e.target.style.backgroundColor = '#3f51b5'}
               >
-                Set Schedule
+                {translations[language].setSchedule}
               </button>
 
               {schedule && (
@@ -599,7 +849,7 @@ function Instructor() {
                   fontSize: 'clamp(0.8rem, 2vw, 0.9rem)',
                   color: '#1e293b'
                 }}>
-                  Current schedule: {schedule}
+                  {translations[language].currentSchedule}: {schedule}
                 </div>
               )}
             </div>
@@ -615,11 +865,11 @@ function Instructor() {
                 color: '#1e293b',
                 whiteSpace: 'nowrap'
               }}>
-                Class Size:
+                {translations[language].classSize}:
               </span>
               <input 
                 type="number" 
-                placeholder="e.g., 30" 
+                placeholder={translations[language].classSizePlaceholder} 
                 value={maxStudents} 
                 onChange={(e) => setMaxStudents(e.target.value)} 
                 style={{ 
@@ -662,14 +912,14 @@ function Instructor() {
               onMouseOver={e => e.target.style.backgroundColor = '#303f9f'}
               onMouseOut={e => e.target.style.backgroundColor = '#3f51b5'}
             >
-              Create Class
+              {translations[language].createClass}
             </button>
           </div>
         </div>
 
         {classes.length > 0 && (
           <div style={{ marginTop: 30 }}>
-            <h3 style={{ fontSize: 'clamp(1.5rem, 4vw, 2rem)', marginBottom: '1.5rem' }}>Your Classes:</h3>
+            <h3 style={{ fontSize: 'clamp(1.5rem, 4vw, 2rem)', marginBottom: '1.5rem' }}>{translations[language].yourClasses}:</h3>
             <ul style={{ listStyle: 'none', padding: 0 }}>
               {classes.map((cls, index) => (
                 <li key={cls.id} style={{ 
@@ -698,7 +948,7 @@ function Instructor() {
                     flexWrap: 'wrap'
                   }}>
                     <span style={{ fontSize: 'clamp(0.9rem, 2.5vw, 1rem)' }}>
-                      Enrollment Code: <code style={{ 
+                      {translations[language].enrollmentCode}: <code style={{ 
                         backgroundColor: '#f1f5f9',
                         padding: '2px 6px',
                         borderRadius: '4px',
@@ -710,7 +960,7 @@ function Instructor() {
                         ...prev,
                         [cls.id]: !prev[cls.id]
                       }))}
-                      title="Click to show codes in large format"
+                      title={translations[language].showCodes}
                       style={{
                         padding: 'clamp(4px, 1vw, 6px) clamp(8px, 1.5vw, 12px)',
                         backgroundColor: showLargeCodes[cls.id] ? '#94a3b8' : '#cbd5e1',
@@ -737,7 +987,7 @@ function Instructor() {
                         e.target.style.backgroundColor = showLargeCodes[cls.id] ? '#94a3b8' : '#cbd5e1';
                       }}
                     >
-                      {showLargeCodes[cls.id] ? 'Hide Codes' : 'Show Codes'}
+                      {showLargeCodes[cls.id] ? translations[language].hideCodes : translations[language].showCodes}
                     </button>
                   </div>
 
@@ -801,7 +1051,7 @@ function Instructor() {
                             color: '#64748b', 
                             marginBottom: '12px' 
                           }}>
-                            Enrollment Code
+                            {translations[language].enrollmentCode}
                           </div>
                           <div style={{
                             fontSize: 'clamp(2rem, 5vw, 2.8rem)',
@@ -824,7 +1074,7 @@ function Instructor() {
                             color: '#64748b', 
                             marginBottom: '12px' 
                           }}>
-                            Attendance Code
+                            {translations[language].attendanceCode}
                           </div>
                           <div style={{
                             fontSize: 'clamp(2.5rem, 6vw, 3.5rem)',
@@ -863,7 +1113,7 @@ function Instructor() {
                             marginTop: '10px',
                             textAlign: 'center'
                           }}>
-                            Scan QR code to go to presenzo.com/student
+                            {translations[language].scanQR}
                           </div>
                           <div style={{
                             fontSize: 'clamp(1.2rem, 3vw, 1.5rem)',
@@ -871,7 +1121,7 @@ function Instructor() {
                             fontWeight: 'bold',
                             marginTop: '15px'
                           }}>
-                            Time Remaining: {Math.floor(timers[cls.id] / 60)}:{(timers[cls.id] % 60).toString().padStart(2, '0')}
+                            {translations[language].timeRemaining}: {Math.floor(timers[cls.id] / 60)}:{(timers[cls.id] % 60).toString().padStart(2, '0')}
                           </div>
                         </div>
 
@@ -915,7 +1165,7 @@ function Instructor() {
                         fontSize: 'clamp(0.9rem, 2.5vw, 1rem)'
                       }}
                     >
-                      Start Attendance
+                      {translations[language].startAttendance}
                     </button>
 
                     <button
@@ -932,7 +1182,7 @@ function Instructor() {
                         fontSize: 'clamp(0.9rem, 2.5vw, 1rem)'
                       }}
                     >
-                      {expandedClassId === cls.id ? 'Hide Attendance' : 'View Attendance'}
+                      {expandedClassId === cls.id ? translations[language].hideAttendance : translations[language].viewAttendance}
                     </button>
 
                     <button
@@ -952,7 +1202,7 @@ function Instructor() {
                       onMouseOver={e => e.target.style.backgroundColor = '#b91c1c'}
                       onMouseOut={e => e.target.style.backgroundColor = '#dc2626'}
                     >
-                      Delete Class
+                      {translations[language].deleteClass}
                     </button>
                   </div>
 
@@ -975,7 +1225,7 @@ function Instructor() {
                           color: '#1e293b',
                           margin: 0
                         }}>
-                          Attendance Records
+                          {translations[language].attendanceRecords}
                         </h4>
                         <button
                           onClick={() => fetchAttendanceForClass(cls.id, true)}
@@ -992,7 +1242,7 @@ function Instructor() {
                             gap: '8px'
                           }}
                         >
-                          📥 Download CSV
+                          {translations[language].downloadCSV}
                         </button>
                       </div>
                       
@@ -1013,9 +1263,9 @@ function Instructor() {
                               backgroundColor: '#f1f5f9',
                               borderBottom: '2px solid #e2e8f0'
                             }}>
-                              <th style={{ padding: '10px', textAlign: 'left' }}>Student Code</th>
-                              <th style={{ padding: '10px', textAlign: 'left' }}>Date</th>
-                              <th style={{ padding: '10px', textAlign: 'left' }}>Time</th>
+                              <th style={{ padding: '10px', textAlign: 'left' }}>{translations[language].studentCode}</th>
+                              <th style={{ padding: '10px', textAlign: 'left' }}>{translations[language].date}</th>
+                              <th style={{ padding: '10px', textAlign: 'left' }}>{translations[language].time}</th>
                             </tr>
                           </thead>
                           <tbody>
@@ -1051,7 +1301,14 @@ function Instructor() {
   }
 
   return (
-    <div style={{ maxWidth: 400, margin: '40px auto', padding: '0 20px', textAlign: 'center' }}>
+    <div style={{ 
+      maxWidth: 400, 
+      margin: '40px auto', 
+      padding: '0 20px', 
+      textAlign: 'center',
+      width: '100%',
+      boxSizing: 'border-box'
+    }}>
       <Link to="/" style={{ textDecoration: 'none' }}>
         <img 
           src={logo} 
@@ -1080,13 +1337,13 @@ function Instructor() {
           marginBottom: '1.5rem',
           fontWeight: '600'
         }}>
-          {isLogin ? 'Welcome Back!' : 'Create Your Account'}
+          {translations[language].welcomeBack}
         </h3>
         
         <div style={{ marginBottom: '1.5rem' }}>
-          <input 
+          <input
             type="email" 
-            placeholder="Email" 
+            placeholder={translations[language].email} 
             value={email} 
             onChange={(e) => setEmail(e.target.value)} 
             style={{ 
@@ -1102,10 +1359,10 @@ function Instructor() {
           />
           <input 
             type="password" 
-            placeholder="Password" 
+            placeholder={translations[language].password} 
             value={password} 
             onChange={(e) => setPassword(e.target.value)} 
-            style={{ 
+            style={{
               width: '100%', 
               padding: '12px', 
               margin: '8px 0',
@@ -1124,16 +1381,16 @@ function Instructor() {
               textAlign: 'left',
               padding: '0 4px'
             }}>
-              Password must contain:
+              {translations[language].passwordRequirements}:
               <ul style={{ 
                 margin: '4px 0 0 20px',
                 padding: 0,
                 textAlign: 'left'
               }}>
-                <li>At least 6 characters</li>
-                <li>One uppercase letter</li>
-                <li>One lowercase letter</li>
-                <li>One number</li>
+                <li>{translations[language].atLeast6}</li>
+                <li>{translations[language].oneUppercase}</li>
+                <li>{translations[language].oneLowercase}</li>
+                <li>{translations[language].oneNumber}</li>
               </ul>
             </div>
           )}
@@ -1142,8 +1399,8 @@ function Instructor() {
         {isLogin && (
           <div style={{ marginBottom: '1.5rem' }}>
             <label style={{ 
-              display: 'flex', 
-              alignItems: 'center', 
+              display: 'flex',
+              alignItems: 'center',
               justifyContent: 'center', 
               gap: 8,
               color: '#64748b',
@@ -1155,7 +1412,7 @@ function Instructor() {
                 onChange={(e) => setRememberMe(e.target.checked)}
                 style={{ width: '16px', height: '16px' }}
               />
-              Remember me
+              {translations[language].rememberMe}
             </label>
           </div>
         )}
@@ -1179,7 +1436,7 @@ function Instructor() {
           onMouseOver={e => e.target.style.backgroundColor = isLogin ? '#303f9f' : '#059669'}
           onMouseOut={e => e.target.style.backgroundColor = isLogin ? '#3f51b5' : '#10b981'}
         >
-          {isLogin ? 'Login' : 'Create Account'}
+          {translations[language].login}
         </button>
 
         {message && (
@@ -1207,7 +1464,7 @@ function Instructor() {
           color: '#64748b',
           marginBottom: '0.5rem'
         }}>
-          {isLogin ? "Don't have an account?" : "Already have an account?"}
+          {translations[language].dontHaveAccount}
         </p>
         <button 
           onClick={() => setIsLogin(!isLogin)} 
@@ -1232,7 +1489,7 @@ function Instructor() {
             e.target.style.color = '#3f51b5';
           }}
         >
-          {isLogin ? 'Sign Up' : 'Login'}
+          {translations[language].signUp}
         </button>
       </div>
     </div>
