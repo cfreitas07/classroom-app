@@ -11,7 +11,7 @@ import {
   getDoc,
   Timestamp
 } from 'firebase/firestore';
-import { FaGlobe, FaUserGraduate, FaCode, FaQuestionCircle } from 'react-icons/fa';
+import { FaGlobe, FaUserGraduate, FaCode, FaQuestionCircle, FaSearch } from 'react-icons/fa';
 import logo from '../images/logo transparent.png';
 
 function Student() {
@@ -29,6 +29,8 @@ function Student() {
   const [showTooltip, setShowTooltip] = useState(false);
   const [showEnrollmentTooltip, setShowEnrollmentTooltip] = useState(false);
   const [showAttendanceTooltip, setShowAttendanceTooltip] = useState(false);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const [suggestions, setSuggestions] = useState([]);
   const navigate = useNavigate();
 
   const translations = {
@@ -79,18 +81,7 @@ function Student() {
       checkInTime: "Check-in Time",
       status: "Status",
       enrollmentTooltip: "This is your class's permanent enrollment code. It will ALWAYS be the same for this specific class section. Use this code to join the class for the first time.",
-      attendanceCodeTooltip: "This is a unique 3-digit code generated at the start of each class. It is only valid for 3 minutes. Your instructor will display this code at the beginning of class.",
-      identificationOptions: {
-        fullName: {
-          tooltip: "Full Name"
-        },
-        nickname: {
-          tooltip: "Nickname"
-        },
-        other: {
-          tooltip: "Other"
-        }
-      }
+      attendanceCodeTooltip: "This is a unique 3-digit code generated at the start of each class. It is only valid for 3 minutes. Your instructor will display this code at the beginning of class."
     },
     pt: {
       title: 'Registro de Presença',
@@ -139,18 +130,7 @@ function Student() {
       checkInTime: "Horário do Check-in",
       status: "Status",
       enrollmentTooltip: "Este é o código permanente da sua turma. Ele SEMPRE será o mesmo para esta seção específica da turma. Use este código para entrar na turma pela primeira vez.",
-      attendanceCodeTooltip: "Este é um código único de 3 dígitos gerado no início de cada aula. É válido apenas por 3 minutos. Seu instrutor exibirá este código no início da aula.",
-      identificationOptions: {
-        fullName: {
-          tooltip: "Nome Completo"
-        },
-        nickname: {
-          tooltip: "Apelido"
-        },
-        other: {
-          tooltip: "Outro"
-        }
-      }
+      attendanceCodeTooltip: "Este é um código único de 3 dígitos gerado no início de cada aula. É válido apenas por 3 minutos. Seu instrutor exibirá este código no início da aula."
     },
     es: {
       title: 'Registro de Asistencia',
@@ -199,18 +179,7 @@ function Student() {
       checkInTime: "Hora de Registro",
       status: "Estado",
       enrollmentTooltip: "Este es el código permanente de matrícula de su clase. SIEMPRE será el mismo para esta sección específica de la clase. Use este código para unirse a la clase por primera vez.",
-      attendanceCodeTooltip: "Este es un código único de 3 dígitos generado al inicio de cada clase. Es válido solo por 3 minutos. Su instructor mostrará este código al inicio de la clase.",
-      identificationOptions: {
-        fullName: {
-          tooltip: "Nombre Completo"
-        },
-        nickname: {
-          tooltip: "Apodo"
-        },
-        other: {
-          tooltip: "Otro"
-        }
-      }
+      attendanceCodeTooltip: "Este es un código único de 3 dígitos generado al inicio de cada clase. Es válido solo por 3 minutos. Su instructor mostrará este código al inicio de la clase."
     }
   };
 
@@ -337,6 +306,56 @@ function Student() {
     return () => clearInterval(timer);
   }, [showSuccessModal, countdown]);
 
+  // Function to fetch autocomplete suggestions
+  const fetchAutocompleteSuggestions = async (inputText) => {
+    if (!classId || !inputText || inputText.length < 2) {
+      setSuggestions([]);
+      setShowSuggestions(false);
+      return;
+    }
+
+    try {
+      const q = query(
+        collection(db, 'attendanceRecords'),
+        where('classId', '==', classId)
+      );
+      const querySnapshot = await getDocs(q);
+      
+      const uniqueNames = new Set();
+      querySnapshot.forEach((doc) => {
+        const data = doc.data();
+        if (data.studentCode) {
+          uniqueNames.add(data.studentCode);
+        }
+      });
+
+      // Filter and sort matches
+      const matches = Array.from(uniqueNames)
+        .filter(name => name.toLowerCase().includes(inputText.toLowerCase()))
+        .sort((a, b) => a.localeCompare(b))
+        .slice(0, 5); // Limit to 5 suggestions
+
+      setSuggestions(matches);
+      setShowSuggestions(matches.length > 0);
+    } catch (error) {
+      console.error('Error fetching suggestions:', error);
+    }
+  };
+
+  // Handle student code input changes
+  const handleStudentCodeChange = async (e) => {
+    const value = e.target.value;
+    setStudentCode(value);
+    fetchAutocompleteSuggestions(value);
+  };
+
+  // Handle suggestion selection
+  const handleSuggestionClick = (suggestion) => {
+    setStudentCode(suggestion);
+    setSuggestions([]);
+    setShowSuggestions(false);
+  };
+
   const buttonStyle = {
     padding: '10px 20px',
     width: '100%',
@@ -355,6 +374,37 @@ function Student() {
     backgroundColor: '#45a049',
     transform: 'translateY(-2px)',
     boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+  };
+
+  // Add to translations
+  const searchTranslations = {
+    en: {
+      searchForName: "Search for Name",
+      searchPlaceholder: "Type to search for your name",
+      noResults: "No matching names found",
+      selectName: "Select",
+      close: "Close",
+      searching: "Searching...",
+      noDataAvailable: "No previous attendance data available"
+    },
+    pt: {
+      searchForName: "Buscar Nome",
+      searchPlaceholder: "Digite para buscar seu nome",
+      noResults: "Nenhum nome encontrado",
+      selectName: "Selecionar",
+      close: "Fechar",
+      searching: "Buscando...",
+      noDataAvailable: "Não há dados de presença anteriores disponíveis"
+    },
+    es: {
+      searchForName: "Buscar Nombre",
+      searchPlaceholder: "Escriba para buscar su nombre",
+      noResults: "No se encontraron nombres",
+      selectName: "Seleccionar",
+      close: "Cerrar",
+      searching: "Buscando...",
+      noDataAvailable: "No hay datos de asistencia previos disponibles"
+    }
   };
 
   return (
@@ -594,13 +644,13 @@ function Student() {
               marginBottom: '8px',
               display: 'flex',
               alignItems: 'center',
-              gap: '8px'
+              gap: '8px',
+              position: 'relative'
             }}>
               {translations[language].studentName}
               <div style={{ position: 'relative', display: 'inline-block' }}>
                 <span 
                   style={{ 
-                    marginLeft: '0.5rem',
                     cursor: 'help',
                     color: '#718096'
                   }}
@@ -645,26 +695,62 @@ function Student() {
                 )}
               </div>
             </div>
-            <input
-              type="text"
-              placeholder={translations[language].studentPlaceholder}
-              value={studentCode}
-              onChange={(e) => setStudentCode(e.target.value)}
-              style={{ 
-                width: '100%', 
-                padding: 'clamp(8px, 2vw, 12px)', 
-                margin: '10px 0',
-                fontSize: 'clamp(0.9rem, 2.5vw, 1rem)',
-                borderColor: !studentCode.trim() ? '#ffcdd2' : '#e2e8f0',
-                borderWidth: '1px',
-                borderStyle: 'solid',
-                borderRadius: '6px',
-                outline: 'none',
-                boxSizing: 'border-box',
-                transition: 'border-color 0.2s ease'
-              }}
-              required
-            />
+
+            <div style={{ position: 'relative' }}>
+              <div style={{ 
+                display: 'flex', 
+                alignItems: 'center',
+                marginBottom: showSuggestions ? '200px' : '15px'
+              }}>
+                <input
+                  type="text"
+                  value={studentCode}
+                  onChange={handleStudentCodeChange}
+                  placeholder={translations[language].studentPlaceholder}
+                  style={{
+                    width: '100%',
+                    padding: '12px',
+                    border: '1px solid #e2e8f0',
+                    borderRadius: showSuggestions ? '4px 4px 0 0' : '4px',
+                    fontSize: '1rem'
+                  }}
+                />
+                {showSuggestions && suggestions.length > 0 && (
+                  <div style={{
+                    position: 'absolute',
+                    top: '100%',
+                    left: 0,
+                    right: 0,
+                    backgroundColor: 'white',
+                    border: '1px solid #e2e8f0',
+                    borderTop: 'none',
+                    borderRadius: '0 0 4px 4px',
+                    boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+                    zIndex: 1000,
+                    maxHeight: '200px',
+                    overflowY: 'auto'
+                  }}>
+                    {suggestions.map((suggestion, index) => (
+                      <div
+                        key={index}
+                        onClick={() => handleSuggestionClick(suggestion)}
+                        style={{
+                          padding: '8px 12px',
+                          cursor: 'pointer',
+                          borderBottom: index < suggestions.length - 1 ? '1px solid #e2e8f0' : 'none',
+                          transition: 'background-color 0.2s ease',
+                          fontSize: '0.9rem'
+                        }}
+                        onMouseOver={e => e.target.style.backgroundColor = '#f8fafc'}
+                        onMouseOut={e => e.target.style.backgroundColor = 'white'}
+                      >
+                        {suggestion}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
 
           {/* Attendance Code Section */}

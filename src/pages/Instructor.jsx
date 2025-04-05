@@ -56,6 +56,7 @@ function Instructor() {
   const [studentIdentificationType, setStudentIdentificationType] = useState('nickname');
   const [customIdentificationDescription, setCustomIdentificationDescription] = useState('');
   const [classSearchTerm, setClassSearchTerm] = useState('');
+  const [studentNamesFile, setStudentNamesFile] = useState(null);
   const navigate = useNavigate();
 
   // Array of border colors for class cards
@@ -149,7 +150,8 @@ function Instructor() {
     const code = generateCode();
 
     try {
-      await addDoc(collection(db, 'classes'), {
+      // Create the class document
+      const classRef = await addDoc(collection(db, 'classes'), {
         className: className.trim(),
         schedule: schedule.trim(),
         maxStudents: maxStudentsNum,
@@ -158,6 +160,27 @@ function Instructor() {
         studentIdentificationType,
         customIdentificationDescription: studentIdentificationType === 'other' ? customIdentificationDescription.trim() : '',
       });
+
+      // If there's a CSV file with student names, process it
+      if (studentNamesFile) {
+        const reader = new FileReader();
+        reader.onload = async (e) => {
+          const text = e.target.result;
+          const names = text.split('\n')
+            .map(line => line.trim())
+            .filter(line => line.length > 0);
+
+          // Save each student name to the studentNames collection
+          for (const name of names) {
+            await addDoc(collection(db, 'studentNames'), {
+              classId: classRef.id,
+              name: name,
+              nameNormalized: name.toLowerCase() // For case-insensitive search
+            });
+          }
+        };
+        reader.readAsText(studentNamesFile);
+      }
 
       setMessage(`✅ Class created! Code: ${code}`);
       
@@ -173,7 +196,8 @@ function Instructor() {
       // Fetch updated classes list
       fetchClasses(userId);
     } catch (error) {
-      setMessage(`❌ Error creating class: ${error.message}`);
+      console.error('Error creating class:', error);
+      setMessage('Error creating class. Please try again.');
     }
   };
 
@@ -1236,6 +1260,27 @@ function Instructor() {
             >
               {translations[language].createClass}
             </button>
+            <div>
+              <input
+                type="file"
+                accept=".csv"
+                onChange={(e) => setStudentNamesFile(e.target.files[0])}
+                style={{
+                  marginTop: '10px',
+                  padding: '8px',
+                  border: '1px solid #e2e8f0',
+                  borderRadius: '4px',
+                  width: '100%'
+                }}
+              />
+              <div style={{
+                fontSize: '0.8rem',
+                color: '#64748b',
+                marginTop: '4px'
+              }}>
+                Optional: Upload a CSV file with student names (one name per line)
+              </div>
+            </div>
           </div>
         </div>
 
