@@ -24,7 +24,7 @@ import {
 } from 'firebase/firestore';
 import logo from '../images/logo transparent.png';
 import { QRCodeSVG } from 'qrcode.react';
-import { FaGlobe, FaQuestionCircle } from 'react-icons/fa';
+import { FaGlobe, FaQuestionCircle, FaSearch } from 'react-icons/fa';
 
 function Instructor() {
   const [email, setEmail] = useState('');
@@ -55,6 +55,7 @@ function Instructor() {
   const [studentCodeFilter, setStudentCodeFilter] = useState('');
   const [studentIdentificationType, setStudentIdentificationType] = useState('nickname');
   const [customIdentificationDescription, setCustomIdentificationDescription] = useState('');
+  const [classSearchTerm, setClassSearchTerm] = useState('');
   const navigate = useNavigate();
 
   // Array of border colors for class cards
@@ -159,12 +160,17 @@ function Instructor() {
       });
 
       setMessage(`✅ Class created! Code: ${code}`);
-      // Clear all input fields
+      
+      // Reset all form fields
       setClassName('');
       setSchedule('');
       setMaxStudents('');
+      setSelectedDays([]);
+      setSelectedTime('');
       setStudentIdentificationType('nickname');
       setCustomIdentificationDescription('');
+      
+      // Fetch updated classes list
       fetchClasses(userId);
     } catch (error) {
       setMessage(`❌ Error creating class: ${error.message}`);
@@ -528,7 +534,8 @@ function Instructor() {
           warning: 'Please provide clear instructions for students.'
         }
       },
-      customIdentificationPlaceholder: 'Describe how students should identify themselves (e.g., "Student ID", "Class Number", etc.)'
+      customIdentificationPlaceholder: 'Describe how students should identify themselves (e.g., "Student ID", "Class Number", etc.)',
+      searchClasses: 'Search classes...',
     },
     pt: {
       title: 'Painel do Instrutor',
@@ -630,7 +637,8 @@ function Instructor() {
           warning: 'Por favor, forneça instruções claras para os alunos.'
         }
       },
-      customIdentificationPlaceholder: 'Descreva como os alunos devem se identificar (ex: "ID do Aluno", "Número da Turma", etc.)'
+      customIdentificationPlaceholder: 'Descreva como os alunos devem se identificar (ex: "ID do Aluno", "Número da Turma", etc.)',
+      searchClasses: 'Pesquisar turmas...',
     },
     es: {
       title: 'Panel del Instructor',
@@ -732,7 +740,8 @@ function Instructor() {
           warning: 'Por favor, proporcione instrucciones claras para los estudiantes.'
         }
       },
-      customIdentificationPlaceholder: 'Describa cómo los estudiantes deben identificarse (ej: "ID del Estudiante", "Número de Clase", etc.)'
+      customIdentificationPlaceholder: 'Describa cómo los estudiantes deben identificarse (ej: "ID del Estudiante", "Número de Clase", etc.)',
+      searchClasses: 'Buscar clases...',
     }
   };
 
@@ -745,6 +754,15 @@ function Instructor() {
     const tooltip = e.currentTarget.querySelector('div');
     tooltip.style.display = 'none';
   };
+
+  const filteredClasses = classes.filter(cls => {
+    const searchTerm = classSearchTerm.toLowerCase();
+    return (
+      cls.className.toLowerCase().includes(searchTerm) ||
+      cls.schedule.toLowerCase().includes(searchTerm) ||
+      cls.enrollmentCode.toLowerCase().includes(searchTerm)
+    );
+  });
 
   if (userId) {
     return (
@@ -1223,9 +1241,49 @@ function Instructor() {
 
         {classes.length > 0 && (
           <div style={{ marginTop: 30 }}>
-            <h3 style={{ fontSize: 'clamp(1.5rem, 4vw, 2rem)', marginBottom: '1.5rem' }}>{translations[language].yourClasses}:</h3>
+            <div style={{ 
+              display: 'flex', 
+              justifyContent: 'space-between', 
+              alignItems: 'center', 
+              marginBottom: '1.5rem',
+              flexWrap: 'wrap',
+              gap: '1rem'
+            }}>
+              <h3 style={{ fontSize: 'clamp(1.5rem, 4vw, 2rem)', margin: 0 }}>{translations[language].yourClasses}:</h3>
+              <div style={{ 
+                position: 'relative',
+                width: '300px',
+                maxWidth: '100%'
+              }}>
+                <input
+                  type="text"
+                  placeholder={translations[language].searchClasses}
+                  value={classSearchTerm}
+                  onChange={(e) => setClassSearchTerm(e.target.value)}
+                  style={{
+                    width: '100%',
+                    padding: '8px 12px',
+                    paddingLeft: '32px',
+                    border: '1px solid #e2e8f0',
+                    borderRadius: '4px',
+                    fontSize: '0.9rem',
+                    backgroundColor: '#f8fafc'
+                  }}
+                />
+                <FaSearch 
+                  size={14} 
+                  color="#64748b"
+                  style={{
+                    position: 'absolute',
+                    left: '10px',
+                    top: '50%',
+                    transform: 'translateY(-50%)'
+                  }}
+                />
+              </div>
+            </div>
             <ul style={{ listStyle: 'none', padding: 0 }}>
-              {classes.map((cls, index) => (
+              {filteredClasses.map((cls, index) => (
                 <li key={cls.id} style={{ 
                   marginBottom: 20, 
                   textAlign: 'center',
