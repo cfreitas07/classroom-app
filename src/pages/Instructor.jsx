@@ -24,7 +24,7 @@ import {
 } from 'firebase/firestore';
 import logo from '../images/logo transparent.png';
 import { QRCodeSVG } from 'qrcode.react';
-import { FaGlobe } from 'react-icons/fa';
+import { FaGlobe, FaQuestionCircle } from 'react-icons/fa';
 
 function Instructor() {
   const [email, setEmail] = useState('');
@@ -53,6 +53,8 @@ function Instructor() {
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [studentCodeFilter, setStudentCodeFilter] = useState('');
+  const [studentIdentificationType, setStudentIdentificationType] = useState('nickname');
+  const [customIdentificationDescription, setCustomIdentificationDescription] = useState('');
   const navigate = useNavigate();
 
   // Array of border colors for class cards
@@ -133,6 +135,10 @@ function Instructor() {
       setMessage("❌ Please enter the maximum number of students");
       return;
     }
+    if (studentIdentificationType === 'other' && !customIdentificationDescription.trim()) {
+      setMessage("❌ Please describe how students should identify themselves");
+      return;
+    }
     const maxStudentsNum = Number(maxStudents);
     if (isNaN(maxStudentsNum) || maxStudentsNum < 1) {
       setMessage("❌ Please enter a valid number of students (minimum 1)");
@@ -148,6 +154,8 @@ function Instructor() {
         maxStudents: maxStudentsNum,
         enrollmentCode: code,
         instructorId: userId,
+        studentIdentificationType,
+        customIdentificationDescription: studentIdentificationType === 'other' ? customIdentificationDescription.trim() : '',
       });
 
       setMessage(`✅ Class created! Code: ${code}`);
@@ -155,6 +163,8 @@ function Instructor() {
       setClassName('');
       setSchedule('');
       setMaxStudents('');
+      setStudentIdentificationType('nickname');
+      setCustomIdentificationDescription('');
       fetchClasses(userId);
     } catch (error) {
       setMessage(`❌ Error creating class: ${error.message}`);
@@ -497,7 +507,28 @@ function Instructor() {
       startDate: 'Start Date',
       endDate: 'End Date',
       searchStudentCode: 'Search Student Code',
-      clearFilters: 'Clear Filters'
+      clearFilters: 'Clear Filters',
+      studentIdentification: 'How Students Will Identify Themselves',
+      studentIdentificationDescription: 'Choose how students will write their names when checking in to your class',
+      studentIdentificationTooltip: 'This setting determines how students will identify themselves when checking in. Choose carefully as this cannot be changed after creating the class.',
+      identificationOptions: {
+        fullName: {
+          label: 'First and Last Name',
+          tooltip: 'Students will enter their full name (e.g., "John Smith"). Not recommended due to privacy concerns. Example: When checking in, students will type their full name exactly as shown: "John Smith", "Maria Garcia", "David Johnson".',
+          warning: '⚠️ Privacy Warning: Using full names may expose student identities.'
+        },
+        nickname: {
+          label: 'Student Nickname',
+          tooltip: 'You will assign nicknames to students. For example, in an engineering class, you might use physics equations (e.g., "OhmsLaw" for John Smith, "Bernoulli" for Maria Garcia, "Fourier" for David Johnson). Students will use exactly these nicknames when checking in.',
+          warning: 'You will need to provide nicknames to students before they can check in.'
+        },
+        other: {
+          label: 'Custom Identification',
+          tooltip: 'Define your own identification method (e.g., "Student ID", "Class Number", etc.). Example: You might use "ID123" (Student ID), "C2023" (Class Number), or "S1" (Seat Number). Students will use exactly what you specify here when checking in.',
+          warning: 'Please provide clear instructions for students.'
+        }
+      },
+      customIdentificationPlaceholder: 'Describe how students should identify themselves (e.g., "Student ID", "Class Number", etc.)'
     },
     pt: {
       title: 'Painel do Instrutor',
@@ -578,7 +609,28 @@ function Instructor() {
       startDate: 'Data Inicial',
       endDate: 'Data Final',
       searchStudentCode: 'Buscar Código do Aluno',
-      clearFilters: 'Limpar Filtros'
+      clearFilters: 'Limpar Filtros',
+      studentIdentification: 'Como os Alunos se Identificarão',
+      studentIdentificationDescription: 'Escolha como os alunos escreverão seus nomes ao fazer check-in na sua turma',
+      studentIdentificationTooltip: 'Esta configuração determina como os alunos se identificarão ao fazer check-in. Escolha com cuidado, pois isso não pode ser alterado após a criação da turma.',
+      identificationOptions: {
+        fullName: {
+          label: 'Nome Completo',
+          tooltip: 'Os alunos inserirão seu nome completo (ex: "João Silva"). Não recomendado devido a preocupações com privacidade. Exemplo: Ao fazer check-in, os alunos digitarão seu nome completo exatamente como mostrado: "João Silva", "Maria Santos", "Pedro Oliveira".',
+          warning: '⚠️ Aviso de Privacidade: Usar nomes completos pode expor a identidade dos alunos.'
+        },
+        nickname: {
+          label: 'Apelido do Aluno',
+          tooltip: 'Você atribuirá apelidos aos alunos. Por exemplo, em uma aula de engenharia, você pode usar equações da física (ex: "LeiOhm" para João Silva, "Bernoulli" para Maria Santos, "Fourier" para Pedro Oliveira). Os alunos usarão exatamente esses apelidos ao fazer check-in.',
+          warning: 'Você precisará fornecer apelidos aos alunos antes que eles possam fazer check-in.'
+        },
+        other: {
+          label: 'Identificação Personalizada',
+          tooltip: 'Defina seu próprio método de identificação (ex: "ID do Aluno", "Número da Turma", etc.). Exemplo: Você pode usar "ID123" (ID do Aluno), "T2023" (Número da Turma), ou "C1" (Número da Cadeira). Os alunos usarão exatamente o que você especificar aqui ao fazer check-in.',
+          warning: 'Por favor, forneça instruções claras para os alunos.'
+        }
+      },
+      customIdentificationPlaceholder: 'Descreva como os alunos devem se identificar (ex: "ID do Aluno", "Número da Turma", etc.)'
     },
     es: {
       title: 'Panel del Instructor',
@@ -659,8 +711,39 @@ function Instructor() {
       startDate: 'Fecha Inicial',
       endDate: 'Fecha Final',
       searchStudentCode: 'Buscar Código del Estudiante',
-      clearFilters: 'Limpiar Filtros'
+      clearFilters: 'Limpiar Filtros',
+      studentIdentification: 'Cómo se Identificarán los Estudiantes',
+      studentIdentificationDescription: 'Elija cómo los estudiantes escribirán sus nombres al registrarse en su clase',
+      studentIdentificationTooltip: 'Esta configuración determina cómo los estudiantes se identificarán al registrarse. Elija cuidadosamente, ya que esto no se puede cambiar después de crear la clase.',
+      identificationOptions: {
+        fullName: {
+          label: 'Nombre Completo',
+          tooltip: 'Los estudiantes ingresarán su nombre completo (ej: "Juan Pérez"). No recomendado debido a preocupaciones de privacidad. Ejemplo: Al registrarse, los estudiantes escribirán su nombre completo exactamente como se muestra: "Juan Pérez", "María García", "David López".',
+          warning: '⚠️ Advertencia de Privacidad: Usar nombres completos puede exponer la identidad de los estudiantes.'
+        },
+        nickname: {
+          label: 'Apodo del Estudiante',
+          tooltip: 'Usted asignará apodos a los estudiantes. Por ejemplo, en una clase de ingeniería, puede usar ecuaciones de física (ej: "LeyOhm" para Juan Pérez, "Bernoulli" para María García, "Fourier" para David López). Los estudiantes usarán exactamente estos apodos al registrarse.',
+          warning: 'Necesitará proporcionar apodos a los estudiantes antes de que puedan registrarse.'
+        },
+        other: {
+          label: 'Identificación Personalizada',
+          tooltip: 'Defina su propio método de identificación (ej: "ID del Estudiante", "Número de Clase", etc.). Ejemplo: Puede usar "ID123" (ID del Estudiante), "C2023" (Número de Clase), o "A1" (Número de Asiento). Los estudiantes usarán exactamente lo que usted especifique aquí al registrarse.',
+          warning: 'Por favor, proporcione instrucciones claras para los estudiantes.'
+        }
+      },
+      customIdentificationPlaceholder: 'Describa cómo los estudiantes deben identificarse (ej: "ID del Estudiante", "Número de Clase", etc.)'
     }
+  };
+
+  const handleTooltipMouseEnter = (e) => {
+    const tooltip = e.currentTarget.querySelector('div');
+    tooltip.style.display = 'block';
+  };
+
+  const handleTooltipMouseLeave = (e) => {
+    const tooltip = e.currentTarget.querySelector('div');
+    tooltip.style.display = 'none';
   };
 
   if (userId) {
@@ -939,6 +1022,164 @@ function Instructor() {
                 }} 
               />
             </div>
+
+            <div style={{ 
+              marginBottom: '15px',
+              padding: '15px',
+              backgroundColor: '#f8fafc',
+              borderRadius: '8px',
+              textAlign: 'left'
+            }}>
+              <div style={{ 
+                display: 'flex', 
+                alignItems: 'center', 
+                gap: '8px',
+                marginBottom: '10px'
+              }}>
+                <span style={{ 
+                  fontSize: 'clamp(1rem, 2.5vw, 1.2rem)',
+                  color: '#1e293b',
+                  fontWeight: '600'
+                }}>
+                  {translations[language].studentIdentification}
+                </span>
+                <div style={{ 
+                  position: 'relative',
+                  display: 'inline-block',
+                  cursor: 'help'
+                }}
+                onMouseEnter={handleTooltipMouseEnter}
+                onMouseLeave={handleTooltipMouseLeave}>
+                  <FaQuestionCircle 
+                    size={16} 
+                    color="#64748b"
+                    title={translations[language].studentIdentificationTooltip}
+                  />
+                  <div style={{
+                    position: 'absolute',
+                    bottom: '100%',
+                    left: '50%',
+                    transform: 'translateX(-50%)',
+                    backgroundColor: '#1e293b',
+                    color: 'white',
+                    padding: '8px 12px',
+                    borderRadius: '4px',
+                    fontSize: '0.9rem',
+                    width: '300px',
+                    display: 'none',
+                    zIndex: 1000,
+                    boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+                  }}>
+                    {translations[language].studentIdentificationTooltip}
+                  </div>
+                </div>
+              </div>
+              <div style={{ 
+                fontSize: 'clamp(0.9rem, 2.5vw, 1rem)',
+                color: '#4b5563',
+                marginBottom: '15px',
+                padding: '8px',
+                backgroundColor: '#f3f4f6',
+                borderRadius: '4px'
+              }}>
+                {translations[language].studentIdentificationDescription}
+              </div>
+
+              <div style={{ 
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '10px'
+              }}>
+                {Object.entries(translations[language].identificationOptions).map(([key, option]) => (
+                  <label key={key} style={{ 
+                    display: 'flex', 
+                    alignItems: 'flex-start',
+                    gap: '8px',
+                    cursor: 'pointer'
+                  }}>
+                    <input
+                      type="radio"
+                      name="studentIdentification"
+                      value={key}
+                      checked={studentIdentificationType === key}
+                      onChange={(e) => setStudentIdentificationType(e.target.value)}
+                      style={{ marginTop: '4px' }}
+                    />
+                    <div>
+                      <div style={{ 
+                        display: 'flex', 
+                        alignItems: 'center', 
+                        gap: '8px',
+                        marginBottom: '4px'
+                      }}>
+                        <span style={{ 
+                          fontSize: 'clamp(0.9rem, 2.5vw, 1rem)',
+                          color: '#1e293b'
+                        }}>
+                          {option.label}
+                        </span>
+                        <div style={{ 
+                          position: 'relative',
+                          display: 'inline-block',
+                          cursor: 'help'
+                        }}
+                        onMouseEnter={handleTooltipMouseEnter}
+                        onMouseLeave={handleTooltipMouseLeave}>
+                          <FaQuestionCircle 
+                            size={14} 
+                            color="#64748b"
+                            title={option.tooltip}
+                          />
+                          <div style={{
+                            position: 'absolute',
+                            bottom: '100%',
+                            left: '50%',
+                            transform: 'translateX(-50%)',
+                            backgroundColor: '#1e293b',
+                            color: 'white',
+                            padding: '8px 12px',
+                            borderRadius: '4px',
+                            fontSize: '0.9rem',
+                            width: '300px',
+                            display: 'none',
+                            zIndex: 1000,
+                            boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+                          }}>
+                            {option.tooltip}
+                          </div>
+                        </div>
+                      </div>
+                      <div style={{ 
+                        fontSize: 'clamp(0.8rem, 2vw, 0.9rem)',
+                        color: '#ef4444',
+                        marginLeft: '24px'
+                      }}>
+                        {option.warning}
+                      </div>
+                    </div>
+                  </label>
+                ))}
+              </div>
+
+              {studentIdentificationType === 'other' && (
+                <div style={{ marginTop: '10px' }}>
+                  <input
+                    type="text"
+                    value={customIdentificationDescription}
+                    onChange={(e) => setCustomIdentificationDescription(e.target.value)}
+                    placeholder={translations[language].customIdentificationPlaceholder}
+                    style={{
+                      width: '100%',
+                      padding: '8px',
+                      border: '1px solid #e2e8f0',
+                      borderRadius: '4px',
+                      fontSize: 'clamp(0.9rem, 2.5vw, 1rem)'
+                    }}
+                  />
+                </div>
+              )}
+            </div>
+
             {message && (
               <div style={{ 
                 marginTop: '1rem', 
