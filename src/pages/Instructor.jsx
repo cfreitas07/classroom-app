@@ -50,6 +50,9 @@ function Instructor() {
   const [attendanceCode, setAttendanceCode] = useState('');
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [countdown, setCountdown] = useState(5);
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
+  const [studentCodeFilter, setStudentCodeFilter] = useState('');
   const navigate = useNavigate();
 
   // Array of border colors for class cards
@@ -400,6 +403,20 @@ function Instructor() {
     setSchedule(scheduleText);
   };
 
+  const filterAttendanceRecords = (records) => {
+    if (!records) return [];
+    
+    return records.filter(record => {
+      const recordDate = new Date(record.timestamp).toISOString().split('T')[0];
+      const matchesDate = (!startDate || recordDate >= startDate) && 
+                         (!endDate || recordDate <= endDate);
+      const matchesStudentCode = !studentCodeFilter || 
+                               record.studentCode.toLowerCase().includes(studentCodeFilter.toLowerCase());
+      
+      return matchesDate && matchesStudentCode;
+    });
+  };
+
   const translations = {
     en: {
       title: 'Instructor Dashboard',
@@ -476,7 +493,11 @@ function Instructor() {
         friday: 'Friday',
         saturday: 'Saturday',
         sunday: 'Sunday'
-      }
+      },
+      startDate: 'Start Date',
+      endDate: 'End Date',
+      searchStudentCode: 'Search Student Code',
+      clearFilters: 'Clear Filters'
     },
     pt: {
       title: 'Painel do Instrutor',
@@ -553,7 +574,11 @@ function Instructor() {
         friday: 'Sexta-feira',
         saturday: 'Sábado',
         sunday: 'Domingo'
-      }
+      },
+      startDate: 'Data Inicial',
+      endDate: 'Data Final',
+      searchStudentCode: 'Buscar Código do Aluno',
+      clearFilters: 'Limpar Filtros'
     },
     es: {
       title: 'Panel del Instructor',
@@ -630,7 +655,11 @@ function Instructor() {
         friday: 'Viernes',
         saturday: 'Sábado',
         sunday: 'Domingo'
-      }
+      },
+      startDate: 'Fecha Inicial',
+      endDate: 'Fecha Final',
+      searchStudentCode: 'Buscar Código del Estudiante',
+      clearFilters: 'Limpiar Filtros'
     }
   };
 
@@ -1247,7 +1276,9 @@ function Instructor() {
                         display: 'flex', 
                         justifyContent: 'space-between', 
                         alignItems: 'center',
-                        marginBottom: '15px'
+                        marginBottom: '15px',
+                        flexWrap: 'wrap',
+                        gap: '10px'
                       }}>
                         <h4 style={{ 
                           fontSize: 'clamp(1rem, 2.5vw, 1.2rem)',
@@ -1256,23 +1287,86 @@ function Instructor() {
                         }}>
                           {translations[language].attendanceRecords}
                         </h4>
-                        <button
-                          onClick={() => fetchAttendanceForClass(cls.id, true)}
-                          style={{
-                            padding: '8px 16px',
-                            backgroundColor: '#3b82f6',
-                            color: 'white',
-                            border: 'none',
-                            borderRadius: '4px',
-                            cursor: 'pointer',
-                            fontSize: 'clamp(0.8rem, 2vw, 0.9rem)',
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: '8px'
-                          }}
-                        >
-                          {translations[language].downloadCSV}
-                        </button>
+                        <div style={{
+                          display: 'flex',
+                          gap: '10px',
+                          flexWrap: 'wrap'
+                        }}>
+                          <input
+                            type="date"
+                            value={startDate}
+                            onChange={(e) => setStartDate(e.target.value)}
+                            style={{
+                              padding: '8px',
+                              border: '1px solid #e2e8f0',
+                              borderRadius: '4px',
+                              fontSize: 'clamp(0.8rem, 2vw, 0.9rem)'
+                            }}
+                            placeholder={translations[language].startDate}
+                          />
+                          <input
+                            type="date"
+                            value={endDate}
+                            onChange={(e) => setEndDate(e.target.value)}
+                            style={{
+                              padding: '8px',
+                              border: '1px solid #e2e8f0',
+                              borderRadius: '4px',
+                              fontSize: 'clamp(0.8rem, 2vw, 0.9rem)'
+                            }}
+                            placeholder={translations[language].endDate}
+                          />
+                          <input
+                            type="text"
+                            value={studentCodeFilter}
+                            onChange={(e) => setStudentCodeFilter(e.target.value)}
+                            placeholder={translations[language].searchStudentCode}
+                            style={{
+                              padding: '8px',
+                              border: '1px solid #e2e8f0',
+                              borderRadius: '4px',
+                              fontSize: 'clamp(0.8rem, 2vw, 0.9rem)'
+                            }}
+                          />
+                          <button
+                            onClick={() => {
+                              setStartDate('');
+                              setEndDate('');
+                              setStudentCodeFilter('');
+                            }}
+                            style={{
+                              padding: '8px 16px',
+                              backgroundColor: '#e2e8f0',
+                              color: '#1e293b',
+                              border: 'none',
+                              borderRadius: '4px',
+                              cursor: 'pointer',
+                              fontSize: 'clamp(0.8rem, 2vw, 0.9rem)',
+                              transition: 'background-color 0.2s ease'
+                            }}
+                            onMouseOver={e => e.target.style.backgroundColor = '#cbd5e1'}
+                            onMouseOut={e => e.target.style.backgroundColor = '#e2e8f0'}
+                          >
+                            {translations[language].clearFilters}
+                          </button>
+                          <button
+                            onClick={() => fetchAttendanceForClass(cls.id, true)}
+                            style={{
+                              padding: '8px 16px',
+                              backgroundColor: '#3b82f6',
+                              color: 'white',
+                              border: 'none',
+                              borderRadius: '4px',
+                              cursor: 'pointer',
+                              fontSize: 'clamp(0.8rem, 2vw, 0.9rem)',
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: '8px'
+                            }}
+                          >
+                            {translations[language].downloadCSV}
+                          </button>
+                        </div>
                       </div>
                       
                       <div style={{ 
@@ -1298,7 +1392,7 @@ function Instructor() {
                             </tr>
                           </thead>
                           <tbody>
-                            {attendanceRecordsByClass[cls.id]
+                            {filterAttendanceRecords(attendanceRecordsByClass[cls.id])
                               .sort((a, b) => b.timestamp - a.timestamp)
                               .map((record, index) => {
                                 const date = new Date(record.timestamp);

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { FaChalkboardTeacher, FaUserGraduate, FaCode, FaGlobe, FaCopyright, FaUsers, FaClipboardCheck, FaFileCsv, FaHistory, FaShieldAlt, FaFileContract, FaFacebook, FaLinkedin, FaWhatsapp, FaLink } from 'react-icons/fa';
+import { FaChalkboardTeacher, FaUserGraduate, FaCode, FaGlobe, FaCopyright, FaUsers, FaClipboardCheck, FaFileCsv, FaHistory, FaShieldAlt, FaFileContract, FaFacebook, FaLinkedin, FaWhatsapp, FaLink, FaInstagram, FaReddit } from 'react-icons/fa';
 import { FaXTwitter } from 'react-icons/fa6';
 import styles from './Home.module.css';
 import logo from '../images/logo transparent.png';
@@ -16,7 +16,7 @@ function Home() {
       instructor: "I'm an Instructor",
       student: "I'm a Student",
       shareTitle: 'Share with Friends',
-      shareText: 'Check out Presenzo - A simple way to track class attendance!',
+      shareText: 'Hey! Check out this cool app I found - Presenzo! It\'s a super simple way to take attendance in class. No more paper lists or complicated systems. Just generate a code at the start of class and students check in with their phones. Perfect for teachers!',
       copied: 'Link copied!',
       steps: [
         {
@@ -39,7 +39,7 @@ function Home() {
       instructor: 'Sou um Instrutor',
       student: 'Sou um Estudante',
       shareTitle: 'Compartilhe com Amigos',
-      shareText: 'Conheça o Presenzo - Uma maneira simples de controlar a presença em aula!',
+      shareText: 'Oi! Olha só esse app legal que encontrei - Presenzo! É uma maneira super simples de fazer chamada em aula. Chega de listas de papel ou sistemas complicados. É só gerar um código no início da aula e os alunos fazem check-in pelo celular. Perfeito para professores!',
       copied: 'Link copiado!',
       steps: [
         {
@@ -62,7 +62,7 @@ function Home() {
       instructor: 'Soy un Instructor',
       student: 'Soy un Estudiante',
       shareTitle: 'Compartir con Amigos',
-      shareText: '¡Mira Presenzo - Una forma sencilla de controlar la asistencia en clase!',
+      shareText: '¡Hola! Mira esta app genial que encontré - ¡Presenzo! Es una forma súper sencilla de tomar asistencia en clase. Se acabaron las listas de papel o sistemas complicados. Solo generas un código al inicio de la clase y los estudiantes se registran con sus celulares. ¡Perfecto para profesores!',
       copied: '¡Enlace copiado!',
       steps: [
         {
@@ -347,6 +347,64 @@ function Home() {
             title="Share on LinkedIn"
           >
             <FaLinkedin size={14} />
+          </a>
+          <a
+            href={`https://www.instagram.com/share?url=${encodeURIComponent('https://presenzo.com')}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              padding: '0.35rem',
+              backgroundColor: '#E4405F',
+              color: 'white',
+              borderRadius: '50%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              textDecoration: 'none',
+              transition: 'transform 0.2s ease, background-color 0.2s ease',
+              width: '24px',
+              height: '24px'
+            }}
+            onMouseOver={e => {
+              e.target.style.transform = 'translateY(-2px)';
+              e.target.style.backgroundColor = '#d6324c';
+            }}
+            onMouseOut={e => {
+              e.target.style.transform = 'translateY(0)';
+              e.target.style.backgroundColor = '#E4405F';
+            }}
+            title="Share on Instagram"
+          >
+            <FaInstagram size={14} />
+          </a>
+          <a
+            href={`https://reddit.com/submit?url=${encodeURIComponent('https://presenzo.com')}&title=${encodeURIComponent(translations[language].shareText)}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              padding: '0.35rem',
+              backgroundColor: '#FF4500',
+              color: 'white',
+              borderRadius: '50%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              textDecoration: 'none',
+              transition: 'transform 0.2s ease, background-color 0.2s ease',
+              width: '24px',
+              height: '24px'
+            }}
+            onMouseOver={e => {
+              e.target.style.transform = 'translateY(-2px)';
+              e.target.style.backgroundColor = '#e63e00';
+            }}
+            onMouseOut={e => {
+              e.target.style.transform = 'translateY(0)';
+              e.target.style.backgroundColor = '#FF4500';
+            }}
+            title="Share on Reddit"
+          >
+            <FaReddit size={14} />
           </a>
           <a
             href={`https://wa.me/?text=${encodeURIComponent(translations[language].shareText + ' https://presenzo.com')}`}
