@@ -1163,8 +1163,7 @@ function Instructor() {
 
               {studentIdentificationType === 'other' && (
                 <div style={{ marginTop: '10px' }}>
-                  <input
-                    type="text"
+                  <textarea
                     value={customIdentificationDescription}
                     onChange={(e) => setCustomIdentificationDescription(e.target.value)}
                     placeholder={translations[language].customIdentificationPlaceholder}
@@ -1173,7 +1172,13 @@ function Instructor() {
                       padding: '8px',
                       border: '1px solid #e2e8f0',
                       borderRadius: '4px',
-                      fontSize: 'clamp(0.9rem, 2.5vw, 1rem)'
+                      fontSize: '0.9rem',
+                      backgroundColor: '#f8fafc',
+                      minHeight: '60px',
+                      maxHeight: '200px',
+                      resize: 'vertical',
+                      overflowY: 'auto',
+                      boxSizing: 'border-box'
                     }}
                   />
                 </div>
