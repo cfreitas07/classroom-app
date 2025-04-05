@@ -161,27 +161,6 @@ function Instructor() {
         customIdentificationDescription: studentIdentificationType === 'other' ? customIdentificationDescription.trim() : '',
       });
 
-      // If there's a CSV file with student names, process it
-      if (studentNamesFile) {
-        const reader = new FileReader();
-        reader.onload = async (e) => {
-          const text = e.target.result;
-          const names = text.split('\n')
-            .map(line => line.trim())
-            .filter(line => line.length > 0);
-
-          // Save each student name to the studentNames collection
-          for (const name of names) {
-            await addDoc(collection(db, 'studentNames'), {
-              classId: classRef.id,
-              name: name,
-              nameNormalized: name.toLowerCase() // For case-insensitive search
-            });
-          }
-        };
-        reader.readAsText(studentNamesFile);
-      }
-
       setMessage(`✅ Class created! Code: ${code}`);
       
       // Reset all form fields
@@ -1260,27 +1239,6 @@ function Instructor() {
             >
               {translations[language].createClass}
             </button>
-            <div>
-              <input
-                type="file"
-                accept=".csv"
-                onChange={(e) => setStudentNamesFile(e.target.files[0])}
-                style={{
-                  marginTop: '10px',
-                  padding: '8px',
-                  border: '1px solid #e2e8f0',
-                  borderRadius: '4px',
-                  width: '100%'
-                }}
-              />
-              <div style={{
-                fontSize: '0.8rem',
-                color: '#64748b',
-                marginTop: '4px'
-              }}>
-                Optional: Upload a CSV file with student names (one name per line)
-              </div>
-            </div>
           </div>
         </div>
 
