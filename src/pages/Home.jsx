@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { FaChalkboardTeacher, FaUserGraduate, FaCode, FaGlobe, FaCopyright, FaUsers, FaClipboardCheck, FaFileCsv, FaHistory, FaShieldAlt, FaFileContract, FaFacebook, FaLinkedin, FaWhatsapp, FaLink, FaInstagram, FaReddit } from 'react-icons/fa';
+import { FaChalkboardTeacher, FaUserGraduate, FaCode, FaGlobe, FaCopyright, FaUsers, FaClipboardCheck, FaFileCsv, FaHistory, FaShieldAlt, FaFileContract, FaFacebook, FaLinkedin, FaWhatsapp, FaLink, FaInstagram, FaReddit, FaExclamationCircle } from 'react-icons/fa';
 import { FaXTwitter } from 'react-icons/fa6';
 import styles from './Home.module.css';
 import logo from '../images/logo transparent.png';
@@ -18,18 +18,20 @@ function Home() {
       shareTitle: 'Share with Friends',
       shareText: 'Hey! Check out this cool app I found - Presenzo! It\'s a super simple way to take attendance in class. No more paper lists or complicated systems. Just generate a code at the start of class and students check in with their phones. Perfect for teachers!',
       copied: 'Link copied!',
+      feedback: 'Feedback & Bug Reports',
+      translate: 'Translate site to:',
       steps: [
         {
           title: 'Create Class',
-          description: 'Set up your classroom with name, schedule, and size'
+          description: 'Set up all your classes in minutes'
         },
         {
           title: 'Share Code',
-          description: 'Generate and share attendance code at the start of each class'
+          description: 'Students scan unique codes for each class'
         },
         {
           title: 'Download Reports',
-          description: 'Get attendance records in CSV format anytime'
+          description: 'Get attendance records anytime'
         }
       ]
     },
@@ -41,18 +43,20 @@ function Home() {
       shareTitle: 'Compartilhe com Amigos',
       shareText: 'Oi! Olha só esse app legal que encontrei - Presenzo! É uma maneira super simples de fazer chamada em aula. Chega de listas de papel ou sistemas complicados. É só gerar um código no início da aula e os alunos fazem check-in pelo celular. Perfeito para professores!',
       copied: 'Link copiado!',
+      feedback: 'Feedback e Relatórios de Bugs',
+      translate: 'Traduzir site para:',
       steps: [
         {
           title: 'Criar Turma',
-          description: 'Configure sua sala com nome, horário e tamanho'
+          description: 'Configure todas as suas turmas em minutos'
         },
         {
           title: 'Compartilhar Código',
-          description: 'Gere e compartilhe o código de presença no início de cada aula'
+          description: 'Alunos escaneiam códigos únicos para cada aula'
         },
         {
           title: 'Baixar Relatórios',
-          description: 'Obtenha registros de presença em formato CSV a qualquer momento'
+          description: 'Obtenha registros de presença a qualquer momento'
         }
       ]
     },
@@ -64,18 +68,20 @@ function Home() {
       shareTitle: 'Compartir con Amigos',
       shareText: '¡Hola! Mira esta app genial que encontré - ¡Presenzo! Es una forma súper sencilla de tomar asistencia en clase. Se acabaron las listas de papel o sistemas complicados. Solo generas un código al inicio de la clase y los estudiantes se registran con sus celulares. ¡Perfecto para profesores!',
       copied: '¡Enlace copiado!',
+      feedback: 'Comentarios y Reportes de Errores',
+      translate: 'Traducir sitio a:',
       steps: [
         {
           title: 'Crear Clase',
-          description: 'Configure su aula con nombre, horario y tamaño'
+          description: 'Configure todas sus clases en minutos'
         },
         {
           title: 'Compartir Código',
-          description: 'Genere y comparta el código de asistencia al inicio de cada clase'
+          description: 'Estudiantes escanean códigos únicos para cada clase'
         },
         {
           title: 'Descargar Informes',
-          description: 'Obtenga registros de asistencia en formato CSV en cualquier momento'
+          description: 'Obtenga registros de asistencia en cualquier momento'
         }
       ]
     }
@@ -103,32 +109,61 @@ function Home() {
         display: 'flex', 
         alignItems: 'center', 
         justifyContent: 'center',
-        gap: '0.25rem',
+        gap: '0.5rem',
         backgroundColor: 'white',
-        padding: '0.25rem',
+        padding: '0.5rem 1rem',
         borderRadius: '6px',
         boxShadow: '0 1px 2px rgba(0,0,0,0.1)',
-        marginBottom: '1rem'
+        marginBottom: '1rem',
+        maxWidth: 'fit-content',
+        margin: '0 auto 1rem'
       }}>
-        <FaGlobe size={14} style={{ color: '#4a5568', marginRight: '0.5rem' }} />
-        {['en', 'pt', 'es'].map((lang) => (
-          <button
-            key={lang}
-            onClick={() => setLanguage(lang)}
-            style={{
-              padding: '0.25rem 0.75rem',
-              border: 'none',
-              background: language === lang ? '#3b82f6' : 'transparent',
-              color: language === lang ? 'white' : '#4a5568',
-              borderRadius: '4px',
-              cursor: 'pointer',
-              transition: 'all 0.2s ease',
-              fontSize: '0.9rem'
-            }}
-          >
-            {lang.toUpperCase()}
-          </button>
-        ))}
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '0.5rem',
+          color: '#4a5568',
+          fontSize: '0.9rem'
+        }}>
+          <FaGlobe size={16} style={{ color: '#3b82f6' }} />
+          <span>{translations[language].translate}</span>
+        </div>
+        <div style={{
+          display: 'flex',
+          gap: '0.25rem',
+          borderLeft: '1px solid #e2e8f0',
+          paddingLeft: '0.5rem'
+        }}>
+          {['en', 'pt', 'es'].map((lang) => (
+            <button
+              key={lang}
+              onClick={() => setLanguage(lang)}
+              style={{
+                padding: '0.25rem 0.75rem',
+                border: 'none',
+                background: language === lang ? '#3b82f6' : '#f3f4f6',
+                color: language === lang ? 'white' : '#4a5568',
+                borderRadius: '4px',
+                cursor: 'pointer',
+                transition: 'all 0.2s ease',
+                fontSize: '0.9rem',
+                fontWeight: language === lang ? '600' : '400'
+              }}
+              onMouseOver={e => {
+                if (language !== lang) {
+                  e.target.style.backgroundColor = '#e5e7eb';
+                }
+              }}
+              onMouseOut={e => {
+                if (language !== lang) {
+                  e.target.style.backgroundColor = '#f3f4f6';
+                }
+              }}
+            >
+              {lang === 'en' ? 'English' : lang === 'pt' ? 'Português' : 'Español'}
+            </button>
+          ))}
+        </div>
       </div>
 
       <p style={{ 
@@ -251,9 +286,39 @@ function Home() {
         <div style={{
           fontSize: '0.8rem',
           color: '#4a5568',
-          marginBottom: '0.5rem'
+          marginBottom: '0.5rem',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          gap: '1rem'
         }}>
-          {translations[language].shareTitle}
+          <span>{translations[language].shareTitle}</span>
+          <a
+            href="mailto:cfreitas@pfw.edu?subject=Presenzo Feedback"
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.25rem',
+              color: '#dc2626',
+              textDecoration: 'none',
+              fontSize: '0.8rem',
+              padding: '0.25rem 0.5rem',
+              borderRadius: '4px',
+              backgroundColor: '#fee2e2',
+              transition: 'all 0.2s ease'
+            }}
+            onMouseOver={e => {
+              e.target.style.backgroundColor = '#fecaca';
+              e.target.style.color = '#b91c1c';
+            }}
+            onMouseOut={e => {
+              e.target.style.backgroundColor = '#fee2e2';
+              e.target.style.color = '#dc2626';
+            }}
+          >
+            <FaExclamationCircle size={12} />
+            {translations[language].feedback}
+          </a>
         </div>
         <div style={{
           display: 'flex',

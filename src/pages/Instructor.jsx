@@ -828,35 +828,62 @@ function Instructor() {
           display: 'flex', 
           alignItems: 'center', 
           justifyContent: 'center',
-          gap: '0.25rem',
+          gap: '1rem',
           backgroundColor: 'white',
-          padding: '0.25rem',
-          borderRadius: '6px',
-          boxShadow: '0 1px 2px rgba(0,0,0,0.1)',
-          marginBottom: '1rem',
-          maxWidth: '400px',
+          padding: '0.75rem 1rem',
+          borderRadius: '8px',
+          boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+          marginBottom: '1.5rem',
+          maxWidth: 'fit-content',
           marginLeft: 'auto',
           marginRight: 'auto'
         }}>
-          <FaGlobe size={14} style={{ color: '#4a5568', marginRight: '0.5rem' }} />
-          {['en', 'pt', 'es'].map((lang) => (
-            <button
-              key={lang}
-              onClick={() => setLanguage(lang)}
-              style={{
-                padding: '0.25rem 0.75rem',
-                border: 'none',
-                background: language === lang ? '#3b82f6' : 'transparent',
-                color: language === lang ? 'white' : '#4a5568',
-                borderRadius: '4px',
-                cursor: 'pointer',
-                transition: 'all 0.2s ease',
-                fontSize: '0.9rem'
-              }}
-            >
-              {lang.toUpperCase()}
-            </button>
-          ))}
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.5rem',
+            color: '#4b5563',
+            fontSize: '0.9rem',
+            fontWeight: '500'
+          }}>
+            <FaGlobe size={16} style={{ color: '#3b82f6' }} />
+            <span>Translate:</span>
+          </div>
+          <div style={{
+            display: 'flex',
+            gap: '0.5rem'
+          }}>
+            {['en', 'pt', 'es'].map((lang) => (
+              <button
+                key={lang}
+                onClick={() => setLanguage(lang)}
+                style={{
+                  padding: '0.4rem 0.8rem',
+                  border: 'none',
+                  background: language === lang ? '#3b82f6' : '#f1f5f9',
+                  color: language === lang ? 'white' : '#4b5563',
+                  borderRadius: '6px',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease',
+                  fontSize: '0.9rem',
+                  fontWeight: '500',
+                  minWidth: '45px'
+                }}
+                onMouseOver={e => {
+                  if (language !== lang) {
+                    e.target.style.backgroundColor = '#e2e8f0';
+                  }
+                }}
+                onMouseOut={e => {
+                  if (language !== lang) {
+                    e.target.style.backgroundColor = '#f1f5f9';
+                  }
+                }}
+              >
+                {lang.toUpperCase()}
+              </button>
+            ))}
+          </div>
         </div>
 
         <div style={{ marginTop: 40 }}>
