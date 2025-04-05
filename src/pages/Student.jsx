@@ -79,7 +79,18 @@ function Student() {
       checkInTime: "Check-in Time",
       status: "Status",
       enrollmentTooltip: "This is your class's permanent enrollment code. It will ALWAYS be the same for this specific class section. Use this code to join the class for the first time.",
-      attendanceCodeTooltip: "This is a unique 3-digit code generated at the start of each class. It is only valid for 3 minutes. Your instructor will display this code at the beginning of class."
+      attendanceCodeTooltip: "This is a unique 3-digit code generated at the start of each class. It is only valid for 3 minutes. Your instructor will display this code at the beginning of class.",
+      identificationOptions: {
+        fullName: {
+          tooltip: "Full Name"
+        },
+        nickname: {
+          tooltip: "Nickname"
+        },
+        other: {
+          tooltip: "Other"
+        }
+      }
     },
     pt: {
       title: 'Registro de Presença',
@@ -128,7 +139,18 @@ function Student() {
       checkInTime: "Horário do Check-in",
       status: "Status",
       enrollmentTooltip: "Este é o código permanente da sua turma. Ele SEMPRE será o mesmo para esta seção específica da turma. Use este código para entrar na turma pela primeira vez.",
-      attendanceCodeTooltip: "Este é um código único de 3 dígitos gerado no início de cada aula. É válido apenas por 3 minutos. Seu instrutor exibirá este código no início da aula."
+      attendanceCodeTooltip: "Este é um código único de 3 dígitos gerado no início de cada aula. É válido apenas por 3 minutos. Seu instrutor exibirá este código no início da aula.",
+      identificationOptions: {
+        fullName: {
+          tooltip: "Nome Completo"
+        },
+        nickname: {
+          tooltip: "Apelido"
+        },
+        other: {
+          tooltip: "Outro"
+        }
+      }
     },
     es: {
       title: 'Registro de Asistencia',
@@ -177,7 +199,18 @@ function Student() {
       checkInTime: "Hora de Registro",
       status: "Estado",
       enrollmentTooltip: "Este es el código permanente de matrícula de su clase. SIEMPRE será el mismo para esta sección específica de la clase. Use este código para unirse a la clase por primera vez.",
-      attendanceCodeTooltip: "Este es un código único de 3 dígitos generado al inicio de cada clase. Es válido solo por 3 minutos. Su instructor mostrará este código al inicio de la clase."
+      attendanceCodeTooltip: "Este es un código único de 3 dígitos generado al inicio de cada clase. Es válido solo por 3 minutos. Su instructor mostrará este código al inicio de la clase.",
+      identificationOptions: {
+        fullName: {
+          tooltip: "Nombre Completo"
+        },
+        nickname: {
+          tooltip: "Apodo"
+        },
+        other: {
+          tooltip: "Otro"
+        }
+      }
     }
   };
 
@@ -594,7 +627,9 @@ function Student() {
                     whiteSpace: 'pre-line',
                     marginBottom: '8px'
                   }}>
-                    {translations[language].studentNameTooltip}
+                    {classData.studentIdentificationType === 'fullName' && "Enter your full name (e.g., 'John Smith'). Example: When checking in, type your full name exactly as shown: 'John Smith', 'Maria Garcia', 'David Johnson'."}
+                    {classData.studentIdentificationType === 'nickname' && "Enter the nickname assigned by your instructor (e.g., 'OhmsLaw' for John Smith)."}
+                    {classData.studentIdentificationType === 'other' && classData.customIdentificationDescription}
                     <div style={{
                       position: 'absolute',
                       bottom: '-6px',

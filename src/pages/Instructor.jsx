@@ -520,7 +520,7 @@ function Instructor() {
       identificationOptions: {
         fullName: {
           label: 'First and Last Name',
-          tooltip: 'Students will enter their full name (e.g., "John Smith"). Not recommended due to privacy concerns. Example: When checking in, students will type their full name exactly as shown: "John Smith", "Maria Garcia", "David Johnson".',
+          tooltip: 'Students will enter their full name (e.g., "John Smith"). Example: When checking in, students will type their full name exactly as shown: "John Smith", "Maria Garcia", "David Johnson".',
           warning: '⚠️ Privacy Warning: Using full names may expose student identities.'
         },
         nickname: {
@@ -1371,10 +1371,13 @@ function Instructor() {
                         backgroundColor: 'white',
                         padding: 'clamp(20px, 5vw, 40px)',
                         borderRadius: '12px',
-                        maxWidth: '90%',
-                        width: '400px',
+                        maxWidth: '95%',
+                        width: '800px',
+                        maxHeight: '80vh',
+                        overflowY: 'auto',
                         textAlign: 'center',
-                        position: 'relative'
+                        position: 'relative',
+                        boxShadow: '0 4px 20px rgba(0, 0, 0, 0.2)'
                       }}>
                         <button
                           onClick={() => setShowLargeCodes(prev => ({
@@ -1387,12 +1390,17 @@ function Instructor() {
                             right: '12px',
                             background: 'none',
                             border: 'none',
-                            fontSize: 'clamp(1.5rem, 4vw, 2rem)',
+                            fontSize: '24px',
                             cursor: 'pointer',
                             color: '#666',
                             padding: '6px',
                             borderRadius: '50%',
-                            transition: 'background-color 0.2s ease'
+                            zIndex: 10,
+                            width: '36px',
+                            height: '36px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center'
                           }}
                           onMouseOver={e => e.target.style.backgroundColor = '#f0f0f0'}
                           onMouseOut={e => e.target.style.backgroundColor = 'transparent'}
@@ -1402,88 +1410,123 @@ function Instructor() {
                         <h2 style={{ 
                           marginBottom: '25px', 
                           color: '#1e293b',
-                          fontSize: 'clamp(1.5rem, 4vw, 2rem)'
+                          fontSize: 'clamp(1.5rem, 4vw, 2rem)',
+                          paddingRight: '40px'
                         }}>
                           {cls.className}
                         </h2>
-                        
-                        <div style={{ marginBottom: '30px' }}>
-                          <div style={{ 
-                            fontSize: 'clamp(1rem, 2.5vw, 1.1rem)', 
-                            color: '#64748b', 
-                            marginBottom: '12px' 
-                          }}>
-                            {translations[language].enrollmentCode}
-                          </div>
-                          <div style={{
-                            fontSize: 'clamp(2rem, 5vw, 2.8rem)',
-                            fontWeight: 'bold',
-                            color: '#3b82f6',
-                            letterSpacing: '4px',
-                            padding: 'clamp(10px, 2vw, 15px)',
-                            backgroundColor: '#e3f2fd',
-                            borderRadius: '12px',
-                            marginBottom: '15px',
-                            boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
-                          }}>
-                            {cls.enrollmentCode}
-                          </div>
-                        </div>
 
-                        <div style={{ marginBottom: '30px' }}>
-                          <div style={{ 
-                            fontSize: 'clamp(1rem, 2.5vw, 1.1rem)', 
-                            color: '#64748b', 
-                            marginBottom: '12px' 
-                          }}>
-                            {translations[language].attendanceCode}
+                        <div style={{ 
+                          display: 'grid',
+                          gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+                          gap: '20px',
+                          alignItems: 'start'
+                        }}>
+                          <div>
+                            <div style={{
+                              fontSize: 'clamp(1.2rem, 3vw, 1.4rem)',
+                              color: '#3b82f6',
+                              fontWeight: '600',
+                              marginBottom: '10px'
+                            }}>
+                              Enrollment Code
+                            </div>
+                            <div style={{
+                              fontSize: 'clamp(2rem, 5vw, 2.8rem)',
+                              fontWeight: 'bold',
+                              color: '#3b82f6',
+                              letterSpacing: '4px',
+                              padding: 'clamp(10px, 2vw, 15px)',
+                              backgroundColor: '#e3f2fd',
+                              borderRadius: '12px',
+                              marginBottom: '15px',
+                              boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
+                            }}>
+                              {cls.enrollmentCode}
+                            </div>
+                            <div style={{
+                              display: 'flex',
+                              justifyContent: 'center',
+                              marginTop: '10px'
+                            }}>
+                              <QRCodeSVG
+                                value="https://presenzo.com/student"
+                                size={100}
+                                level="H"
+                                includeMargin={true}
+                                style={{
+                                  backgroundColor: 'white',
+                                  padding: '8px',
+                                  borderRadius: '8px',
+                                  boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+                                }}
+                              />
+                            </div>
+                            <div style={{
+                              fontSize: 'clamp(0.9rem, 2.5vw, 1rem)',
+                              color: '#64748b',
+                              marginTop: '10px',
+                              textAlign: 'center'
+                            }}>
+                              {translations[language].scanQR}
+                            </div>
                           </div>
-                          <div style={{
-                            fontSize: 'clamp(2.5rem, 6vw, 3.5rem)',
-                            fontWeight: 'bold',
-                            color: '#f57c00',
-                            letterSpacing: '8px',
-                            padding: 'clamp(15px, 3vw, 20px)',
-                            backgroundColor: '#fff3e0',
-                            borderRadius: '12px',
-                            marginBottom: '15px',
-                            boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
-                          }}>
-                            {cls.attendanceCode || '---'}
+
+                          <div>
+                            <div style={{
+                              fontSize: 'clamp(1.2rem, 3vw, 1.4rem)',
+                              color: '#3b82f6',
+                              fontWeight: '600',
+                              marginBottom: '10px'
+                            }}>
+                              Student Identifier
+                            </div>
+                            <div style={{
+                              fontSize: 'clamp(0.9rem, 2.5vw, 1rem)',
+                              color: '#1e293b',
+                              backgroundColor: '#f8fafc',
+                              padding: '12px',
+                              borderRadius: '8px',
+                              marginBottom: '15px',
+                              fontWeight: '500',
+                              border: '1px solid #e2e8f0'
+                            }}>
+                              {cls.studentIdentificationType === 'fullName' && "Enter your full name (e.g., 'John Smith')"}
+                              {cls.studentIdentificationType === 'nickname' && "Enter your assigned nickname (e.g., 'OhmsLaw')"}
+                              {cls.studentIdentificationType === 'other' && cls.customIdentificationDescription}
+                            </div>
                           </div>
-                          <div style={{
-                            display: 'flex',
-                            justifyContent: 'center',
-                            marginTop: '15px'
-                          }}>
-                            <QRCodeSVG
-                              value="https://presenzo.com/student"
-                              size={120}
-                              level="H"
-                              includeMargin={true}
-                              style={{
-                                backgroundColor: 'white',
-                                padding: '8px',
-                                borderRadius: '8px',
-                                boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
-                              }}
-                            />
-                          </div>
-                          <div style={{
-                            fontSize: 'clamp(0.9rem, 2.5vw, 1rem)',
-                            color: '#64748b',
-                            marginTop: '10px',
-                            textAlign: 'center'
-                          }}>
-                            {translations[language].scanQR}
-                          </div>
-                          <div style={{
-                            fontSize: 'clamp(1.2rem, 3vw, 1.5rem)',
-                            color: '#f57c00',
-                            fontWeight: 'bold',
-                            marginTop: '15px'
-                          }}>
-                            {translations[language].timeRemaining}: {Math.floor(timers[cls.id] / 60)}:{(timers[cls.id] % 60).toString().padStart(2, '0')}
+
+                          <div>
+                            <div style={{
+                              fontSize: 'clamp(1.2rem, 3vw, 1.4rem)',
+                              color: '#3b82f6',
+                              fontWeight: '600',
+                              marginBottom: '10px'
+                            }}>
+                              Attendance Code
+                            </div>
+                            <div style={{
+                              fontSize: 'clamp(2.5rem, 6vw, 3.5rem)',
+                              fontWeight: 'bold',
+                              color: '#f57c00',
+                              letterSpacing: '8px',
+                              padding: 'clamp(15px, 3vw, 20px)',
+                              backgroundColor: '#fff3e0',
+                              borderRadius: '12px',
+                              marginBottom: '15px',
+                              boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
+                            }}>
+                              {cls.attendanceCode || '---'}
+                            </div>
+                            <div style={{
+                              fontSize: 'clamp(1.2rem, 3vw, 1.5rem)',
+                              color: '#f57c00',
+                              fontWeight: 'bold',
+                              marginTop: '10px'
+                            }}>
+                              {translations[language].timeRemaining} {Math.floor(timers[cls.id] / 60)}:{(timers[cls.id] % 60).toString().padStart(2, '0')}
+                            </div>
                           </div>
                         </div>
 
