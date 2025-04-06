@@ -39,6 +39,7 @@ function Instructor() {
   const [classes, setClasses] = useState([]);
   const [selectedDays, setSelectedDays] = useState([]);
   const [selectedTime, setSelectedTime] = useState('');
+  const [defaultExpirationTime, setDefaultExpirationTime] = useState(3);
   const [attendanceData, setAttendanceData] = useState([]);
   const [expandedClassId, setExpandedClassId] = useState(null);
   const [attendanceRecordsByClass, setAttendanceRecordsByClass] = useState({});
@@ -141,6 +142,10 @@ function Instructor() {
       setMessage("❌ Please describe how students should identify themselves");
       return;
     }
+    if (!defaultExpirationTime || defaultExpirationTime < 1) {
+      setMessage("❌ Please enter a valid expiration time (minimum 1 minute)");
+      return;
+    }
     const maxStudentsNum = Number(maxStudents);
     if (isNaN(maxStudentsNum) || maxStudentsNum < 1) {
       setMessage("❌ Please enter a valid number of students (minimum 1)");
@@ -159,6 +164,7 @@ function Instructor() {
         instructorId: userId,
         studentIdentificationType,
         customIdentificationDescription: studentIdentificationType === 'other' ? customIdentificationDescription.trim() : '',
+        defaultExpirationTime: Number(defaultExpirationTime),
       });
 
       setMessage(`✅ Class created! Code: ${code}`);
@@ -171,6 +177,7 @@ function Instructor() {
       setSelectedTime('');
       setStudentIdentificationType('nickname');
       setCustomIdentificationDescription('');
+      setDefaultExpirationTime(3);
       
       // Fetch updated classes list
       fetchClasses(userId);
@@ -178,6 +185,50 @@ function Instructor() {
       console.error('Error creating class:', error);
       setMessage('Error creating class. Please try again.');
     }
+  };
+
+  const handleDeleteClass = async (classId) => {
+    if (!window.confirm('Are you sure you want to delete this class? This action cannot be undone.')) {
+      return;
+    }
+
+    try {
+      await deleteDoc(doc(db, 'classes', classId));
+      setMessage('✅ Class deleted successfully');
+      fetchClasses(userId);
+    } catch (error) {
+      setMessage(`❌ Error deleting class: ${error.message}`);
+    }
+  };
+
+  const downloadAsCSV = (records) => {
+    if (!records || records.length === 0) {
+      setMessage('❌ No records to download');
+      return;
+    }
+
+    const headers = ['Student Code', 'Date', 'Time'];
+    const csvContent = [
+      headers.join(','),
+      ...records.map(record => {
+        const date = new Date(record.timestamp);
+        return [
+          record.studentCode,
+          date.toLocaleDateString(),
+          date.toLocaleTimeString()
+        ].join(',');
+      })
+    ].join('\n');
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', `attendance_records_${new Date().toISOString().split('T')[0]}.csv`);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
   const fetchAttendanceForClass = async (classId, forDownload = false) => {
@@ -209,52 +260,6 @@ function Instructor() {
     }
   };
   
-
-  const downloadAsCSV = (records) => {
-    if (!records.length) {
-      alert("No attendance records found.");
-      return;
-    }
-  
-    const studentMap = new Map();
-    const allDatesSet = new Set();
-  
-    records.forEach((record) => {
-      const dateObj = new Date(record.timestamp);
-      const date = dateObj.toLocaleDateString('en-CA'); // Format: YYYY-MM-DD
-      const time = dateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-  
-      allDatesSet.add(date);
-  
-      if (!studentMap.has(record.studentCode)) {
-        studentMap.set(record.studentCode, {});
-      }
-  
-      studentMap.get(record.studentCode)[date] = time;
-    });
-  
-    const allDates = Array.from(allDatesSet).sort(); // Sorted list of dates
-    const header = ['Student Code', ...allDates];
-  
-    const rows = Array.from(studentMap.entries()).map(([studentCode, dates]) => {
-      return [studentCode, ...allDates.map(date => dates[date] || '')];
-    });
-  
-    const csvContent = [header, ...rows]
-      .map((e) => e.join(','))
-      .join('\n');
-  
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-  
-    const link = document.createElement('a');
-    link.href = url;
-    link.setAttribute('download', 'attendance_by_date.csv');
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  };
-  
   
   
   
@@ -263,9 +268,13 @@ function Instructor() {
     // Generate a random 3-digit code
     const newCode = Math.floor(100 + Math.random() * 900).toString();
     
-    const expirationTime = Date.now() + (3 * 60 * 1000);
-    
     try {
+      // Get the class document to access defaultExpirationTime
+      const classDoc = await getDoc(doc(db, 'classes', classId));
+      const classData = classDoc.data();
+      const expirationMinutes = classData.defaultExpirationTime || 3;
+      const expirationTime = Date.now() + (expirationMinutes * 60 * 1000);
+      
       const classRef = doc(db, 'classes', classId);
       await updateDoc(classRef, {
         attendanceCode: newCode,
@@ -275,7 +284,7 @@ function Instructor() {
   
       // Show code and reset expiration
       setExpiredCodes((prev) => ({ ...prev, [classId]: false }));
-      setTimers((prev) => ({ ...prev, [classId]: 180 })); // 3 minutes in seconds
+      setTimers((prev) => ({ ...prev, [classId]: expirationMinutes * 60 })); // Convert minutes to seconds
       setShowLargeCodes((prev) => ({ ...prev, [classId]: true })); // Show the modal automatically
   
       // Clear any existing interval for this class
@@ -396,20 +405,6 @@ function Instructor() {
     }
   };
 
-  const handleDeleteClass = async (classId) => {
-    if (!window.confirm('Are you sure you want to delete this class? This action cannot be undone.')) {
-      return;
-    }
-
-    try {
-      await deleteDoc(doc(db, 'classes', classId));
-      setMessage('✅ Class deleted successfully');
-      fetchClasses(userId);
-    } catch (error) {
-      setMessage(`❌ Error deleting class: ${error.message}`);
-    }
-  };
-
   // Function to handle schedule creation
   const handleScheduleChange = () => {
     if (selectedDays.length === 0 || !selectedTime) {
@@ -501,7 +496,8 @@ function Instructor() {
         invalidMaxStudents: "❌ Please enter a valid number of students (minimum 1)",
         selectDayTime: '❌ Please select at least one day and time',
         deleteConfirm: 'Are you sure you want to delete this class? This action cannot be undone.',
-        noRecords: "No attendance records found."
+        noRecords: "No attendance records found.",
+        invalidExpirationTime: "❌ Please enter a valid expiration time (minimum 1 minute)",
       },
       logout: 'LOGOUT',
       weekdays: {
@@ -539,6 +535,10 @@ function Instructor() {
       },
       customIdentificationPlaceholder: 'Describe how students should identify themselves (e.g., "Student ID", "Class Number", etc.)',
       searchClasses: 'Search classes...',
+      defaultExpirationTime: 'Student Check-in Time Limit',
+      defaultExpirationPlaceholder: 'Enter minutes (default: 3)',
+      defaultExpirationTimeTooltip: 'This sets how many minutes students have to check in with the attendance code before it expires. This setting cannot be changed after class creation. Choose carefully!',
+      defaultExpirationTimeWarning: '⚠️ This time limit cannot be changed after creating the class.',
     },
     pt: {
       title: 'Painel do Instrutor',
@@ -604,7 +604,8 @@ function Instructor() {
         invalidMaxStudents: "❌ Por favor, digite um número válido de alunos (mínimo 1)",
         selectDayTime: '❌ Por favor, selecione pelo menos um dia e horário',
         deleteConfirm: 'Tem certeza que deseja excluir esta turma? Esta ação não pode ser desfeita.',
-        noRecords: "Nenhum registro de presença encontrado."
+        noRecords: "Nenhum registro de presença encontrado.",
+        invalidExpirationTime: "❌ Por favor, insira um tempo de expiração válido (mínimo 1 minuto)",
       },
       logout: 'SAIR',
       weekdays: {
@@ -642,6 +643,10 @@ function Instructor() {
       },
       customIdentificationPlaceholder: 'Descreva como os alunos devem se identificar (ex: "ID do Aluno", "Número da Turma", etc.)',
       searchClasses: 'Pesquisar turmas...',
+      defaultExpirationTime: 'Limite de Tempo para Check-in',
+      defaultExpirationPlaceholder: 'Digite minutos (padrão: 3)',
+      defaultExpirationTimeTooltip: 'Define quantos minutos os alunos têm para fazer check-in com o código de presença antes que expire. Esta configuração não pode ser alterada após a criação da turma. Escolha com cuidado!',
+      defaultExpirationTimeWarning: '⚠️ Este limite de tempo não pode ser alterado após criar a turma.',
     },
     es: {
       title: 'Panel del Instructor',
@@ -707,7 +712,8 @@ function Instructor() {
         invalidMaxStudents: "❌ Por favor, ingrese un número válido de estudiantes (mínimo 1)",
         selectDayTime: '❌ Por favor, seleccione al menos un día y horario',
         deleteConfirm: '¿Está seguro que desea eliminar esta clase? Esta acción no se puede deshacer.',
-        noRecords: "No se encontraron registros de asistencia."
+        noRecords: "No se encontraron registros de asistencia.",
+        invalidExpirationTime: "❌ Por favor, ingrese un tiempo de expiración válido (mínimo 1 minuto)",
       },
       logout: 'CERRAR SESIÓN',
       weekdays: {
@@ -745,6 +751,10 @@ function Instructor() {
       },
       customIdentificationPlaceholder: 'Describa cómo los estudiantes deben identificarse (ej: "ID del Estudiante", "Número de Clase", etc.)',
       searchClasses: 'Buscar clases...',
+      defaultExpirationTime: 'Límite de Tiempo para Check-in',
+      defaultExpirationPlaceholder: 'Ingrese minutos (predeterminado: 3)',
+      defaultExpirationTimeTooltip: 'Define cuántos minutos tienen los estudiantes para hacer check-in con el código de asistencia antes de que expire. Esta configuración no se puede cambiar después de crear la clase. ¡Elija con cuidado!',
+      defaultExpirationTimeWarning: '⚠️ Este límite de tiempo no se puede cambiar después de crear la clase.',
     }
   };
 
@@ -1061,6 +1071,64 @@ function Instructor() {
                 placeholder={translations[language].classSizePlaceholder} 
                 value={maxStudents} 
                 onChange={(e) => setMaxStudents(e.target.value)} 
+                style={{ 
+                  width: '100%', 
+                  padding: 'clamp(8px, 2vw, 12px)', 
+                  boxSizing: 'border-box',
+                  textAlign: 'left',
+                  fontSize: 'clamp(0.9rem, 2.5vw, 1rem)'
+                }} 
+              />
+            </div>
+
+            <div style={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              gap: '10px',
+              marginBottom: '15px'
+            }}>
+              <span style={{ 
+                fontSize: 'clamp(0.9rem, 2.5vw, 1rem)',
+                color: '#1e293b',
+                whiteSpace: 'nowrap'
+              }}>
+                {translations[language].defaultExpirationTime}:
+              </span>
+              <div style={{ 
+                position: 'relative',
+                display: 'inline-block',
+                cursor: 'help'
+              }}
+              onMouseEnter={handleTooltipMouseEnter}
+              onMouseLeave={handleTooltipMouseLeave}>
+                <FaQuestionCircle 
+                  size={16} 
+                  color="#64748b"
+                />
+                <div style={{
+                  position: 'absolute',
+                  bottom: '100%',
+                  left: '50%',
+                  transform: 'translateX(-50%)',
+                  backgroundColor: '#1e293b',
+                  color: 'white',
+                  padding: '8px 12px',
+                  borderRadius: '4px',
+                  fontSize: '0.9rem',
+                  width: '300px',
+                  display: 'none',
+                  zIndex: 1000,
+                  boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+                }}>
+                  {translations[language].defaultExpirationTimeTooltip}
+                </div>
+              </div>
+              <input 
+                type="number" 
+                min="1"
+                placeholder={translations[language].defaultExpirationPlaceholder} 
+                value={defaultExpirationTime} 
+                onChange={(e) => setDefaultExpirationTime(e.target.value)} 
                 style={{ 
                   width: '100%', 
                   padding: 'clamp(8px, 2vw, 12px)', 
