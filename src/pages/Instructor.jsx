@@ -207,20 +207,45 @@ function Instructor() {
       return;
     }
 
-    const headers = ['Student Code', 'Date', 'Time'];
-    const csvContent = [
-      headers.join(','),
-      ...records.map(record => {
-        const date = new Date(record.timestamp);
-        return [
-          record.studentCode,
-          date.toLocaleDateString(),
-          date.toLocaleTimeString()
-        ].join(',');
-      })
-    ].join('\n');
+    // Sort records by date
+    const sortedRecords = [...records].sort((a, b) => a.timestamp - b.timestamp);
+    
+    // Get unique student codes and dates
+    const studentCodes = [...new Set(records.map(record => record.studentCode))].sort();
+    const dates = [...new Set(records.map(record => 
+      new Date(record.timestamp).toLocaleDateString()
+    ))].sort((a, b) => new Date(a) - new Date(b));
 
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    // Create a map of student attendance by date
+    const attendanceMap = {};
+    studentCodes.forEach(code => {
+      attendanceMap[code] = {};
+      dates.forEach(date => {
+        attendanceMap[code][date] = '';
+      });
+    });
+
+    // Fill in the attendance times
+    sortedRecords.forEach(record => {
+      const date = new Date(record.timestamp).toLocaleDateString();
+      const time = new Date(record.timestamp).toLocaleTimeString();
+      attendanceMap[record.studentCode][date] = time;
+    });
+
+    // Create CSV content
+    const headers = ['Student Code', ...dates];
+    let csvContent = [headers.join(',')];
+
+    // Add student rows
+    studentCodes.forEach(code => {
+      const row = [code];
+      dates.forEach(date => {
+        row.push(attendanceMap[code][date] ? `"${attendanceMap[code][date]}"` : '');
+      });
+      csvContent.push(row.join(','));
+    });
+
+    const blob = new Blob([csvContent.join('\n')], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement('a');
     const url = URL.createObjectURL(blob);
     link.setAttribute('href', url);
