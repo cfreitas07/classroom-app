@@ -207,40 +207,39 @@ function Instructor() {
       return;
     }
 
-    // Sort records by date
-    const sortedRecords = [...records].sort((a, b) => a.timestamp - b.timestamp);
-    
-    // Get unique student codes and dates
-    const studentCodes = [...new Set(records.map(record => record.studentCode))].sort();
+    // Get unique student codes (sorted alphabetically)
+    const studentCodes = [...new Set(records.map(record => record.studentCode))]
+      .sort((a, b) => a.localeCompare(b));
+
+    // Get unique dates (sorted chronologically)
     const dates = [...new Set(records.map(record => 
       new Date(record.timestamp).toLocaleDateString()
     ))].sort((a, b) => new Date(a) - new Date(b));
 
-    // Create a map of student attendance by date
+    // Create a map for student attendance, initializing all cells as empty
     const attendanceMap = {};
     studentCodes.forEach(code => {
       attendanceMap[code] = {};
       dates.forEach(date => {
-        attendanceMap[code][date] = '';
+        attendanceMap[code][date] = ''; // Initialize as empty
       });
     });
 
-    // Fill in the attendance times
-    sortedRecords.forEach(record => {
+    // Mark attendance only for actual attendance records
+    records.forEach(record => {
       const date = new Date(record.timestamp).toLocaleDateString();
-      const time = new Date(record.timestamp).toLocaleTimeString();
-      attendanceMap[record.studentCode][date] = time;
+      attendanceMap[record.studentCode][date] = '########'; // Mark as present only when they attended
     });
 
     // Create CSV content
     const headers = ['Student Code', ...dates];
     let csvContent = [headers.join(',')];
 
-    // Add student rows
+    // Add one row per student with all their attendance
     studentCodes.forEach(code => {
       const row = [code];
       dates.forEach(date => {
-        row.push(attendanceMap[code][date] ? `"${attendanceMap[code][date]}"` : '');
+        row.push(attendanceMap[code][date]);
       });
       csvContent.push(row.join(','));
     });
