@@ -1,93 +1,111 @@
-# 🎓 Aki - Attendance App
+# Presenzo - Smart Classroom Attendance System
+Presenzo is a modern, user-friendly attendance management system designed for educational institutions. It provides a seamless way for instructors to track student attendance using unique codes and QR technology.
 
-**Aki** is a simple, mobile-friendly web application built to help instructors manage classroom attendance with ease and privacy.
+## 🌟 Features
 
-Students submit attendance anonymously, and instructors have a clear dashboard to track sessions, generate attendance codes, and export records.
+### For Instructors
+- **Class Management**
+  - Create and manage multiple classes
+  - Set custom class schedules
+  - Define maximum class size
+  - Configure student identification methods
+  - Set customizable attendance code expiration time
 
----
+- **Attendance Tracking**
+  - Generate unique attendance codes
+  - Real-time countdown timer for active codes
+  - View detailed attendance records
+  - Export attendance data to CSV
+  - Filter attendance records by date and student code
 
-## 🚀 Features
+- **Student Identification Options**
+  - Full name
+  - Custom nicknames
+  - Custom identification methods (e.g., student ID, class number)
 
-- Instructor authentication (signup/login)
-- Create classrooms with custom schedules and class size
-- Generate time-limited attendance codes at the start of each session
-- Students can mark attendance anonymously using the provided codes
-- Attendance records organized by date
-- Export attendance as CSV
-- Fully responsive and mobile-ready
+### For Students
+- Simple check-in process
+- QR code scanning for quick access
+- Multiple identification methods
+- Real-time attendance confirmation
 
----
+## 🚀 Getting Started
 
-## 🔧 Available Scripts
+### Prerequisites
+- Node.js
+- npm or yarn
+- Firebase account
 
-In the project directory, you can run:
-
-### `npm start`
-
-Runs the app in the development mode.  
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
-
-The page will reload when you make changes.  
-You may also see any lint errors in the console.
-
----
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.  
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.  
-Your app is ready to be deployed!
-
----
-
-## 🧪 `npm test`
-
-Launches the test runner in interactive watch mode.  
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
----
-
-## 📖 How It Works
-
-### 👨‍🏫 For Instructors:
-1. Go to the app and select **"I'm an Instructor"**
-2. Create an account or log in
-3. Create a class with:
-   - Class name
-   - Schedule (e.g., Mon/Wed 10am)
-   - Max class size
-4. Before each class session, click **"Start Attendance"** to generate a temporary attendance code (valid for 10 minutes)
-5. Share the code with your students
-6. View or download attendance reports in CSV format
-
----
-
-### 👩‍🎓 For Students:
-1. Go to the app and select **"I'm a Student"**
-2. Enter:
-   - The **Class Code** (shared by the instructor)
-   - Your **Student Code** (anonymous identifier)
-   - The **Attendance Code** generated during class
-3. That’s it — you’re marked as present anonymously!
-
----
-
-## 🛠 Tech Stack
-
-- **React** (frontend)
-- **Firebase Auth** (authentication)
-- **Firestore** (real-time database)
-- **Firebase Hosting** (deployment)
-- **Tailwind CSS** (styling)
-
----
-
-## 📦 Deployment
-
-To deploy using Firebase Hosting:
-
+### Installation
+1. Clone the repository
 ```bash
-npm run build
-firebase deploy
+git clone https://github.com/yourusername/presenzo.git
+```
+
+2. Install dependencies
+```bash
+cd presenzo
+npm install
+```
+
+3. Set up Firebase
+- Create a new Firebase project
+- Add your Firebase configuration to the project
+- Enable Authentication and Firestore
+
+4. Start the development server
+```bash
+npm start
+```
+
+## Configuration
+
+### Firebase Setup
+1. Create a new Firebase project
+2. Enable Email/Password authentication
+3. Set up Firestore database
+4. Add your Firebase configuration to `src/firebase.js`
+
+### Environment Variables
+Create a `.env` file in the root directory with:
+REACT_APP_FIREBASE_API_KEY=your_api_key
+REACT_APP_FIREBASE_AUTH_DOMAIN=your_auth_domain
+REACT_APP_FIREBASE_PROJECT_ID=your_project_id
+REACT_APP_FIREBASE_STORAGE_BUCKET=your_storage_bucket
+REACT_APP_FIREBASE_MESSAGING_SENDER_ID=your_messaging_sender_id
+REACT_APP_FIREBASE_APP_ID=your_app_id
+
+## 🌐 Multi-language Support
+Presenzo supports multiple languages:
+- English
+- Portuguese
+- Spanish
+
+## 📱 Technologies Used
+- React.js
+- Firebase (Authentication & Firestore)
+- QR Code Generation
+- CSV Export
+- Responsive Design
+
+## 📊 Data Management
+- Secure student data storage
+- Real-time attendance tracking
+- Exportable attendance records
+- Customizable data retention
+
+## 🔒 Security Features
+- Secure authentication
+- Encrypted data transmission
+- Role-based access control
+- Session management
+
+## 🤝 Contributing
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## 📝 License
+This project is licensed under the MIT License.
+
+## Contact
+Claudio de Freitas
+www.claudiocsdefreitas.com
