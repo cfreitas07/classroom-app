@@ -188,7 +188,15 @@ function Instructor() {
   };
 
   const handleDeleteClass = async (classId) => {
+    // First confirmation dialog
     if (!window.confirm('Are you sure you want to delete this class? This action cannot be undone.')) {
+      return;
+    }
+
+    // Second confirmation requiring typing "delete"
+    const confirmation = window.prompt('To confirm deletion, please type "delete" (without quotes):');
+    if (confirmation?.toLowerCase() !== 'delete') {
+      setMessage('❌ Class deletion cancelled. Please type "delete" to confirm deletion.');
       return;
     }
 
